@@ -45,18 +45,15 @@ class _NawawiAppState extends State<NawawiApp> {
       ],
 
       builder:
-          (context, widget) => Directionality(
-            textDirection: TextDirection.rtl,
-            child: ResponsiveBreakpoints.builder(
-              child: widget!,
-              breakpoints: [
-                const Breakpoint(start: 0, end: 359, name: 'MOBILE'),
-                const Breakpoint(start: 360, end: 599, name: 'MOBILE'),
-                const Breakpoint(start: 600, end: 799, name: 'TABLET'),
-                const Breakpoint(start: 800, end: 999, name: 'TABLET'),
-                const Breakpoint(start: 1000, end: 1200, name: 'DESKTOP'),
-              ],
-            ),
+          (context, widget) => ResponsiveBreakpoints.builder(
+            child: widget!,
+            breakpoints: [
+              const Breakpoint(start: 0, end: 359, name: 'MOBILE'),
+              const Breakpoint(start: 360, end: 599, name: 'MOBILE'),
+              const Breakpoint(start: 600, end: 799, name: 'TABLET'),
+              const Breakpoint(start: 800, end: 999, name: 'TABLET'),
+              const Breakpoint(start: 1000, end: 1200, name: 'DESKTOP'),
+            ],
           ),
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,

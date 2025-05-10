@@ -81,15 +81,6 @@ class HadithTile extends StatelessWidget {
         ),
         title: RichText(
           textAlign: TextAlign.end,
-          text: _highlightText(
-            'الحديث رقم $index',
-            searchQuery,
-            normalStyle,
-            highlightStyle,
-          ),
-        ),
-        subtitle: RichText(
-          textAlign: TextAlign.end,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           text: _highlightText(
@@ -97,6 +88,15 @@ class HadithTile extends StatelessWidget {
             searchQuery,
             subtitleStyle,
             subtitleHighlight,
+          ),
+        ),
+        subtitle: RichText(
+          textAlign: TextAlign.end,
+          text: _highlightText(
+            _extractHadithMainStatement(hadith.hadith),
+            searchQuery,
+            normalStyle,
+            highlightStyle,
           ),
         ),
         trailing: Icon(
@@ -113,5 +113,29 @@ class HadithTile extends StatelessWidget {
         },
       ),
     );
+  }
+
+  // Helper to extract main statement from the first quote in the hadith
+  String _extractHadithMainStatement(String text) {
+    // Try to find the first Arabic quote
+    final quoteRegex = RegExp(r'["«"“"„‟""❝❞]');
+    final match = quoteRegex.firstMatch(text);
+    if (match != null) {
+      final start = match.end;
+      // Find the closing quote after the opening
+      final endMatch = quoteRegex.firstMatch(text.substring(start));
+      if (endMatch != null) {
+        final end = start + endMatch.start;
+        return text.substring(start, end).trim();
+      } else {
+        // No closing quote, just take 10 words after the quote
+        final after = text.substring(start).trim();
+        final words = after.split(RegExp(r'\s+')).take(10).join(' ');
+        return words;
+      }
+    } else {
+      // No quote found, fallback to first 10 words
+      return text.split(RegExp(r'\s+')).take(10).join(' ');
+    }
   }
 }
