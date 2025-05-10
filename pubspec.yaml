@@ -13,6 +13,15 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: 
+  equatable: 
+  flutter_bloc: 
+  just_audio:
+  path_provider:
+  responsive_framework:
+  google_fonts: 
+  flutter_localizations:
+    sdk: flutter
+  share_plus: 11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +35,7 @@ flutter:
     - assets/images/
     - assets/audio/
     - assets/fonts/
+    - assets/json/
   fonts:
     - family: Cairo
       fonts:
