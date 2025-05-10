@@ -150,100 +150,97 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     );
   }
 
-  String _formatDuration(Duration d) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final m = twoDigits(d.inMinutes.remainder(60));
-    final s = twoDigits(d.inSeconds.remainder(60));
-    return '$m:$s';
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl, // دعم اللغة العربية
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('الحديث رقم ${widget.index}'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: _showShareOptions,
-              tooltip: 'مشاركة',
-            ),
-          ],
-        ),
-        body: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ListView(
-                children: [
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.hadith.hadith.split('\n').first.trim()),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: _showShareOptions,
+            tooltip: 'مشاركة',
+          ),
+        ],
+      ),
+      body: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView(
+              children: [
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: Theme.of(context).cardColor,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 20.0,
+                      horizontal: 16,
                     ),
-                    color: Theme.of(context).cardColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            widget.hadith.hadith,
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.end,
-                          ),
-                          const SizedBox(height: 24),
-                          _isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : AudioPlayerWidget(
-                                player: _player,
-                                isPlaying: isPlaying,
-                                duration: _duration,
-                                position: _position,
-                                isLoading: _isLoading,
-                                onPlayPause: _togglePlayPause,
-                                onReplay: _replay,
-                                onSkipForward: _skipForward,
-                                onSkipBackward: _skipBackward,
-                                onSeek: _seekTo,
-                              ),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          widget.hadith.hadith
+                              .split('\n')
+                              .skip(1)
+                              .join('\n')
+                              .trim(),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.start,
+                        ),
+                        const SizedBox(height: 24),
+                        _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : AudioPlayerWidget(
+                              player: _player,
+                              isPlaying: isPlaying,
+                              duration: _duration,
+                              position: _position,
+                              isLoading: _isLoading,
+                              onPlayPause: _togglePlayPause,
+                              onReplay: _replay,
+                              onSkipForward: _skipForward,
+                              onSkipBackward: _skipBackward,
+                              onSeek: _seekTo,
+                            ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Card(
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    color: Theme.of(context).cardColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(
-                            'الشرح:',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.hadith.description,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.end,
-                          ),
-                        ],
-                      ),
+                ),
+                const SizedBox(height: 24),
+                Card(
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  color: Theme.of(context).cardColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'الشرح:',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          widget.hadith.description,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
