@@ -17,8 +17,7 @@ dependencies:
   flutter_bloc: 
   just_audio:
   path_provider:
-  responsive_framework:
-  google_fonts: 
+  responsive_framework: 
   flutter_localizations:
     sdk: flutter
   share_plus: 11.0.0
