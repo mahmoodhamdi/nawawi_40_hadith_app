@@ -53,8 +53,8 @@ class HadithTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
-      color: Colors.orange.shade800,
-      backgroundColor: Colors.orange.shade100,
+      color: theme.colorScheme.secondary,
+      backgroundColor: theme.colorScheme.secondary.withOpacity(0.15),
       fontWeight: FontWeight.bold,
     );
     final normalStyle = theme.textTheme.titleMedium?.copyWith(
@@ -62,8 +62,8 @@ class HadithTile extends StatelessWidget {
     );
     final subtitleStyle = theme.textTheme.bodyMedium;
     final subtitleHighlight = subtitleStyle?.copyWith(
-      color: Colors.blue.shade900,
-      backgroundColor: Colors.blue.shade50,
+      color: theme.colorScheme.primary,
+      backgroundColor: theme.colorScheme.primary.withOpacity(0.08),
       fontWeight: FontWeight.bold,
     );
 
@@ -73,7 +73,7 @@ class HadithTile extends StatelessWidget {
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white.withOpacity(0.95),
+      color: theme.cardColor,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -99,7 +99,10 @@ class HadithTile extends StatelessWidget {
             subtitleHighlight,
           ),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.blueAccent),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: theme.colorScheme.primary,
+        ),
         onTap: () {
           Navigator.push(
             context,

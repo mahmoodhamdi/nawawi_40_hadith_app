@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../models/hadith.dart';
+import '../widgets/audio_player_widget.dart';
 
 class HadithDetailsScreen extends StatefulWidget {
   final int index;
@@ -172,13 +173,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
           ],
         ),
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [Color(0xFFe0eafc), Color(0xFFcfdef3)],
-            ),
-          ),
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -189,7 +184,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    color: Colors.white.withOpacity(0.95),
+                    color: Theme.of(context).cardColor,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
@@ -204,71 +199,17 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           const SizedBox(height: 24),
                           _isLoading
                               ? const Center(child: CircularProgressIndicator())
-                              : Column(
-                                children: [
-                                  Slider(
-                                    value: _position.inSeconds.toDouble().clamp(
-                                      0,
-                                      _duration.inSeconds.toDouble(),
-                                    ),
-                                    min: 0,
-                                    max: _duration.inSeconds.toDouble(),
-                                    onChanged:
-                                        (value) => _seekTo(
-                                          Duration(seconds: value.toInt()),
-                                        ),
-                                    activeColor: Colors.blueAccent,
-                                    inactiveColor: Colors.blueAccent
-                                        .withOpacity(0.3),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        _formatDuration(_position),
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      Text(
-                                        _formatDuration(_duration),
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.replay_10),
-                                        onPressed: _skipBackward,
-                                        tooltip: 'رجوع 10 ثواني',
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.replay),
-                                        onPressed: _replay,
-                                        tooltip: 'إعادة',
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          isPlaying
-                                              ? Icons.pause_circle_filled
-                                              : Icons.play_circle_fill,
-                                          size: 40,
-                                        ),
-                                        onPressed: _togglePlayPause,
-                                        tooltip:
-                                            isPlaying
-                                                ? 'إيقاف الصوت'
-                                                : 'تشغيل الصوت',
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.forward_10),
-                                        onPressed: _skipForward,
-                                        tooltip: 'تقديم 10 ثواني',
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                              : AudioPlayerWidget(
+                                player: _player,
+                                isPlaying: isPlaying,
+                                duration: _duration,
+                                position: _position,
+                                isLoading: _isLoading,
+                                onPlayPause: _togglePlayPause,
+                                onReplay: _replay,
+                                onSkipForward: _skipForward,
+                                onSkipBackward: _skipBackward,
+                                onSeek: _seekTo,
                               ),
                         ],
                       ),
@@ -280,7 +221,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    color: Colors.white.withOpacity(0.93),
+                    color: Theme.of(context).cardColor,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(

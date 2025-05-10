@@ -1,25 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
+import 'app_colors.dart';
+import 'app_styles.dart';
 
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  primarySwatch: Colors.green,
-  scaffoldBackgroundColor: Colors.white,
+  fontFamily: 'Cairo',
+  primaryColor: AppColors.primary,
+  colorScheme: ColorScheme(
+    brightness: Brightness.light,
+    primary: AppColors.primary,
+    onPrimary: Colors.white,
+    secondary: AppColors.secondary,
+    onSecondary: AppColors.textPrimaryLight,
+    surface: AppColors.surfaceLight,
+    onSurface: AppColors.textPrimaryLight,
+    error: Colors.red,
+    onError: Colors.white,
+  ),
+  scaffoldBackgroundColor: AppColors.backgroundLight,
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.green,
+    backgroundColor: Color(0xFF37966F),
     foregroundColor: Colors.white,
     centerTitle: true,
+    elevation: 1,
+    iconTheme: IconThemeData(color: Colors.white),
   ),
-  textTheme: GoogleFonts.cairoTextTheme().copyWith(
-    titleLarge: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.bold),
-    titleMedium: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.w600),
-    bodyMedium: GoogleFonts.cairo(fontSize: 16),
+  textTheme: const TextTheme(
+    titleLarge: AppStyles.titleLargeLight,
+    titleMedium: AppStyles.titleMediumLight,
+    bodyMedium: AppStyles.bodyMediumLight,
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.primary,
       foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      textStyle: AppStyles.titleMediumLight,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     ),
+  ),
+  cardTheme: CardTheme(
+    color: AppColors.surfaceLight,
+    elevation: 3,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: const BorderSide(color: AppColors.borderLight, width: 1),
+    ),
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+  ),
+  visualDensity: VisualDensity.adaptivePlatformDensity,
+  inputDecorationTheme: InputDecorationTheme(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(30),
+      borderSide: const BorderSide(color: AppColors.primary, width: 2),
+    ),
+    filled: true,
+    fillColor: AppColors.surfaceLight,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
   ),
 );
