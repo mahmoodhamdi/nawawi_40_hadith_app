@@ -1,6 +1,7 @@
 class AppStrings {
   static const appTitle = 'الأربعون النووية';
-  static const welcome = 'مرحباً بك في تطبيق الأربعين النووية';
+  static const welcome =
+      'وَما آتاكُمُ الرَّسُولُ فَخُذُوهُ\nوَما نَهاكُمْ عَنْهُ فَانْتَهُوا';
   static const searchHint = 'ابحث عن حديث...';
   static const noResults = 'لا يوجد نتائج للبحث.';
   static const hadithNumber = 'الحديث رقم';

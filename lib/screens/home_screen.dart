@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final borderColor =
         isDark
             ? theme.dividerColor
-            : theme.colorScheme.secondary.withValues(alpha:  0.2);
+            : theme.colorScheme.secondary.withValues(alpha: 0.2);
     return BlocProvider(
       create: (_) => HadithCubit()..fetchHadiths(),
       child: Directionality(
@@ -108,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 16),
                     Text(
                       AppStrings.welcome,
+
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: welcomeColor,
                         fontWeight: FontWeight.bold,
