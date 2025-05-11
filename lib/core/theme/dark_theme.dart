@@ -67,4 +67,9 @@ final ThemeData darkTheme = ThemeData(
     fillColor: AppColors.surfaceDark,
     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
   ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: Colors.blue.withOpacity(0.3),
+    selectionHandleColor: Colors.blue.shade300,
+    cursorColor: Colors.blue.shade300,
+  ),
 );

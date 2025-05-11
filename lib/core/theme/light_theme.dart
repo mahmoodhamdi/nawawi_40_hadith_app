@@ -67,4 +67,9 @@ final ThemeData lightTheme = ThemeData(
     fillColor: AppColors.surfaceLight,
     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
   ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: Colors.blue.withOpacity(0.2),
+    selectionHandleColor: Colors.blue.shade700,
+    cursorColor: Colors.blue.shade700,
+  ),
 );
