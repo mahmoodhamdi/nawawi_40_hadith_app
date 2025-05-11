@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -46,10 +47,32 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   Future<void> _loadAudio() async {
     try {
       final path = 'assets/audio/الحديث_${widget.index}.mp3';
+      debugPrint('Loading audio from path: $path');
+
+      // First check if the asset exists
+      final manifestContent = await DefaultAssetBundle.of(
+        context,
+      ).loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+      if (!manifestMap.containsKey(path)) {
+        throw Exception('Audio file not found in assets: $path');
+      }
+
       await _player.setAsset(path);
       _duration = _player.duration ?? Duration.zero;
-    } catch (e) {
-      debugPrint("فشل تحميل الملف الصوتي: $e");
+      debugPrint('Audio loaded successfully. Duration: $_duration');
+    } catch (e, stackTrace) {
+      debugPrint('Error loading audio: $e');
+      debugPrint('Stack trace: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('فشل تحميل الملف الصوتي: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
     if (mounted) setState(() => _isLoading = false);
   }
@@ -184,7 +207,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
+                        SelectableText(
                           widget.hadith.hadith
                               .split('\n')
                               .skip(1)
@@ -193,6 +216,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.start,
+                          contextMenuBuilder: (context, editableTextState) {
+                            return AdaptiveTextSelectionToolbar.editableText(
+                              editableTextState: editableTextState,
+                            );
+                          },
                         ),
                         const SizedBox(height: 24),
                         _isLoading
@@ -231,10 +259,15 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        Text(
+                        SelectableText(
                           widget.hadith.description,
                           style: Theme.of(context).textTheme.bodyMedium,
                           textAlign: TextAlign.start,
+                          contextMenuBuilder: (context, editableTextState) {
+                            return AdaptiveTextSelectionToolbar.editableText(
+                              editableTextState: editableTextState,
+                            );
+                          },
                         ),
                       ],
                     ),

@@ -54,7 +54,7 @@ class HadithTile extends StatelessWidget {
     final theme = Theme.of(context);
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
       color: theme.colorScheme.secondary,
-      backgroundColor: theme.colorScheme.secondary.withOpacity(0.15),
+      backgroundColor: theme.colorScheme.secondary.withAlpha(38),
       fontWeight: FontWeight.bold,
     );
     final normalStyle = theme.textTheme.titleMedium?.copyWith(
@@ -63,7 +63,7 @@ class HadithTile extends StatelessWidget {
     final subtitleStyle = theme.textTheme.bodyMedium;
     final subtitleHighlight = subtitleStyle?.copyWith(
       color: theme.colorScheme.primary,
-      backgroundColor: theme.colorScheme.primary.withOpacity(0.08),
+      backgroundColor: theme.colorScheme.primary.withAlpha(20),
       fontWeight: FontWeight.bold,
     );
 
@@ -118,7 +118,7 @@ class HadithTile extends StatelessWidget {
   // Helper to extract main statement from the first quote in the hadith
   String _extractHadithMainStatement(String text) {
     // Try to find the first Arabic quote
-    final quoteRegex = RegExp(r'["«"“"„‟""❝❞]');
+    final quoteRegex = RegExp(r'["«"""„‟""❝❞]');
     final match = quoteRegex.firstMatch(text);
     if (match != null) {
       final start = match.end;
