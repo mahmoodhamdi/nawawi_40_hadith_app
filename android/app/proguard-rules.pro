@@ -1,6 +1,6 @@
 # Keep audio files
--keep class com.example.hadith_nawawi_audio.R$raw { *; }
--keep class com.example.hadith_nawawi_audio.R$drawable { *; }
+-keep class com.ashwah.hadith_nawawi_audio.R$raw { *; }
+-keep class com.ashwah.hadith_nawawi_audio.R$drawable { *; }
 
 # Keep just_audio related classes
 -keep class com.ryanheise.just_audio.** { *; }
@@ -21,7 +21,7 @@
 -keep class com.google.android.play.core.tasks.** { *; }
 
 # Keep your app's classes
--keep class com.example.hadith_nawawi_audio.** { *; }
+-keep class com.ashwah.hadith_nawawi_audio.** { *; }
 
 # Keep native methods
 -keepclasseswithmembernames class * {
