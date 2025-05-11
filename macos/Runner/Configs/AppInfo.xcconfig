@@ -8,7 +8,10 @@
 PRODUCT_NAME = hadith_nawawi_audio
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.hadithNawawiAudio
+PRODUCT_BUNDLE_IDENTIFIER = com.ashwah.hadith_nawawi_audio
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+
+// Privacy Policy URL
+PRIVACY_POLICY_URL = https://github.com/your-username/nawawi_40_hadith_app/blob/main/PRIVACY.md
