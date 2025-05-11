@@ -21,6 +21,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   share_plus:
+  change_app_package_name:
   flutter_launcher_icons:
 dev_dependencies:
   flutter_test:

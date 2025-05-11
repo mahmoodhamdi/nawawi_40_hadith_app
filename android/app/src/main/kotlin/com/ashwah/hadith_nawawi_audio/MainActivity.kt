@@ -1,4 +1,4 @@
-package com.example.hadith_nawawi_audio
+package com.ashwah.hadith_nawawi_audio
 
 import io.flutter.embedding.android.FlutterActivity
 
