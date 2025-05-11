@@ -43,3 +43,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/key.properties
+android/key.jks
+
+# Add key.properties and keystore files to ignore list
+android/app/key.properties
+**/*.keystore
+**/*.jks

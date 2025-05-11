@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
@@ -46,18 +44,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
   Future<void> _loadAudio() async {
     try {
-      final path = 'assets/audio/الحديث_${widget.index}.mp3';
+      // Renamed asset file to audio_1.mp3, audio_2.mp3, etc.
+      final path = 'assets/audio/audio_${widget.index}.mp3';
       debugPrint('Loading audio from path: $path');
-
-      // First check if the asset exists
-      final manifestContent = await DefaultAssetBundle.of(
-        context,
-      ).loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-
-      if (!manifestMap.containsKey(path)) {
-        throw Exception('Audio file not found in assets: $path');
-      }
 
       await _player.setAsset(path);
       _duration = _player.duration ?? Duration.zero;
