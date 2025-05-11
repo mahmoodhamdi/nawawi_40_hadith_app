@@ -50,7 +50,7 @@ class AudioPlayerWidget extends StatelessWidget {
               max: duration.inSeconds.toDouble(),
               onChanged: (value) => onSeek(Duration(seconds: value.toInt())),
               activeColor: theme.colorScheme.primary,
-              inactiveColor: theme.colorScheme.primary.withOpacity(0.3),
+              inactiveColor: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
