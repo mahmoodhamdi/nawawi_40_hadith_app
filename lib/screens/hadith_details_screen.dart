@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,6 +27,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
   bool _isLoading = true;
+  double _playbackSpeed = 1.0;
   StreamSubscription<Duration>? _positionSub;
   StreamSubscription<PlayerState>? _playerStateSub;
 
@@ -107,6 +109,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   void _replay() {
     _seekTo(Duration.zero);
     _player.play();
+  }
+
+  void _changePlaybackSpeed(double speed) {
+    setState(() => _playbackSpeed = speed);
+    _player.setSpeed(speed);
   }
 
   void _shareHadithOnly() {
@@ -225,6 +232,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                               onSkipForward: _skipForward,
                               onSkipBackward: _skipBackward,
                               onSeek: _seekTo,
+                              onSpeedChanged: _changePlaybackSpeed,
+                              playbackSpeed: _playbackSpeed,
                             ),
                       ],
                     ),

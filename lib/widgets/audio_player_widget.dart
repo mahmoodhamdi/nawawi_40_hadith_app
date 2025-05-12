@@ -12,6 +12,8 @@ class AudioPlayerWidget extends StatelessWidget {
   final VoidCallback onSkipForward;
   final VoidCallback onSkipBackward;
   final ValueChanged<Duration> onSeek;
+  final ValueChanged<double>? onSpeedChanged;
+  final double playbackSpeed;
 
   const AudioPlayerWidget({
     super.key,
@@ -25,6 +27,8 @@ class AudioPlayerWidget extends StatelessWidget {
     required this.onSkipForward,
     required this.onSkipBackward,
     required this.onSeek,
+    this.onSpeedChanged,
+    this.playbackSpeed = 1.0,
   });
 
   String _formatDuration(Duration d) {
@@ -95,6 +99,41 @@ class AudioPlayerWidget extends StatelessWidget {
                   icon: const Icon(Icons.forward_10),
                   onPressed: onSkipForward,
                   tooltip: 'تقديم 10 ثواني',
+                  color: theme.colorScheme.primary,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'السرعة:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  '${playbackSpeed}x',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.speed),
+                  onPressed: () {
+                    // Cycle through speeds: 1.0 -> 1.5 -> 2.0 -> 1.0
+                    double nextSpeed;
+                    if (playbackSpeed == 1.0) {
+                      nextSpeed = 1.5;
+                    } else if (playbackSpeed == 1.5) {
+                      nextSpeed = 2.0;
+                    } else {
+                      nextSpeed = 1.0;
+                    }
+                    onSpeedChanged?.call(nextSpeed);
+                  },
+                  tooltip: 'تغيير سرعة التشغيل',
                   color: theme.colorScheme.primary,
                 ),
               ],
