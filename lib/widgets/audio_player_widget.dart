@@ -75,18 +75,19 @@ class AudioPlayerWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.replay_10),
-                    onPressed: onSkipBackward,
-                    tooltip: 'رجوع 10 ثواني',
-                    color: theme.colorScheme.primary,
-                  ),
-                  IconButton(
                     icon: const Icon(Icons.replay),
                     onPressed: onReplay,
                     tooltip: 'إعادة',
                     color: theme.colorScheme.primary,
                   ),
+            
                   IconButton(
+                    icon: const Icon(Icons.replay_10),
+                    onPressed: onSkipBackward,
+                    tooltip: 'رجوع 10 ثواني',
+                    color: theme.colorScheme.primary,
+                  ),
+                    IconButton(
                     icon: Icon(
                       isPlaying
                           ? Icons.pause_circle_filled
