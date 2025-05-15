@@ -187,87 +187,91 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              children: [
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  color: Theme.of(context).cardColor,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 20.0,
-                      horizontal: 16,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SelectableText(
-                          widget.hadith.hadith
-                              .split('\n')
-                              .skip(1)
-                              .join('\n')
-                              .trim(),
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.start,
-                          contextMenuBuilder: (context, editableTextState) {
-                            return AdaptiveTextSelectionToolbar.editableText(
-                              editableTextState: editableTextState,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        _isLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : AudioPlayerWidget(
-                              player: _player,
-                              isPlaying: isPlaying,
-                              duration: _duration,
-                              position: _position,
-                              isLoading: _isLoading,
-                              onPlayPause: _togglePlayPause,
-                              onReplay: _replay,
-                              onSkipForward: _skipForward,
-                              onSkipBackward: _skipBackward,
-                              onSeek: _seekTo,
-                              onSpeedChanged: _changePlaybackSpeed,
-                              playbackSpeed: _playbackSpeed,
-                            ),
-                      ],
+                    color: Theme.of(context).cardColor,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20.0,
+                        horizontal: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SelectableText(
+                            widget.hadith.hadith
+                                .split('\n')
+                                .skip(1)
+                                .join('\n')
+                                .trim(),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.start,
+                            contextMenuBuilder: (context, editableTextState) {
+                              return AdaptiveTextSelectionToolbar.editableText(
+                                editableTextState: editableTextState,
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 24),
+                          _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : AudioPlayerWidget(
+                                player: _player,
+                                isPlaying: isPlaying,
+                                duration: _duration,
+                                position: _position,
+                                isLoading: _isLoading,
+                                onPlayPause: _togglePlayPause,
+                                onReplay: _replay,
+                                onSkipForward: _skipForward,
+                                onSkipBackward: _skipBackward,
+                                onSeek: _seekTo,
+                                onSpeedChanged: _changePlaybackSpeed,
+                                playbackSpeed: _playbackSpeed,
+                              ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                Card(
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  color: Theme.of(context).cardColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'الشرح:',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 8),
-                        SelectableText(
-                          widget.hadith.description,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.start,
-                          contextMenuBuilder: (context, editableTextState) {
-                            return AdaptiveTextSelectionToolbar.editableText(
-                              editableTextState: editableTextState,
-                            );
-                          },
-                        ),
-                      ],
+                const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                SliverToBoxAdapter(
+                  child: Card(
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    color: Theme.of(context).cardColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            'الشرح:',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          SelectableText(
+                            widget.hadith.description,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.start,
+                            contextMenuBuilder: (context, editableTextState) {
+                              return AdaptiveTextSelectionToolbar.editableText(
+                                editableTextState: editableTextState,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
