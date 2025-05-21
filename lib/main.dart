@@ -21,12 +21,14 @@ class NawawiApp extends StatefulWidget {
 }
 
 class _NawawiAppState extends State<NawawiApp> {
+  AppThemeType _themeType = AppThemeType.system;
   ThemeMode _themeMode = ThemeMode.system;
 
-  void _changeTheme(ThemeMode? mode) {
-    if (mode != null) {
-      setState(() => _themeMode = mode);
-    }
+  void _changeTheme(AppThemeType type) {
+    setState(() {
+      _themeType = type;
+      _themeMode = AppTheme.themeTypeToMode(type);
+    });
   }
 
   @override
@@ -55,10 +57,13 @@ class _NawawiAppState extends State<NawawiApp> {
               const Breakpoint(start: 1000, end: 1200, name: 'DESKTOP'),
             ],
           ),
-      theme: AppTheme.light,
+      theme: AppTheme.byType(_themeType),
       darkTheme: AppTheme.dark,
       themeMode: _themeMode,
-      home: HomeScreen(onThemeChange: _changeTheme, currentTheme: _themeMode),
+      home: HomeScreen(
+        onThemeChange: _changeTheme,
+        currentThemeType: _themeType,
+      ),
     );
   }
 }

@@ -3,13 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hadith_nawawi_audio/widgets/hadith_tile.dart';
 
 import '../core/strings.dart';
+import '../core/theme/app_theme.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 
 class HomeScreen extends StatefulWidget {
-  final void Function(ThemeMode?)? onThemeChange;
-  final ThemeMode? currentTheme;
-  const HomeScreen({super.key, this.onThemeChange, this.currentTheme});
+  final void Function(AppThemeType)? onThemeChange;
+  final AppThemeType? currentThemeType;
+  const HomeScreen({super.key, this.onThemeChange, this.currentThemeType});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -53,15 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 floating: true,
                 snap: true,
                 actions: [
-                  PopupMenuButton<ThemeMode>(
+                  PopupMenuButton<AppThemeType>(
                     icon: const Icon(Icons.color_lens),
                     tooltip: 'تغيير الثيم',
                     onSelected: widget.onThemeChange,
-                    initialValue: widget.currentTheme,
+                    initialValue: widget.currentThemeType,
                     itemBuilder:
                         (context) => [
                           PopupMenuItem(
-                            value: ThemeMode.light,
+                            value: AppThemeType.light,
                             child: Row(
                               children: [
                                 Icon(
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           PopupMenuItem(
-                            value: ThemeMode.dark,
+                            value: AppThemeType.dark,
                             child: Row(
                               children: [
                                 Icon(
@@ -93,7 +94,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           PopupMenuItem(
-                            value: ThemeMode.system,
+                            value: AppThemeType.blue,
+                            child: Row(
+                              children: [
+                                Icon(Icons.water_drop, color: Colors.blue[700]),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'ثيم أزرق',
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: AppThemeType.purple,
+                            child: Row(
+                              children: [
+                                Icon(Icons.palette, color: Colors.purple[700]),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'ثيم بنفسجي',
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: AppThemeType.system,
                             child: Row(
                               children: [
                                 const Icon(

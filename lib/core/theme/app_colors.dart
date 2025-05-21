@@ -21,4 +21,12 @@ class AppColors {
   static const Color borderDark = Color(0xFF23262F);
   static const Color primaryDark = Color(0xFF52B788); // Olive green light
   static const Color secondaryDark = Color(0xFFFFD166); // Soft gold
+
+  // Blue theme
+  static const Color blueThemePrimary = Color(0xFF1A73E8); // Google blue
+  static const Color blueThemeSecondary = Color(0xFFFFAB40); // Amber accent
+
+  // Purple theme
+  static const Color purpleThemePrimary = Color(0xFF6200EE); // Material purple
+  static const Color purpleThemeSecondary = Color(0xFF03DAC6); // Teal accent
 }
