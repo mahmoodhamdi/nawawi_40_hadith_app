@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/hadith.dart';
 import '../widgets/audio_player_widget.dart';
@@ -31,17 +32,39 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   StreamSubscription<Duration>? _positionSub;
   StreamSubscription<PlayerState>? _playerStateSub;
 
+  // Font size state variables
+  double _hadithFontSize = 18.0;
+  double _descriptionFontSize = 16.0;
+  final double _minFontSize = 12.0;
+  final double _maxFontSize = 30.0;
+  final double _fontSizeStep = 2.0;
+
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
     _loadAudio();
+    _loadFontSizePreferences();
     _positionSub = _player.positionStream.listen((pos) {
       if (mounted) setState(() => _position = pos);
     });
     _playerStateSub = _player.playerStateStream.listen((state) {
       if (mounted) setState(() => isPlaying = state.playing);
     });
+  }
+
+  Future<void> _loadFontSizePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _hadithFontSize = prefs.getDouble('hadith_font_size') ?? 18.0;
+      _descriptionFontSize = prefs.getDouble('description_font_size') ?? 16.0;
+    });
+  }
+
+  Future<void> _saveFontSizePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('hadith_font_size', _hadithFontSize);
+    await prefs.setDouble('description_font_size', _descriptionFontSize);
   }
 
   Future<void> _loadAudio() async {
@@ -128,6 +151,43 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     Share.share('${widget.hadith.hadith}\n\n${widget.hadith.description}');
   }
 
+  // Font size adjustment methods
+  void _increaseHadithFontSize() {
+    setState(() {
+      if (_hadithFontSize < _maxFontSize) {
+        _hadithFontSize += _fontSizeStep;
+        _saveFontSizePreferences();
+      }
+    });
+  }
+
+  void _decreaseHadithFontSize() {
+    setState(() {
+      if (_hadithFontSize > _minFontSize) {
+        _hadithFontSize -= _fontSizeStep;
+        _saveFontSizePreferences();
+      }
+    });
+  }
+
+  void _increaseDescriptionFontSize() {
+    setState(() {
+      if (_descriptionFontSize < _maxFontSize) {
+        _descriptionFontSize += _fontSizeStep;
+        _saveFontSizePreferences();
+      }
+    });
+  }
+
+  void _decreaseDescriptionFontSize() {
+    setState(() {
+      if (_descriptionFontSize > _minFontSize) {
+        _descriptionFontSize -= _fontSizeStep;
+        _saveFontSizePreferences();
+      }
+    });
+  }
+
   void _showShareOptions() {
     showModalBottomSheet(
       context: context,
@@ -204,14 +264,43 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'الحديث:',
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.text_increase),
+                                    onPressed: _increaseHadithFontSize,
+                                    tooltip: 'زيادة حجم الخط',
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.text_decrease),
+                                    onPressed: _decreaseHadithFontSize,
+                                    tooltip: 'تقليل حجم الخط',
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           SelectableText(
                             widget.hadith.hadith
                                 .split('\n')
                                 .skip(1)
                                 .join('\n')
                                 .trim(),
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: _hadithFontSize,
+                            ),
                             textAlign: TextAlign.start,
                             contextMenuBuilder: (context, editableTextState) {
                               return AdaptiveTextSelectionToolbar.editableText(
@@ -254,15 +343,35 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Text(
-                            'الشرح:',
-                            style: Theme.of(context).textTheme.titleMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'الشرح:',
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.text_increase),
+                                    onPressed: _increaseDescriptionFontSize,
+                                    tooltip: 'زيادة حجم الخط',
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.text_decrease),
+                                    onPressed: _decreaseDescriptionFontSize,
+                                    tooltip: 'تقليل حجم الخط',
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           SelectableText(
                             widget.hadith.description,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(fontSize: _descriptionFontSize),
                             textAlign: TextAlign.start,
                             contextMenuBuilder: (context, editableTextState) {
                               return AdaptiveTextSelectionToolbar.editableText(
