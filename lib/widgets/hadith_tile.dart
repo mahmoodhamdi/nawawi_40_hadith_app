@@ -118,7 +118,7 @@ class HadithTile extends StatelessWidget {
   // Helper to extract main statement from the first quote in the hadith
   String _extractHadithMainStatement(String text) {
     // Try to find the first Arabic quote
-    final quoteRegex = RegExp(r'["«"""„‟""❝❞]');
+    final quoteRegex = RegExp(r'["«"""„‟""❝❞"?","?;"?."»"]');
     final match = quoteRegex.firstMatch(text);
     if (match != null) {
       final start = match.end;
