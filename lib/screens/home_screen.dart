@@ -6,6 +6,9 @@ import '../core/strings.dart';
 import '../core/theme/app_theme.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
+import '../models/hadith.dart';
+import '../screens/hadith_details_screen.dart';
+import '../services/preferences_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(AppThemeType)? onThemeChange;
@@ -19,6 +22,185 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  int? _lastReadHadithIndex;
+  DateTime? _lastReadTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLastReadInfo();
+  }
+
+  Future<void> _loadLastReadInfo() async {
+    final lastIndex = await PreferencesService.getLastReadHadith();
+    final lastTime = await PreferencesService.getLastReadTime();
+    if (mounted) {
+      setState(() {
+        _lastReadHadithIndex = lastIndex;
+        _lastReadTime = lastTime;
+      });
+    }
+  }
+
+  // Navigate to the last read hadith
+  void _navigateToLastReadHadith(BuildContext context, List<Hadith> hadiths) {
+    if (_lastReadHadithIndex == null ||
+        _lastReadHadithIndex! <= 0 ||
+        _lastReadHadithIndex! > hadiths.length)
+      return;
+
+    final hadith =
+        hadiths[_lastReadHadithIndex! - 1]; // Adjust for 0-based index
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (context) => HadithDetailsScreen(
+              index: _lastReadHadithIndex!,
+              hadith: hadith,
+            ),
+      ),
+    ).then((_) => _loadLastReadInfo()); // Refresh after returning
+  }
+
+  // Build the continue reading card
+  Widget _buildContinueReadingCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // Format the last read time
+    String timeAgo = '';
+    if (_lastReadTime != null) {
+      final difference = DateTime.now().difference(_lastReadTime!);
+      if (difference.inMinutes < 60) {
+        timeAgo = AppStrings.minutesAgo.replaceAll(
+          '{minutes}',
+          '${difference.inMinutes}',
+        );
+      } else if (difference.inHours < 24) {
+        timeAgo = AppStrings.hoursAgo.replaceAll(
+          '{hours}',
+          '${difference.inHours}',
+        );
+      } else {
+        timeAgo = AppStrings.daysAgo.replaceAll(
+          '{days}',
+          '${difference.inDays}',
+        );
+      }
+    }
+
+    return BlocBuilder<HadithCubit, HadithState>(
+      builder: (context, state) {
+        if (state is HadithLoaded && _lastReadHadithIndex != null) {
+          // Calculate progress percentage
+          final progress = _lastReadHadithIndex! / state.hadiths.length;
+
+          return Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: LinearGradient(
+                  colors:
+                      isDark
+                          ? [
+                            theme.colorScheme.primary.withOpacity(0.7),
+                            theme.colorScheme.primary.withOpacity(0.3),
+                          ]
+                          : [
+                            theme.colorScheme.primary,
+                            theme.colorScheme.primary.withOpacity(0.7),
+                          ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed:
+                            () => _navigateToLastReadHadith(
+                              context,
+                              state.hadiths,
+                            ),
+                        icon: const Icon(Icons.play_arrow),
+                        label: const Text(AppStrings.continueReading),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              isDark ? theme.colorScheme.surface : Colors.white,
+                          foregroundColor: theme.colorScheme.primary,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            AppStrings.lastRead,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: isDark ? Colors.white : Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${AppStrings.hadithNumber} $_lastReadHadithIndex',
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: isDark ? Colors.white70 : Colors.white,
+                            ),
+                          ),
+                          if (_lastReadTime != null)
+                            Text(
+                              timeAgo,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: isDark ? Colors.white60 : Colors.white70,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: isDark ? Colors.white24 : Colors.white38,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isDark ? Colors.white : Colors.white,
+                      ),
+                      minHeight: 8,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${(_lastReadHadithIndex! * 100 ~/ state.hadiths.length)}% ${AppStrings.completed}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: isDark ? Colors.white70 : Colors.white,
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -222,6 +404,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      if (_lastReadHadithIndex != null)
+                        _buildContinueReadingCard(context),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -243,6 +428,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       h.description.contains(_searchQuery),
                                 )
                                 .toList();
+
+                    // Store hadiths for continue reading functionality
+                    // We don't want to automatically navigate, just make the button available
                     if (filtered.isEmpty) {
                       return const SliverFillRemaining(
                         child: Center(

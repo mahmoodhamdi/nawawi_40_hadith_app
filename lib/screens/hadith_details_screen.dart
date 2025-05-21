@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/hadith.dart';
+import '../services/preferences_service.dart';
 import '../widgets/audio_player_widget.dart';
 
 class HadithDetailsScreen extends StatefulWidget {
@@ -39,12 +40,18 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   final double _maxFontSize = 30.0;
   final double _fontSizeStep = 2.0;
 
+  // Save the current hadith as last read
+  Future<void> _saveLastReadHadith() async {
+    await PreferencesService.saveLastReadHadith(widget.index);
+  }
+
   @override
   void initState() {
     super.initState();
     _player = AudioPlayer();
     _loadAudio();
     _loadFontSizePreferences();
+    _saveLastReadHadith();
     _positionSub = _player.positionStream.listen((pos) {
       if (mounted) setState(() => _position = pos);
     });

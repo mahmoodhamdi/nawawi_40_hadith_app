@@ -15,4 +15,10 @@ class AppStrings {
   static const skipForward = 'تقديم 10 ثواني';
   static const skipBackward = 'رجوع 10 ثواني';
   static const explanation = 'الشرح:';
+  static const continueReading = 'متابعة القراءة';
+  static const lastRead = 'آخر قراءة';
+  static const completed = 'مكتمل';
+  static const minutesAgo = 'منذ {minutes} دقيقة';
+  static const hoursAgo = 'منذ {hours} ساعة';
+  static const daysAgo = 'منذ {days} يوم';
 }
