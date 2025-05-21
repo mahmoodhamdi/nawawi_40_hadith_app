@@ -40,7 +40,7 @@ final ThemeData darkTheme = ThemeData(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     ),
   ),
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: AppColors.surfaceDark,
     elevation: 3,
     shape: RoundedRectangleBorder(
