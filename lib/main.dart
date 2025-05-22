@@ -4,10 +4,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 import 'core/strings.dart';
-// If BouncingScrollWrapper is not found, comment out or remove its usage.
-// import 'package:responsive_framework/bouncing_scroll_wrapper.dart';
-
 import 'core/theme/app_theme.dart';
+import 'cubit/hadith_cubit.dart';
 import 'cubit/last_read_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/theme_state.dart';
@@ -32,6 +30,7 @@ class _NawawiAppState extends State<NawawiApp> {
       providers: [
         BlocProvider(create: (context) => LastReadCubit()),
         BlocProvider(create: (context) => ThemeCubit()),
+        BlocProvider(create: (context) => HadithCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, themeState) {

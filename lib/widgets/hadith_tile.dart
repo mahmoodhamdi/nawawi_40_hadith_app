@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../cubit/last_read_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
 
@@ -54,7 +52,6 @@ class HadithTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final lastReadCubit = context.read<LastReadCubit>();
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
       color: theme.colorScheme.secondary,
       backgroundColor: theme.colorScheme.secondary.withAlpha(38),

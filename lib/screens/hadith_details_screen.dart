@@ -6,6 +6,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cubit/hadith_cubit.dart';
+import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
 import '../models/hadith.dart';
 import '../widgets/audio_player_widget.dart';
@@ -393,8 +395,157 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                     ),
                   ),
                 ),
+                // Add Next and Previous Hadith Navigation Buttons
+                const SliverToBoxAdapter(child: SizedBox(height: 30)),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 30.0, left: 16.0, right: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildNavigationButton(
+                          context: context,
+                          icon: Icons.arrow_back_ios_rounded,
+                          label: 'الحديث السابق',
+                          onPressed: widget.index > 1
+                              ? () => _navigateToHadith(widget.index - 1)
+                              : null,
+                        ),
+                        _buildNavigationButton(
+                          context: context,
+                          icon: Icons.arrow_forward_ios_rounded,
+                          label: 'الحديث التالي',
+                          onPressed: widget.index < 42
+                              ? () => _navigateToHadith(widget.index + 1)
+                              : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Navigate to a specific hadith by index
+  void _navigateToHadith(int index) async {
+    // Show loading indicator while fetching the hadith
+    setState(() => _isLoading = true);
+    
+    try {
+      // First ensure hadiths are loaded
+      final hadithCubit = context.read<HadithCubit>();
+      final hadithState = hadithCubit.state;
+      
+      // If hadiths aren't loaded yet, load them first
+      if (hadithState is! HadithLoaded) {
+        debugPrint('Hadiths not loaded yet, fetching them now...');
+        await hadithCubit.fetchHadiths();
+      }
+      
+      // Check again after potential loading
+      final currentState = hadithCubit.state;
+      debugPrint('Current state after fetch: ${currentState.runtimeType}');
+      
+      if (currentState is HadithLoaded) {
+        final hadiths = currentState.hadiths;
+        debugPrint('Found ${hadiths.length} hadiths, navigating to index $index');
+        
+        if (index > 0 && index <= hadiths.length) {
+          // Pause audio if playing
+          if (_player.playing) {
+            await _player.pause();
+          }
+          
+          // Replace current screen with new hadith details screen
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HadithDetailsScreen(
+                  index: index,
+                  hadith: hadiths[index - 1], // Adjust for 0-based index
+                ),
+              ),
+            );
+          }
+        } else {
+          debugPrint('Invalid index: $index (valid range: 1-${hadiths.length})');
+        }
+      } else {
+        debugPrint('Failed to load hadiths: ${currentState.runtimeType}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('فشل تحميل الأحاديث، الرجاء المحاولة مرة أخرى'),
+              duration: Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error navigating to hadith: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ: ${e.toString()}'),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+    
+    // Reset loading state if we're still on this screen
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  /// Build a navigation button with icon and label
+  Widget _buildNavigationButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback? onPressed,
+  }) {
+    final isDisabled = onPressed == null;
+    final theme = Theme.of(context);
+    
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: isDisabled
+                ? theme.disabledColor.withOpacity(0.1)
+                : theme.colorScheme.primary,
+            foregroundColor: isDisabled
+                ? theme.disabledColor
+                : theme.colorScheme.onPrimary,
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: isDisabled ? 0 : 2,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
       ),
