@@ -8,13 +8,12 @@ import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
+import '../cubit/theme_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final void Function(AppThemeType)? onThemeChange;
-  final AppThemeType? currentThemeType;
-  const HomeScreen({super.key, this.onThemeChange, this.currentThemeType});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -238,8 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   PopupMenuButton<AppThemeType>(
                     icon: const Icon(Icons.color_lens),
                     tooltip: 'تغيير الثيم',
-                    onSelected: widget.onThemeChange,
-                    initialValue: widget.currentThemeType,
+                    onSelected: (themeType) {
+                      context.read<ThemeCubit>().changeTheme(themeType);
+                    },
+                    initialValue: context.read<ThemeCubit>().state.themeType,
                     itemBuilder: (context) => [
                       PopupMenuItem(
                         value: AppThemeType.light,
