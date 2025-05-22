@@ -6,9 +6,10 @@ import '../core/strings.dart';
 import '../core/theme/app_theme.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
+import '../cubit/last_read_cubit.dart';
+import '../cubit/last_read_state.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
-import '../services/preferences_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final void Function(AppThemeType)? onThemeChange;
@@ -22,56 +23,41 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  int? _lastReadHadithIndex;
-  DateTime? _lastReadTime;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLastReadInfo();
-  }
-
-  Future<void> _loadLastReadInfo() async {
-    final lastIndex = await PreferencesService.getLastReadHadith();
-    final lastTime = await PreferencesService.getLastReadTime();
-    if (mounted) {
-      setState(() {
-        _lastReadHadithIndex = lastIndex;
-        _lastReadTime = lastTime;
-      });
-    }
-  }
 
   // Navigate to the last read hadith
-  void _navigateToLastReadHadith(BuildContext context, List<Hadith> hadiths) {
-    if (_lastReadHadithIndex == null ||
-        _lastReadHadithIndex! <= 0 ||
-        _lastReadHadithIndex! > hadiths.length)
-      return;
+  void _navigateToLastReadHadith(
+    BuildContext context,
+    List<Hadith> hadiths,
+    int lastReadIndex,
+  ) {
+    if (lastReadIndex <= 0 || lastReadIndex > hadiths.length) return;
 
-    final hadith =
-        hadiths[_lastReadHadithIndex! - 1]; // Adjust for 0-based index
+    final hadith = hadiths[lastReadIndex - 1]; // Adjust for 0-based index
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => HadithDetailsScreen(
-              index: _lastReadHadithIndex!,
-              hadith: hadith,
-            ),
+        builder: (context) =>
+            HadithDetailsScreen(index: lastReadIndex, hadith: hadith),
       ),
-    ).then((_) => _loadLastReadInfo()); // Refresh after returning
+    ).then((_) {
+      // Refresh the LastReadCubit when returning from HadithDetailsScreen
+      context.read<LastReadCubit>().loadLastReadInfo();
+    });
   }
 
   // Build the continue reading card
-  Widget _buildContinueReadingCard(BuildContext context) {
+  Widget _buildContinueReadingCard(
+    BuildContext context,
+    int? lastReadIndex,
+    DateTime? lastReadTime,
+  ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     // Format the last read time
     String timeAgo = '';
-    if (_lastReadTime != null) {
-      final difference = DateTime.now().difference(_lastReadTime!);
+    if (lastReadTime != null) {
+      final difference = DateTime.now().difference(lastReadTime);
       if (difference.inMinutes < 60) {
         timeAgo = AppStrings.minutesAgo.replaceAll(
           '{minutes}',
@@ -92,9 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return BlocBuilder<HadithCubit, HadithState>(
       builder: (context, state) {
-        if (state is HadithLoaded && _lastReadHadithIndex != null) {
+        if (state is HadithLoaded && lastReadIndex != null) {
           // Calculate progress percentage
-          final progress = _lastReadHadithIndex! / state.hadiths.length;
+          final progress = lastReadIndex / state.hadiths.length;
 
           return Card(
             elevation: 4,
@@ -105,16 +91,15 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 gradient: LinearGradient(
-                  colors:
-                      isDark
-                          ? [
-                            theme.colorScheme.primary.withOpacity(0.7),
-                            theme.colorScheme.primary.withOpacity(0.3),
-                          ]
-                          : [
-                            theme.colorScheme.primary,
-                            theme.colorScheme.primary.withOpacity(0.7),
-                          ],
+                  colors: isDark
+                      ? [
+                          theme.colorScheme.primary.withOpacity(0.7),
+                          theme.colorScheme.primary.withOpacity(0.3),
+                        ]
+                      : [
+                          theme.colorScheme.primary,
+                          theme.colorScheme.primary.withOpacity(0.7),
+                        ],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
                 ),
@@ -127,16 +112,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton.icon(
-                        onPressed:
-                            () => _navigateToLastReadHadith(
-                              context,
-                              state.hadiths,
-                            ),
+                        onPressed: () => _navigateToLastReadHadith(
+                          context,
+                          state.hadiths,
+                          lastReadIndex,
+                        ),
                         icon: const Icon(Icons.play_arrow),
                         label: const Text(AppStrings.continueReading),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isDark ? theme.colorScheme.surface : Colors.white,
+                          backgroundColor: isDark
+                              ? theme.colorScheme.surface
+                              : Colors.white,
                           foregroundColor: theme.colorScheme.primary,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(
@@ -156,12 +142,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Text(
-                            '${AppStrings.hadithNumber} $_lastReadHadithIndex',
+                            '${AppStrings.hadithNumber} $lastReadIndex',
                             style: theme.textTheme.bodyLarge?.copyWith(
                               color: isDark ? Colors.white70 : Colors.white,
                             ),
                           ),
-                          if (_lastReadTime != null)
+                          if (lastReadTime != null)
                             Text(
                               timeAgo,
                               style: theme.textTheme.bodySmall?.copyWith(
@@ -186,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${(_lastReadHadithIndex! * 100 ~/ state.hadiths.length)}% ${AppStrings.completed}',
+                    '${(lastReadIndex * 100 ~/ state.hadiths.length)}% ${AppStrings.completed}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: isDark ? Colors.white70 : Colors.white,
                     ),
@@ -203,6 +189,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Ensure LastReadCubit is loaded when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<LastReadCubit>().loadLastReadInfo();
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -212,16 +207,20 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final welcomeColor =
-        isDark ? theme.colorScheme.onSurface : theme.colorScheme.primary;
+    final welcomeColor = isDark
+        ? theme.colorScheme.onSurface
+        : theme.colorScheme.primary;
     final searchIconColor = theme.colorScheme.secondary;
     final searchFillColor = theme.cardColor;
-    final borderColor =
-        isDark
-            ? theme.dividerColor
-            : theme.colorScheme.secondary.withValues(alpha: 0.2);
-    return BlocProvider(
-      create: (_) => HadithCubit()..fetchHadiths(),
+    final borderColor = isDark
+        ? theme.dividerColor
+        : theme.colorScheme.secondary.withValues(alpha: 0.2);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => HadithCubit()..fetchHadiths()),
+        // Use the existing LastReadCubit instance from the parent context
+        BlocProvider.value(value: BlocProvider.of<LastReadCubit>(context)),
+      ],
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Scaffold(
@@ -241,83 +240,67 @@ class _HomeScreenState extends State<HomeScreen> {
                     tooltip: 'تغيير الثيم',
                     onSelected: widget.onThemeChange,
                     initialValue: widget.currentThemeType,
-                    itemBuilder:
-                        (context) => [
-                          PopupMenuItem(
-                            value: AppThemeType.light,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.light_mode,
-                                  color: Colors.amber[700],
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'ثيم فاتح',
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: AppThemeType.light,
+                        child: Row(
+                          children: [
+                            Icon(Icons.light_mode, color: Colors.amber[700]),
+                            const SizedBox(width: 8),
+                            const Text('ثيم فاتح', textAlign: TextAlign.right),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: AppThemeType.dark,
+                        child: Row(
+                          children: [
+                            Icon(Icons.dark_mode, color: Colors.blueGrey[700]),
+                            const SizedBox(width: 8),
+                            const Text('ثيم داكن', textAlign: TextAlign.right),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: AppThemeType.blue,
+                        child: Row(
+                          children: [
+                            Icon(Icons.water_drop, color: Colors.blue[700]),
+                            const SizedBox(width: 8),
+                            const Text('ثيم أزرق', textAlign: TextAlign.right),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: AppThemeType.purple,
+                        child: Row(
+                          children: [
+                            Icon(Icons.palette, color: Colors.purple[700]),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'ثيم بنفسجي',
+                              textAlign: TextAlign.right,
                             ),
-                          ),
-                          PopupMenuItem(
-                            value: AppThemeType.dark,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.dark_mode,
-                                  color: Colors.blueGrey[700],
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'ثيم داكن',
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: AppThemeType.system,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.brightness_auto,
+                              color: Colors.grey,
                             ),
-                          ),
-                          PopupMenuItem(
-                            value: AppThemeType.blue,
-                            child: Row(
-                              children: [
-                                Icon(Icons.water_drop, color: Colors.blue[700]),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'ثيم أزرق',
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
+                            const SizedBox(width: 8),
+                            const Text(
+                              'حسب النظام',
+                              textAlign: TextAlign.right,
                             ),
-                          ),
-                          PopupMenuItem(
-                            value: AppThemeType.purple,
-                            child: Row(
-                              children: [
-                                Icon(Icons.palette, color: Colors.purple[700]),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'ثيم بنفسجي',
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: AppThemeType.system,
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.brightness_auto,
-                                  color: Colors.grey,
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'حسب النظام',
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -379,21 +362,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               horizontal: 20,
                               vertical: 14,
                             ),
-                            suffixIcon:
-                                _searchQuery.isNotEmpty
-                                    ? IconButton(
-                                      icon: Icon(
-                                        Icons.clear,
-                                        color: searchIconColor,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _searchController.clear();
-                                          _searchQuery = '';
-                                        });
-                                      },
-                                    )
-                                    : null,
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.clear,
+                                      color: searchIconColor,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _searchController.clear();
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
                           ),
                           onChanged: (value) {
                             setState(() {
@@ -404,8 +386,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      if (_lastReadHadithIndex != null)
-                        _buildContinueReadingCard(context),
+                      BlocBuilder<LastReadCubit, LastReadState>(
+                        builder: (context, lastReadState) {
+                          if (lastReadState.hadithIndex != null) {
+                            return _buildContinueReadingCard(
+                              context,
+                              lastReadState.hadithIndex,
+                              lastReadState.lastReadTime,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
                       const SizedBox(height: 16),
                     ],
                   ),
@@ -418,16 +410,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     );
                   } else if (state is HadithLoaded) {
-                    final filtered =
-                        _searchQuery.isEmpty
-                            ? state.hadiths
-                            : state.hadiths
-                                .where(
-                                  (h) =>
-                                      h.hadith.contains(_searchQuery) ||
-                                      h.description.contains(_searchQuery),
-                                )
-                                .toList();
+                    final filtered = _searchQuery.isEmpty
+                        ? state.hadiths
+                        : state.hadiths
+                              .where(
+                                (h) =>
+                                    h.hadith.contains(_searchQuery) ||
+                                    h.description.contains(_searchQuery),
+                              )
+                              .toList();
 
                     // Store hadiths for continue reading functionality
                     // We don't want to automatically navigate, just make the button available

@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cubit/last_read_cubit.dart';
 import '../models/hadith.dart';
-import '../services/preferences_service.dart';
 import '../widgets/audio_player_widget.dart';
 
 class HadithDetailsScreen extends StatefulWidget {
@@ -41,8 +42,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   final double _fontSizeStep = 2.0;
 
   // Save the current hadith as last read
-  Future<void> _saveLastReadHadith() async {
-    await PreferencesService.saveLastReadHadith(widget.index);
+  void _saveLastReadHadith() {
+    context.read<LastReadCubit>().updateLastReadHadith(widget.index);
   }
 
   @override
@@ -51,7 +52,10 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     _player = AudioPlayer();
     _loadAudio();
     _loadFontSizePreferences();
-    _saveLastReadHadith();
+    // Update last read information when screen is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _saveLastReadHadith();
+    });
     _positionSub = _player.positionStream.listen((pos) {
       if (mounted) setState(() => _position = pos);
     });
@@ -201,38 +205,37 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder:
-          (context) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.short_text),
-                  title: const Text('مشاركة الحديث فقط'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _shareHadithOnly();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.description),
-                  title: const Text('مشاركة الشرح فقط'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _shareDescriptionOnly();
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.library_books),
-                  title: const Text('مشاركة الحديث مع الشرح'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _shareBoth();
-                  },
-                ),
-              ],
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.short_text),
+              title: const Text('مشاركة الحديث فقط'),
+              onTap: () {
+                Navigator.pop(context);
+                _shareHadithOnly();
+              },
             ),
-          ),
+            ListTile(
+              leading: const Icon(Icons.description),
+              title: const Text('مشاركة الشرح فقط'),
+              onTap: () {
+                Navigator.pop(context);
+                _shareDescriptionOnly();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.library_books),
+              title: const Text('مشاركة الحديث مع الشرح'),
+              onTap: () {
+                Navigator.pop(context);
+                _shareBoth();
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -302,12 +305,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                 .skip(1)
                                 .join('\n')
                                 .trim(),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: _hadithFontSize,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: _hadithFontSize,
+                                ),
                             textAlign: TextAlign.start,
                             contextMenuBuilder: (context, editableTextState) {
                               return AdaptiveTextSelectionToolbar.editableText(
@@ -319,19 +321,19 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           _isLoading
                               ? const Center(child: CircularProgressIndicator())
                               : AudioPlayerWidget(
-                                player: _player,
-                                isPlaying: isPlaying,
-                                duration: _duration,
-                                position: _position,
-                                isLoading: _isLoading,
-                                onPlayPause: _togglePlayPause,
-                                onReplay: _replay,
-                                onSkipForward: _skipForward,
-                                onSkipBackward: _skipBackward,
-                                onSeek: _seekTo,
-                                onSpeedChanged: _changePlaybackSpeed,
-                                playbackSpeed: _playbackSpeed,
-                              ),
+                                  player: _player,
+                                  isPlaying: isPlaying,
+                                  duration: _duration,
+                                  position: _position,
+                                  isLoading: _isLoading,
+                                  onPlayPause: _togglePlayPause,
+                                  onReplay: _replay,
+                                  onSkipForward: _skipForward,
+                                  onSkipBackward: _skipBackward,
+                                  onSeek: _seekTo,
+                                  onSpeedChanged: _changePlaybackSpeed,
+                                  playbackSpeed: _playbackSpeed,
+                                ),
                         ],
                       ),
                     ),
