@@ -5,6 +5,8 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import 'core/strings.dart';
 import 'core/theme/app_theme.dart';
+import 'cubit/audio_player_cubit.dart';
+import 'cubit/font_size_cubit.dart';
 import 'cubit/hadith_cubit.dart';
 import 'cubit/last_read_cubit.dart';
 import 'cubit/theme_cubit.dart';
@@ -30,7 +32,14 @@ class _NawawiAppState extends State<NawawiApp> {
       providers: [
         BlocProvider(create: (context) => LastReadCubit()),
         BlocProvider(create: (context) => ThemeCubit()),
-        BlocProvider(create: (context) => HadithCubit()),
+        BlocProvider(create: (context) {
+          final cubit = HadithCubit();
+          cubit.fetchHadiths();
+          return cubit;
+        }),
+        BlocProvider(create: (context) => FontSizeCubit()),
+        BlocProvider(create: (context) => AudioPlayerCubit()),
+       
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, themeState) {

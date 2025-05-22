@@ -1,11 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../cubit/audio_player_cubit.dart';
+import '../cubit/font_size_cubit.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
@@ -27,21 +25,6 @@ class HadithDetailsScreen extends StatefulWidget {
 }
 
 class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
-  late AudioPlayer _player;
-  bool isPlaying = false;
-  Duration _duration = Duration.zero;
-  Duration _position = Duration.zero;
-  bool _isLoading = true;
-  double _playbackSpeed = 1.0;
-  StreamSubscription<Duration>? _positionSub;
-  StreamSubscription<PlayerState>? _playerStateSub;
-
-  // Font size state variables
-  double _hadithFontSize = 18.0;
-  double _descriptionFontSize = 16.0;
-  final double _minFontSize = 12.0;
-  final double _maxFontSize = 30.0;
-  final double _fontSizeStep = 2.0;
 
   // Save the current hadith as last read
   void _saveLastReadHadith() {
@@ -51,106 +34,33 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _player = AudioPlayer();
-    _loadAudio();
-    _loadFontSizePreferences();
+    
+    // Initialize Cubits
+    _initializeCubits();
+    
     // Update last read information when screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _saveLastReadHadith();
     });
-    _positionSub = _player.positionStream.listen((pos) {
-      if (mounted) setState(() => _position = pos);
-    });
-    _playerStateSub = _player.playerStateStream.listen((state) {
-      if (mounted) setState(() => isPlaying = state.playing);
-    });
+  }
+  
+  void _initializeCubits() {
+    // Initialize FontSizeCubit by loading saved preferences
+    context.read<FontSizeCubit>().loadFontSizePreferences();
+    
+    // Initialize AudioPlayerCubit by loading the current hadith's audio
+    context.read<AudioPlayerCubit>().loadAudio(widget.index);
   }
 
-  Future<void> _loadFontSizePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _hadithFontSize = prefs.getDouble('hadith_font_size') ?? 18.0;
-      _descriptionFontSize = prefs.getDouble('description_font_size') ?? 16.0;
-    });
-  }
 
-  Future<void> _saveFontSizePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('hadith_font_size', _hadithFontSize);
-    await prefs.setDouble('description_font_size', _descriptionFontSize);
-  }
-
-  Future<void> _loadAudio() async {
-    try {
-      // Renamed asset file to audio_1.mp3, audio_2.mp3, etc.
-      final path = 'assets/audio/audio_${widget.index}.mp3';
-      debugPrint('Loading audio from path: $path');
-
-      await _player.setAsset(path);
-      _duration = _player.duration ?? Duration.zero;
-      debugPrint('Audio loaded successfully. Duration: $_duration');
-    } catch (e, stackTrace) {
-      debugPrint('Error loading audio: $e');
-      debugPrint('Stack trace: $stackTrace');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل تحميل الملف الصوتي: ${e.toString()}'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-    if (mounted) setState(() => _isLoading = false);
-  }
 
   @override
   void dispose() {
-    _positionSub?.cancel();
-    _playerStateSub?.cancel();
-    _player.dispose();
+    // Cleanup is handled by the Cubits
     super.dispose();
   }
 
-  void _togglePlayPause() async {
-    if (_player.playing) {
-      await _player.pause();
-    } else {
-      await _player.play();
-    }
-  }
 
-  void _seekTo(Duration position) {
-    _player.seek(position);
-  }
-
-  void _skipForward() {
-    final newPos = _position + const Duration(seconds: 10);
-    if (newPos < _duration) {
-      _seekTo(newPos);
-    } else {
-      _seekTo(_duration);
-    }
-  }
-
-  void _skipBackward() {
-    final newPos = _position - const Duration(seconds: 10);
-    if (newPos > Duration.zero) {
-      _seekTo(newPos);
-    } else {
-      _seekTo(Duration.zero);
-    }
-  }
-
-  void _replay() {
-    _seekTo(Duration.zero);
-    _player.play();
-  }
-
-  void _changePlaybackSpeed(double speed) {
-    setState(() => _playbackSpeed = speed);
-    _player.setSpeed(speed);
-  }
 
   void _shareHadithOnly() {
     Share.share(widget.hadith.hadith);
@@ -164,41 +74,21 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     Share.share('${widget.hadith.hadith}\n\n${widget.hadith.description}');
   }
 
-  // Font size adjustment methods
+  // Font size adjustment methods - now uses FontSizeCubit
   void _increaseHadithFontSize() {
-    setState(() {
-      if (_hadithFontSize < _maxFontSize) {
-        _hadithFontSize += _fontSizeStep;
-        _saveFontSizePreferences();
-      }
-    });
+    context.read<FontSizeCubit>().increaseHadithFontSize();
   }
 
   void _decreaseHadithFontSize() {
-    setState(() {
-      if (_hadithFontSize > _minFontSize) {
-        _hadithFontSize -= _fontSizeStep;
-        _saveFontSizePreferences();
-      }
-    });
+    context.read<FontSizeCubit>().decreaseHadithFontSize();
   }
 
   void _increaseDescriptionFontSize() {
-    setState(() {
-      if (_descriptionFontSize < _maxFontSize) {
-        _descriptionFontSize += _fontSizeStep;
-        _saveFontSizePreferences();
-      }
-    });
+    context.read<FontSizeCubit>().increaseDescriptionFontSize();
   }
 
   void _decreaseDescriptionFontSize() {
-    setState(() {
-      if (_descriptionFontSize > _minFontSize) {
-        _descriptionFontSize -= _fontSizeStep;
-        _saveFontSizePreferences();
-      }
-    });
+    context.read<FontSizeCubit>().decreaseDescriptionFontSize();
   }
 
   void _showShareOptions() {
@@ -301,41 +191,52 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          SelectableText(
-                            widget.hadith.hadith
-                                .split('\n')
-                                .skip(1)
-                                .join('\n')
-                                .trim(),
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: _hadithFontSize,
-                                ),
-                            textAlign: TextAlign.start,
-                            contextMenuBuilder: (context, editableTextState) {
-                              return AdaptiveTextSelectionToolbar.editableText(
-                                editableTextState: editableTextState,
+                          // Hadith Text with BlocBuilder for Font Size
+                          BlocBuilder<FontSizeCubit, FontSizeState>(
+                            builder: (context, fontState) {
+                              return SelectableText(
+                                widget.hadith.hadith
+                                    .split('\n')
+                                    .skip(1)
+                                    .join('\n')
+                                    .trim(),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: fontState.hadithFontSize,
+                                    ),
+                                textAlign: TextAlign.start,
+                                contextMenuBuilder: (context, editableTextState) {
+                                  return AdaptiveTextSelectionToolbar.editableText(
+                                    editableTextState: editableTextState,
+                                  );
+                                },
                               );
                             },
                           ),
                           const SizedBox(height: 24),
-                          _isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : AudioPlayerWidget(
-                                  player: _player,
-                                  isPlaying: isPlaying,
-                                  duration: _duration,
-                                  position: _position,
-                                  isLoading: _isLoading,
-                                  onPlayPause: _togglePlayPause,
-                                  onReplay: _replay,
-                                  onSkipForward: _skipForward,
-                                  onSkipBackward: _skipBackward,
-                                  onSeek: _seekTo,
-                                  onSpeedChanged: _changePlaybackSpeed,
-                                  playbackSpeed: _playbackSpeed,
-                                ),
+                          // Audio Player Widget
+                          BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
+                            builder: (context, audioState) {
+                              return audioState.isLoading
+                                ? const Center(child: CircularProgressIndicator())
+                                : AudioPlayerWidget(
+                                    // We don't pass the player directly anymore
+                                    player: null, // Not used with Cubit
+                                    isPlaying: audioState.isPlaying,
+                                    duration: audioState.duration,
+                                    position: audioState.position,
+                                    isLoading: audioState.isLoading,
+                                    onPlayPause: () => context.read<AudioPlayerCubit>().togglePlayPause(),
+                                    onReplay: () => context.read<AudioPlayerCubit>().replay(),
+                                    onSkipForward: () => context.read<AudioPlayerCubit>().skipForward(),
+                                    onSkipBackward: () => context.read<AudioPlayerCubit>().skipBackward(),
+                                    onSeek: (pos) => context.read<AudioPlayerCubit>().seekTo(pos),
+                                    onSpeedChanged: (speed) => context.read<AudioPlayerCubit>().changePlaybackSpeed(speed),
+                                    playbackSpeed: audioState.playbackSpeed,
+                                  );
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -379,14 +280,19 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          SelectableText(
-                            widget.hadith.description,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(fontSize: _descriptionFontSize),
-                            textAlign: TextAlign.start,
-                            contextMenuBuilder: (context, editableTextState) {
-                              return AdaptiveTextSelectionToolbar.editableText(
-                                editableTextState: editableTextState,
+                          // Description text with BlocBuilder for font size
+                          BlocBuilder<FontSizeCubit, FontSizeState>(
+                            builder: (context, fontState) {
+                              return SelectableText(
+                                widget.hadith.description,
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(fontSize: fontState.descriptionFontSize),
+                                textAlign: TextAlign.start,
+                                contextMenuBuilder: (context, editableTextState) {
+                                  return AdaptiveTextSelectionToolbar.editableText(
+                                    editableTextState: editableTextState,
+                                  );
+                                },
                               );
                             },
                           ),
@@ -408,7 +314,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           icon: Icons.arrow_back_ios_rounded,
                           label: 'الحديث السابق',
                           onPressed: widget.index > 1
-                              ? () => _navigateToHadith(widget.index - 1)
+                              ? () => _navigateToPreviousHadith(context)
                               : null,
                         ),
                         _buildNavigationButton(
@@ -416,7 +322,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           icon: Icons.arrow_forward_ios_rounded,
                           label: 'الحديث التالي',
                           onPressed: widget.index < 42
-                              ? () => _navigateToHadith(widget.index + 1)
+                              ? () => _navigateToNextHadith(context)
                               : null,
                         ),
                       ],
@@ -431,81 +337,84 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     );
   }
 
-  /// Navigate to a specific hadith by index
-  void _navigateToHadith(int index) async {
-    // Show loading indicator while fetching the hadith
-    setState(() => _isLoading = true);
+  // Navigate to next hadith
+  void _navigateToNextHadith(BuildContext context) async {
+    final audioCubit = context.read<AudioPlayerCubit>();
+    // Pause audio if playing
+    await audioCubit.pause();
     
-    try {
-      // First ensure hadiths are loaded
-      final hadithCubit = context.read<HadithCubit>();
-      final hadithState = hadithCubit.state;
+    // Get the next hadith using HadithCubit
+    final hadithCubit = context.read<HadithCubit>();
+    final hadithState = hadithCubit.state;
+    
+    // If hadiths aren't loaded yet, load them first
+    if (hadithState is! HadithLoaded) {
+      await hadithCubit.fetchHadiths();
+    }
+    
+    // Check again after potential loading
+    final currentState = hadithCubit.state;
+    
+    if (currentState is HadithLoaded) {
+      final hadiths = currentState.hadiths;
+      final nextIndex = widget.index + 1;
       
-      // If hadiths aren't loaded yet, load them first
-      if (hadithState is! HadithLoaded) {
-        debugPrint('Hadiths not loaded yet, fetching them now...');
-        await hadithCubit.fetchHadiths();
-      }
-      
-      // Check again after potential loading
-      final currentState = hadithCubit.state;
-      debugPrint('Current state after fetch: ${currentState.runtimeType}');
-      
-      if (currentState is HadithLoaded) {
-        final hadiths = currentState.hadiths;
-        debugPrint('Found ${hadiths.length} hadiths, navigating to index $index');
-        
-        if (index > 0 && index <= hadiths.length) {
-          // Pause audio if playing
-          if (_player.playing) {
-            await _player.pause();
-          }
-          
-          // Replace current screen with new hadith details screen
-          if (mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HadithDetailsScreen(
-                  index: index,
-                  hadith: hadiths[index - 1], // Adjust for 0-based index
-                ),
-              ),
-            );
-          }
-        } else {
-          debugPrint('Invalid index: $index (valid range: 1-${hadiths.length})');
-        }
-      } else {
-        debugPrint('Failed to load hadiths: ${currentState.runtimeType}');
+      if (nextIndex <= hadiths.length) {
+        // Update UI
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('فشل تحميل الأحاديث، الرجاء المحاولة مرة أخرى'),
-              duration: Duration(seconds: 3),
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HadithDetailsScreen(
+                index: nextIndex,
+                hadith: hadiths[nextIndex - 1], // Adjust for 0-based index
+              ),
             ),
           );
         }
       }
-    } catch (e) {
-      debugPrint('Error navigating to hadith: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('حدث خطأ: ${e.toString()}'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-    
-    // Reset loading state if we're still on this screen
-    if (mounted) {
-      setState(() => _isLoading = false);
     }
   }
-
-  /// Build a navigation button with icon and label
+  
+  // Navigate to previous hadith
+  void _navigateToPreviousHadith(BuildContext context) async {
+    final audioCubit = context.read<AudioPlayerCubit>();
+    // Pause audio if playing
+    await audioCubit.pause();
+    
+    // Get the previous hadith using HadithCubit
+    final hadithCubit = context.read<HadithCubit>();
+    final hadithState = hadithCubit.state;
+    
+    // If hadiths aren't loaded yet, load them first
+    if (hadithState is! HadithLoaded) {
+      await hadithCubit.fetchHadiths();
+    }
+    
+    // Check again after potential loading
+    final currentState = hadithCubit.state;
+    
+    if (currentState is HadithLoaded) {
+      final hadiths = currentState.hadiths;
+      final prevIndex = widget.index - 1;
+      
+      if (prevIndex > 0) {
+        // Update UI
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HadithDetailsScreen(
+                index: prevIndex,
+                hadith: hadiths[prevIndex - 1], // Adjust for 0-based index
+              ),
+            ),
+          );
+        }
+      }
+    }
+  }
+   /// Build a navigation button with icon and label
   Widget _buildNavigationButton({
     required BuildContext context,
     required IconData icon,

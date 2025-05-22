@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 class AudioPlayerWidget extends StatelessWidget {
-  final AudioPlayer player;
+  // Made AudioPlayer optional to support both direct AudioPlayer and Cubit approaches
+  final AudioPlayer? player;
   final bool isPlaying;
   final Duration duration;
   final Duration position;
@@ -17,7 +18,7 @@ class AudioPlayerWidget extends StatelessWidget {
 
   const AudioPlayerWidget({
     super.key,
-    required this.player,
+    this.player, // Made optional
     required this.isPlaying,
     required this.duration,
     required this.position,
