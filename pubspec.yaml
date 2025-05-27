@@ -3,7 +3,7 @@ description: "تطبيق الأربعين النووية بصوت الشيخ أ�
 
 publish_to: "none"
 
-version: 1.0.2+4
+version: 1.0.2+5
 
 environment:
   sdk: ^3.8.0
@@ -20,8 +20,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   share_plus:
-  just_audio: ^0.10.2
-  shared_preferences: ^2.5.3
+  just_audio: 
+  shared_preferences:
 dev_dependencies:
   flutter_test:
     sdk: flutter

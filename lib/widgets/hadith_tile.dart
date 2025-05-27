@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
 
