@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hadith_nawawi_audio/widgets/hadith_tile.dart';
@@ -22,6 +24,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+
+  // Debounce timer for search optimization
+  Timer? _debounceTimer;
+  static const Duration _debounceDuration = Duration(milliseconds: 300);
 
   // Navigate to the last read hadith
   void _navigateToLastReadHadith(
@@ -201,8 +207,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Handles search input with debouncing for better performance
+  void _onSearchChanged(String value) {
+    // Cancel previous timer if still active
+    _debounceTimer?.cancel();
+
+    // Start new debounce timer
+    _debounceTimer = Timer(_debounceDuration, () {
+      if (mounted) {
+        setState(() {
+          _searchQuery = value.trim();
+        });
+      }
+    });
+  }
+
+  /// Normalizes Arabic text for better search matching
+  ///
+  /// Removes diacritics (tashkeel) and normalizes common character variations
+  String _normalizeArabicText(String text) {
+    // Remove Arabic diacritics (tashkeel)
+    final diacritics = RegExp(
+      '[\u064B-\u065F\u0670\u06D6-\u06ED]',
+    );
+
+    // Normalize alef variations
+    String normalized = text
+        .replaceAll(diacritics, '')
+        .replaceAll('أ', 'ا')
+        .replaceAll('إ', 'ا')
+        .replaceAll('آ', 'ا')
+        .replaceAll('ى', 'ي')
+        .replaceAll('ة', 'ه');
+
+    return normalized;
+  }
+
+  /// Checks if hadith matches the search query
+  bool _hadithMatchesQuery(Hadith hadith, String query) {
+    if (query.isEmpty) return true;
+
+    final normalizedQuery = _normalizeArabicText(query);
+    final normalizedHadith = _normalizeArabicText(hadith.hadith);
+    final normalizedDescription = _normalizeArabicText(hadith.description);
+
+    return normalizedHadith.contains(normalizedQuery) ||
+        normalizedDescription.contains(normalizedQuery);
   }
 
   @override
@@ -381,11 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 : null,
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery = value.trim();
-                            });
-                          },
+                          onChanged: _onSearchChanged,
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -414,14 +465,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     );
                   } else if (state is HadithLoaded) {
+                    // Use normalized Arabic text matching for better search results
                     final filtered = _searchQuery.isEmpty
                         ? state.hadiths
                         : state.hadiths
-                              .where(
-                                (h) =>
-                                    h.hadith.contains(_searchQuery) ||
-                                    h.description.contains(_searchQuery),
-                              )
+                              .where((h) => _hadithMatchesQuery(h, _searchQuery))
                               .toList();
 
                     // Store hadiths for continue reading functionality
