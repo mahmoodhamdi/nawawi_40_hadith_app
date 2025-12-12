@@ -8,6 +8,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
+![Tests](https://img.shields.io/badge/Tests-135%20passing-brightgreen)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
 
@@ -86,6 +87,7 @@ share_plus            مشاركة المحتوى
 lib/
 ├── main.dart                 # نقطة الدخول
 ├── core/
+│   ├── constants.dart        # الثوابت المركزية
 │   ├── strings.dart          # النصوص المركزية
 │   └── theme/                # نظام الثيمات
 │       ├── app_theme.dart
@@ -177,6 +179,33 @@ dart format lib/
 flutter pub upgrade
 ```
 
+### الاختبارات
+
+التطبيق يحتوي على **135 اختبار** شامل:
+
+| النوع | العدد | الوصف |
+|-------|-------|-------|
+| Unit Tests | 135 | اختبارات الوحدة للمكونات |
+| Integration Tests | 13 | اختبارات التكامل للواجهات |
+
+```
+test/
+├── cubit/
+│   ├── audio_player_cubit_test.dart    (25 اختبار)
+│   ├── font_size_cubit_test.dart       (20 اختبار)
+│   ├── hadith_cubit_test.dart          (12 اختبار)
+│   ├── last_read_cubit_test.dart       (14 اختبار)
+│   └── theme_cubit_test.dart           (15 اختبار)
+├── models/
+│   └── hadith_test.dart                (10 اختبار)
+├── services/
+│   └── preferences_service_test.dart   (34 اختبار)
+└── widget_test.dart                    (5 اختبار)
+
+integration_test/
+└── app_test.dart                       (13 اختبار)
+```
+
 ### البنية المعمارية
 
 التطبيق يستخدم **BLoC/Cubit Pattern** لإدارة الحالة:
@@ -231,11 +260,15 @@ View (Screens/Widgets)
 
 راجع [خطة التطوير](docs/IMPROVEMENT_PLAN.md) للقائمة الكاملة:
 
-#### مطلوب بشدة
-- [ ] إضافة اختبارات الوحدة (Unit Tests)
+#### مكتمل
+- [x] إضافة اختبارات الوحدة (135 اختبار)
+- [x] تحسين البحث (debounce + case-insensitive + تطبيع النص العربي)
+- [x] إضافة Accessibility labels
+- [x] معالجة الأخطاء في تحميل البيانات
+- [x] التحقق من صحة المدخلات
+
+#### مطلوب
 - [ ] نظام المفضلة/الإشارات المرجعية
-- [ ] تحسين البحث (debounce + case-insensitive)
-- [ ] إضافة Accessibility labels
 
 #### مميزات جديدة
 - [ ] تذكير يومي بحديث
