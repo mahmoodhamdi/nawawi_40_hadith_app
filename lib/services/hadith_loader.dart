@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../core/constants.dart';
 import '../models/hadith.dart';
 
 /// Custom exception for hadith loading errors
@@ -15,7 +16,6 @@ class HadithLoadException implements Exception {
 
 /// Service responsible for loading hadith data from assets
 class HadithLoader {
-  static const String _assetPath = 'assets/json/40-hadith-nawawi.json';
 
   /// Loads all hadiths from the JSON asset file
   ///
@@ -25,7 +25,7 @@ class HadithLoader {
   /// - The data structure doesn't match expected format
   static Future<List<Hadith>> loadHadiths() async {
     try {
-      final String jsonString = await rootBundle.loadString(_assetPath);
+      final String jsonString = await rootBundle.loadString(AssetPaths.hadithJson);
 
       final dynamic decoded = json.decode(jsonString);
 

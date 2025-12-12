@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../core/constants.dart';
+
 // Audio Player State
 class AudioPlayerState extends Equatable {
   final bool isPlaying;
@@ -18,7 +20,7 @@ class AudioPlayerState extends Equatable {
     this.isLoading = true,
     this.position = Duration.zero,
     this.duration = Duration.zero,
-    this.playbackSpeed = 1.0,
+    this.playbackSpeed = AudioConstants.defaultPlaybackSpeed,
     this.errorMessage,
   });
 
@@ -72,12 +74,11 @@ class AudioPlayerCubit extends Cubit<AudioPlayerState> {
     });
   }
 
-  // Load audio for a specific hadith index
+  /// Load audio for a specific hadith index
   Future<void> loadAudio(int hadithIndex) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      // Renamed asset file to audio_1.mp3, audio_2.mp3, etc.
-      final path = 'assets/audio/audio_$hadithIndex.mp3';
+      final path = AssetPaths.audioFile(hadithIndex);
       debugPrint('Loading audio from path: $path');
 
       await _player.setAsset(path);
@@ -111,9 +112,9 @@ class AudioPlayerCubit extends Cubit<AudioPlayerState> {
     _player.seek(position);
   }
 
-  // Skip forward
+  /// Skip forward by configured duration
   void skipForward() {
-    final newPos = state.position + const Duration(seconds: 10);
+    final newPos = state.position + AudioConstants.skipDuration;
     if (newPos < state.duration) {
       seekTo(newPos);
     } else {
@@ -121,9 +122,9 @@ class AudioPlayerCubit extends Cubit<AudioPlayerState> {
     }
   }
 
-  // Skip backward
+  /// Skip backward by configured duration
   void skipBackward() {
-    final newPos = state.position - const Duration(seconds: 10);
+    final newPos = state.position - AudioConstants.skipDuration;
     if (newPos > Duration.zero) {
       seekTo(newPos);
     } else {

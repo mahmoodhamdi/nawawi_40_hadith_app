@@ -2,7 +2,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Font Size State
+import '../core/constants.dart';
+
+/// State for font size preferences
 class FontSizeState extends Equatable {
   final double hadithFontSize;
   final double descriptionFontSize;
@@ -11,11 +13,11 @@ class FontSizeState extends Equatable {
   final double fontSizeStep;
 
   const FontSizeState({
-    this.hadithFontSize = 18.0,
-    this.descriptionFontSize = 16.0,
-    this.minFontSize = 12.0,
-    this.maxFontSize = 30.0,
-    this.fontSizeStep = 2.0,
+    this.hadithFontSize = FontSizeConstants.defaultHadithFontSize,
+    this.descriptionFontSize = FontSizeConstants.defaultDescriptionFontSize,
+    this.minFontSize = FontSizeConstants.minFontSize,
+    this.maxFontSize = FontSizeConstants.maxFontSize,
+    this.fontSizeStep = FontSizeConstants.fontSizeStep,
   });
 
   FontSizeState copyWith({
@@ -41,27 +43,32 @@ class FontSizeState extends Equatable {
       ];
 }
 
-// Font Size Cubit
+/// Cubit for managing font size preferences
 class FontSizeCubit extends Cubit<FontSizeState> {
   FontSizeCubit() : super(const FontSizeState());
 
-  // Load saved preferences
+  /// Load saved font size preferences from storage
   Future<void> loadFontSizePreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    final hadithSize = prefs.getDouble('hadith_font_size') ?? 18.0;
-    final descriptionSize = prefs.getDouble('description_font_size') ?? 16.0;
-    
+    final hadithSize = prefs.getDouble(PreferenceKeys.hadithFontSize) ??
+        FontSizeConstants.defaultHadithFontSize;
+    final descriptionSize = prefs.getDouble(PreferenceKeys.descriptionFontSize) ??
+        FontSizeConstants.defaultDescriptionFontSize;
+
     emit(state.copyWith(
       hadithFontSize: hadithSize,
       descriptionFontSize: descriptionSize,
     ));
   }
 
-  // Save preferences
+  /// Save current font size preferences to storage
   Future<void> saveFontSizePreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble('hadith_font_size', state.hadithFontSize);
-    await prefs.setDouble('description_font_size', state.descriptionFontSize);
+    await prefs.setDouble(PreferenceKeys.hadithFontSize, state.hadithFontSize);
+    await prefs.setDouble(
+      PreferenceKeys.descriptionFontSize,
+      state.descriptionFontSize,
+    );
   }
 
   // Increase hadith font size
