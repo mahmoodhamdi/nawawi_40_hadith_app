@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (lastReadIndex <= 0 || lastReadIndex > hadiths.length) return;
 
     final hadith = hadiths[lastReadIndex - 1]; // Adjust for 0-based index
+    final lastReadCubit = context.read<LastReadCubit>();
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -40,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     ).then((_) {
       // Refresh the LastReadCubit when returning from HadithDetailsScreen
-      context.read<LastReadCubit>().loadLastReadInfo();
+      if (mounted) {
+        lastReadCubit.loadLastReadInfo();
+      }
     });
   }
 
@@ -92,12 +95,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 gradient: LinearGradient(
                   colors: isDark
                       ? [
-                          theme.colorScheme.primary.withOpacity(0.7),
-                          theme.colorScheme.primary.withOpacity(0.3),
+                          theme.colorScheme.primary.withValues(alpha: 0.7),
+                          theme.colorScheme.primary.withValues(alpha: 0.3),
                         ]
                       : [
                           theme.colorScheme.primary,
-                          theme.colorScheme.primary.withOpacity(0.7),
+                          theme.colorScheme.primary.withValues(alpha: 0.7),
                         ],
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,

@@ -63,15 +63,15 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
 
   void _shareHadithOnly() {
-    Share.share(widget.hadith.hadith);
+    SharePlus.instance.share(ShareParams(text: widget.hadith.hadith));
   }
 
   void _shareDescriptionOnly() {
-    Share.share(widget.hadith.description);
+    SharePlus.instance.share(ShareParams(text: widget.hadith.description));
   }
 
   void _shareBoth() {
-    Share.share('${widget.hadith.hadith}\n\n${widget.hadith.description}');
+    SharePlus.instance.share(ShareParams(text: '${widget.hadith.hadith}\n\n${widget.hadith.description}'));
   }
 
   // Font size adjustment methods - now uses FontSizeCubit
@@ -340,77 +340,73 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   // Navigate to next hadith
   void _navigateToNextHadith(BuildContext context) async {
     final audioCubit = context.read<AudioPlayerCubit>();
+    final hadithCubit = context.read<HadithCubit>();
+    final navigator = Navigator.of(context);
+
     // Pause audio if playing
     await audioCubit.pause();
-    
-    // Get the next hadith using HadithCubit
-    final hadithCubit = context.read<HadithCubit>();
+
+    // Get the current hadith state
     final hadithState = hadithCubit.state;
-    
+
     // If hadiths aren't loaded yet, load them first
     if (hadithState is! HadithLoaded) {
       await hadithCubit.fetchHadiths();
     }
-    
+
     // Check again after potential loading
     final currentState = hadithCubit.state;
-    
-    if (currentState is HadithLoaded) {
+
+    if (currentState is HadithLoaded && mounted) {
       final hadiths = currentState.hadiths;
       final nextIndex = widget.index + 1;
-      
+
       if (nextIndex <= hadiths.length) {
-        // Update UI
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HadithDetailsScreen(
-                index: nextIndex,
-                hadith: hadiths[nextIndex - 1], // Adjust for 0-based index
-              ),
+        navigator.pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HadithDetailsScreen(
+              index: nextIndex,
+              hadith: hadiths[nextIndex - 1], // Adjust for 0-based index
             ),
-          );
-        }
+          ),
+        );
       }
     }
   }
-  
+
   // Navigate to previous hadith
   void _navigateToPreviousHadith(BuildContext context) async {
     final audioCubit = context.read<AudioPlayerCubit>();
+    final hadithCubit = context.read<HadithCubit>();
+    final navigator = Navigator.of(context);
+
     // Pause audio if playing
     await audioCubit.pause();
-    
-    // Get the previous hadith using HadithCubit
-    final hadithCubit = context.read<HadithCubit>();
+
+    // Get the current hadith state
     final hadithState = hadithCubit.state;
-    
+
     // If hadiths aren't loaded yet, load them first
     if (hadithState is! HadithLoaded) {
       await hadithCubit.fetchHadiths();
     }
-    
+
     // Check again after potential loading
     final currentState = hadithCubit.state;
-    
-    if (currentState is HadithLoaded) {
+
+    if (currentState is HadithLoaded && mounted) {
       final hadiths = currentState.hadiths;
       final prevIndex = widget.index - 1;
-      
+
       if (prevIndex > 0) {
-        // Update UI
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HadithDetailsScreen(
-                index: prevIndex,
-                hadith: hadiths[prevIndex - 1], // Adjust for 0-based index
-              ),
+        navigator.pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => HadithDetailsScreen(
+              index: prevIndex,
+              hadith: hadiths[prevIndex - 1], // Adjust for 0-based index
             ),
-          );
-        }
+          ),
+        );
       }
     }
   }
@@ -431,7 +427,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
           onPressed: onPressed,
           style: ElevatedButton.styleFrom(
             backgroundColor: isDisabled
-                ? theme.disabledColor.withOpacity(0.1)
+                ? theme.disabledColor.withValues(alpha: 0.1)
                 : theme.colorScheme.primary,
             foregroundColor: isDisabled
                 ? theme.disabledColor
