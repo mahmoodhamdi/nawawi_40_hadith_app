@@ -43,101 +43,143 @@ class AudioPlayerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return isLoading
-        ? const Center(child: CircularProgressIndicator())
-        : Directionality(
-          textDirection: TextDirection.ltr,
-          child: Column(
-            children: [
-              Slider(
-                value: position.inSeconds.toDouble().clamp(
-                  0,
-                  duration.inSeconds.toDouble(),
-                ),
-                min: 0,
-                max: duration.inSeconds.toDouble(),
-                onChanged: (value) => onSeek(Duration(seconds: value.toInt())),
-                activeColor: theme.colorScheme.primary,
-                inactiveColor: theme.colorScheme.primary.withValues(alpha: 0.3),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ? Semantics(
+            label: 'جاري تحميل الصوت',
+            child: const Center(child: CircularProgressIndicator()),
+          )
+        : Semantics(
+            label: 'مشغل الصوت',
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Column(
                 children: [
-                  Text(
-                    _formatDuration(position),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  Text(
-                    _formatDuration(duration),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.replay),
-                    onPressed: onReplay,
-                    tooltip: 'إعادة',
-                    color: theme.colorScheme.primary,
-                  ),
-            
-                  IconButton(
-                    icon: const Icon(Icons.replay_10),
-                    onPressed: onSkipBackward,
-                    tooltip: 'رجوع 10 ثواني',
-                    color: theme.colorScheme.primary,
-                  ),
-                    IconButton(
-                    icon: Icon(
-                      isPlaying
-                          ? Icons.pause_circle_filled
-                          : Icons.play_circle_fill,
-                      size: 40,
+                  Semantics(
+                    label:
+                        'شريط التقدم. الموقع الحالي ${_formatDuration(position)} من ${_formatDuration(duration)}',
+                    slider: true,
+                    value: '${(position.inSeconds / duration.inSeconds * 100).round()}%',
+                    child: Slider(
+                      value: position.inSeconds.toDouble().clamp(
+                        0,
+                        duration.inSeconds.toDouble(),
+                      ),
+                      min: 0,
+                      max: duration.inSeconds.toDouble(),
+                      onChanged: (value) =>
+                          onSeek(Duration(seconds: value.toInt())),
+                      activeColor: theme.colorScheme.primary,
+                      inactiveColor:
+                          theme.colorScheme.primary.withValues(alpha: 0.3),
                     ),
-                    onPressed: onPlayPause,
-                    tooltip: isPlaying ? 'إيقاف الصوت' : 'تشغيل الصوت',
-                    color: theme.colorScheme.primary,
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.forward_10),
-                    onPressed: onSkipForward,
-                    tooltip: 'تقديم 10 ثواني',
-                    color: theme.colorScheme.primary,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Semantics(
+                        label: 'الوقت الحالي',
+                        child: Text(
+                          _formatDuration(position),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                      Semantics(
+                        label: 'المدة الكلية',
+                        child: Text(
+                          _formatDuration(duration),
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        icon: const Icon(Icons.speed),
-                        onPressed: () {
-                          // Cycle through speeds: 1.0 -> 1.5 -> 2.0 -> 1.0
-                          double nextSpeed;
-                          if (playbackSpeed == 1.0) {
-                            nextSpeed = 1.5;
-                          } else if (playbackSpeed == 1.5) {
-                            nextSpeed = 2.0;
-                          } else {
-                            nextSpeed = 1.0;
-                          }
-                          onSpeedChanged?.call(nextSpeed);
-                        },
-                        tooltip: 'تغيير سرعة التشغيل',
-                        color: theme.colorScheme.primary,
-                      ),
-                      Text(
-                        '${playbackSpeed}x',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                      Semantics(
+                        label: 'إعادة التشغيل من البداية',
+                        button: true,
+                        child: IconButton(
+                          icon: const Icon(Icons.replay),
+                          onPressed: onReplay,
+                          tooltip: 'إعادة',
                           color: theme.colorScheme.primary,
                         ),
+                      ),
+                      Semantics(
+                        label: 'رجوع 10 ثواني',
+                        button: true,
+                        child: IconButton(
+                          icon: const Icon(Icons.replay_10),
+                          onPressed: onSkipBackward,
+                          tooltip: 'رجوع 10 ثواني',
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Semantics(
+                        label: isPlaying ? 'إيقاف الصوت' : 'تشغيل الصوت',
+                        button: true,
+                        child: IconButton(
+                          icon: Icon(
+                            isPlaying
+                                ? Icons.pause_circle_filled
+                                : Icons.play_circle_fill,
+                            size: 40,
+                          ),
+                          onPressed: onPlayPause,
+                          tooltip: isPlaying ? 'إيقاف الصوت' : 'تشغيل الصوت',
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Semantics(
+                        label: 'تقديم 10 ثواني',
+                        button: true,
+                        child: IconButton(
+                          icon: const Icon(Icons.forward_10),
+                          onPressed: onSkipForward,
+                          tooltip: 'تقديم 10 ثواني',
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Semantics(
+                            label:
+                                'سرعة التشغيل الحالية ${playbackSpeed}x. انقر للتغيير',
+                            button: true,
+                            child: IconButton(
+                              icon: const Icon(Icons.speed),
+                              onPressed: () {
+                                // Cycle through speeds: 1.0 -> 1.5 -> 2.0 -> 1.0
+                                double nextSpeed;
+                                if (playbackSpeed == 1.0) {
+                                  nextSpeed = 1.5;
+                                } else if (playbackSpeed == 1.5) {
+                                  nextSpeed = 2.0;
+                                } else {
+                                  nextSpeed = 1.0;
+                                }
+                                onSpeedChanged?.call(nextSpeed);
+                              },
+                              tooltip: 'تغيير سرعة التشغيل',
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          ExcludeSemantics(
+                            child: Text(
+                              '${playbackSpeed}x',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
-            ],
-          ),
-        );
+            ),
+          );
   }
 }

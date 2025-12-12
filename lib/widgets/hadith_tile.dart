@@ -68,49 +68,60 @@ class HadithTile extends StatelessWidget {
 
     final preview = hadith.hadith.split('\n').first.trim();
 
-    return Card(
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: theme.cardColor,
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 12,
-        ),
-        title: RichText(
-          textAlign: TextAlign.end,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          text: _highlightText(
-            preview,
-            searchQuery,
-            subtitleStyle,
-            subtitleHighlight,
+    return Semantics(
+      label: 'الحديث رقم $index. $preview',
+      hint: 'انقر لعرض تفاصيل الحديث',
+      button: true,
+      child: Card(
+        elevation: 3,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        color: theme.cardColor,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 12,
           ),
-        ),
-        subtitle: RichText(
-          textAlign: TextAlign.end,
-          text: _highlightText(
-            _extractHadithMainStatement(hadith.hadith),
-            searchQuery,
-            normalStyle,
-            highlightStyle,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios,
-          color: theme.colorScheme.primary,
-        ),
-        onTap: () {
-          // Navigate to hadith details and update last read info via cubit
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => HadithDetailsScreen(index: index, hadith: hadith),
+          title: ExcludeSemantics(
+            child: RichText(
+              textAlign: TextAlign.end,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: _highlightText(
+                preview,
+                searchQuery,
+                subtitleStyle,
+                subtitleHighlight,
+              ),
             ),
-          );
-        },
+          ),
+          subtitle: ExcludeSemantics(
+            child: RichText(
+              textAlign: TextAlign.end,
+              text: _highlightText(
+                _extractHadithMainStatement(hadith.hadith),
+                searchQuery,
+                normalStyle,
+                highlightStyle,
+              ),
+            ),
+          ),
+          trailing: ExcludeSemantics(
+            child: Icon(
+              Icons.arrow_forward_ios,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          onTap: () {
+            // Navigate to hadith details and update last read info via cubit
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => HadithDetailsScreen(index: index, hadith: hadith),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

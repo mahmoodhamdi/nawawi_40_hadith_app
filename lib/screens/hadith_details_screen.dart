@@ -428,38 +428,46 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   }) {
     final isDisabled = onPressed == null;
     final theme = Theme.of(context);
-    
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isDisabled
-                ? theme.disabledColor.withValues(alpha: 0.1)
-                : theme.colorScheme.primary,
-            foregroundColor: isDisabled
-                ? theme.disabledColor
-                : theme.colorScheme.onPrimary,
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: isDisabled ? 0 : 2,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+        child: Semantics(
+          label: label,
+          hint: isDisabled ? 'غير متاح' : 'انقر للانتقال',
+          enabled: !isDisabled,
+          button: true,
+          child: ElevatedButton(
+            onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isDisabled
+                  ? theme.disabledColor.withValues(alpha: 0.1)
+                  : theme.colorScheme.primary,
+              foregroundColor: isDisabled
+                  ? theme.disabledColor
+                  : theme.colorScheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
               ),
-            ],
+              elevation: isDisabled ? 0 : 2,
+            ),
+            child: ExcludeSemantics(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
