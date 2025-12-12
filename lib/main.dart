@@ -10,6 +10,7 @@ import 'cubit/favorites_cubit.dart';
 import 'cubit/font_size_cubit.dart';
 import 'cubit/hadith_cubit.dart';
 import 'cubit/last_read_cubit.dart';
+import 'cubit/reading_stats_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/theme_state.dart';
 import 'screens/home_screen.dart';
@@ -41,6 +42,7 @@ class _NawawiAppState extends State<NawawiApp> {
         BlocProvider(create: (context) => FontSizeCubit()),
         BlocProvider(create: (context) => AudioPlayerCubit()),
         BlocProvider(create: (context) => FavoritesCubit()),
+        BlocProvider(create: (context) => ReadingStatsCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, themeState) {

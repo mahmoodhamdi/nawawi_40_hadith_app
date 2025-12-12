@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-162%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-195%20passing-brightgreen)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
 
@@ -61,6 +61,7 @@
 | الميزة | الوصف |
 |--------|--------|
 | المفضلة | حفظ الأحاديث المفضلة وفلترتها |
+| إحصائيات القراءة | عرض تقدم القراءة ونسبة الإنجاز |
 | متابعة القراءة | حفظ آخر حديث تمت قراءته |
 | التنقل | أزرار للحديث السابق والتالي |
 | المشاركة | مشاركة الحديث أو الشرح أو كليهما |
@@ -98,9 +99,11 @@ lib/
 │       └── purple_theme.dart
 ├── cubit/                    # إدارة الحالة
 │   ├── audio_player_cubit.dart
+│   ├── favorites_cubit.dart
 │   ├── font_size_cubit.dart
 │   ├── hadith_cubit.dart
 │   ├── last_read_cubit.dart
+│   ├── reading_stats_cubit.dart
 │   └── theme_cubit.dart
 ├── models/
 │   └── hadith.dart           # نموذج البيانات
@@ -182,20 +185,22 @@ flutter pub upgrade
 
 ### الاختبارات
 
-التطبيق يحتوي على **135 اختبار** شامل:
+التطبيق يحتوي على **195 اختبار** شامل:
 
 | النوع | العدد | الوصف |
 |-------|-------|-------|
-| Unit Tests | 135 | اختبارات الوحدة للمكونات |
+| Unit Tests | 182 | اختبارات الوحدة للمكونات |
 | Integration Tests | 13 | اختبارات التكامل للواجهات |
 
 ```
 test/
 ├── cubit/
 │   ├── audio_player_cubit_test.dart    (25 اختبار)
+│   ├── favorites_cubit_test.dart       (27 اختبار)
 │   ├── font_size_cubit_test.dart       (20 اختبار)
 │   ├── hadith_cubit_test.dart          (12 اختبار)
 │   ├── last_read_cubit_test.dart       (14 اختبار)
+│   ├── reading_stats_cubit_test.dart   (33 اختبار)
 │   └── theme_cubit_test.dart           (15 اختبار)
 ├── models/
 │   └── hadith_test.dart                (10 اختبار)
@@ -226,6 +231,8 @@ View (Screens/Widgets)
 | ThemeCubit | إدارة الثيمات |
 | FontSizeCubit | حجم الخط |
 | LastReadCubit | آخر قراءة |
+| FavoritesCubit | إدارة المفضلة |
+| ReadingStatsCubit | إحصائيات القراءة |
 
 ---
 
@@ -262,18 +269,16 @@ View (Screens/Widgets)
 راجع [خطة التطوير](docs/IMPROVEMENT_PLAN.md) للقائمة الكاملة:
 
 #### مكتمل
-- [x] إضافة اختبارات الوحدة (135 اختبار)
+- [x] إضافة اختبارات الوحدة (195 اختبار)
 - [x] تحسين البحث (debounce + case-insensitive + تطبيع النص العربي)
 - [x] إضافة Accessibility labels
 - [x] معالجة الأخطاء في تحميل البيانات
 - [x] التحقق من صحة المدخلات
-
-#### مطلوب
-- [ ] نظام المفضلة/الإشارات المرجعية
+- [x] نظام المفضلة/الإشارات المرجعية
+- [x] إحصائيات القراءة
 
 #### مميزات جديدة
 - [ ] تذكير يومي بحديث
-- [ ] إحصائيات القراءة
 - [ ] دعم لغات إضافية (الإنجليزية/الفرنسية)
 - [ ] مشاركة كصورة
 - [ ] وضع القراءة المركز
@@ -287,14 +292,14 @@ View (Screens/Widgets)
 
 ## خارطة الطريق
 
-### الإصدار 1.1 (قريباً)
-- [ ] نظام المفضلة
-- [ ] تحسين البحث
-- [ ] اختبارات شاملة
+### الإصدار 1.1 (مكتمل)
+- [x] نظام المفضلة
+- [x] تحسين البحث
+- [x] اختبارات شاملة (195 اختبار)
+- [x] إحصائيات القراءة
 
-### الإصدار 1.2
+### الإصدار 1.2 (قادم)
 - [ ] التذكيرات اليومية
-- [ ] إحصائيات القراءة
 - [ ] مشاركة كصورة
 
 ### الإصدار 2.0

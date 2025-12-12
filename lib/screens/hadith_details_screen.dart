@@ -9,6 +9,7 @@ import '../cubit/font_size_cubit.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
+import '../cubit/reading_stats_cubit.dart';
 import '../models/hadith.dart';
 import '../widgets/audio_player_widget.dart';
 
@@ -28,9 +29,11 @@ class HadithDetailsScreen extends StatefulWidget {
 
 class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
-  // Save the current hadith as last read
+  // Save the current hadith as last read and mark as read
   void _saveLastReadHadith() {
     context.read<LastReadCubit>().updateLastReadHadith(widget.index);
+    // Mark this hadith as read for statistics
+    context.read<ReadingStatsCubit>().markAsRead(widget.index);
   }
 
   @override

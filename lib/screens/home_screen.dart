@@ -12,6 +12,8 @@ import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
+import '../cubit/reading_stats_cubit.dart';
+import '../cubit/reading_stats_state.dart';
 import '../cubit/theme_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
@@ -196,6 +198,172 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         return const SizedBox.shrink();
       },
+    );
+  }
+
+  // Build the reading stats card
+  Widget _buildReadingStatsCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return BlocBuilder<ReadingStatsCubit, ReadingStatsState>(
+      builder: (context, statsState) {
+        if (statsState.isLoading) {
+          return const SizedBox.shrink();
+        }
+
+        return BlocBuilder<HadithCubit, HadithState>(
+          builder: (context, hadithState) {
+            // Update total hadith count when loaded
+            if (hadithState is HadithLoaded) {
+              final totalCount = hadithState.hadiths.length;
+              if (statsState.totalHadiths != totalCount) {
+                context.read<ReadingStatsCubit>().setTotalHadiths(totalCount);
+              }
+            }
+
+            return Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: theme.cardColor,
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(
+                          statsState.isComplete
+                              ? Icons.emoji_events
+                              : Icons.menu_book,
+                          color: statsState.isComplete
+                              ? Colors.amber
+                              : theme.colorScheme.primary,
+                          size: 28,
+                        ),
+                        Text(
+                          'إحصائيات القراءة',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatItem(
+                          context,
+                          '${statsState.readCount}',
+                          'مقروءة',
+                          Icons.check_circle,
+                          Colors.green,
+                        ),
+                        Container(
+                          height: 40,
+                          width: 1,
+                          color: theme.dividerColor,
+                        ),
+                        _buildStatItem(
+                          context,
+                          '${statsState.remainingCount}',
+                          'متبقية',
+                          Icons.schedule,
+                          Colors.orange,
+                        ),
+                        Container(
+                          height: 40,
+                          width: 1,
+                          color: theme.dividerColor,
+                        ),
+                        _buildStatItem(
+                          context,
+                          '${statsState.progressPercent}%',
+                          'مكتمل',
+                          Icons.pie_chart,
+                          theme.colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: statsState.progressPercentage,
+                        backgroundColor: isDark
+                            ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                            : theme.colorScheme.primary.withValues(alpha: 0.15),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          statsState.isComplete
+                              ? Colors.green
+                              : theme.colorScheme.primary,
+                        ),
+                        minHeight: 10,
+                      ),
+                    ),
+                    if (statsState.isComplete) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        'مبارك! لقد أتممت قراءة جميع الأحاديث',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Helper widget for stat items
+  Widget _buildStatItem(
+    BuildContext context,
+    String value,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
+    final theme = Theme.of(context);
+    return Column(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 4),
+            Text(
+              value,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+          ),
+        ),
+      ],
     );
   }
 
@@ -516,6 +684,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const SizedBox.shrink();
                         },
                       ),
+                      const SizedBox(height: 12),
+                      _buildReadingStatsCard(context),
                       const SizedBox(height: 16),
                     ],
                   ),

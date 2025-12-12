@@ -120,6 +120,9 @@ class PreferenceKeys {
 
   /// Key for storing favorite hadiths
   static const String favorites = 'favorite_hadiths';
+
+  /// Key for storing read hadiths
+  static const String readHadiths = 'read_hadiths';
 }
 
 /// Constants related to assets
