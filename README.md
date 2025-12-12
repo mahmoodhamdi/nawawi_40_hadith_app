@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-135%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-162%20passing-brightgreen)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
 
@@ -60,6 +60,7 @@
 ### مميزات إضافية
 | الميزة | الوصف |
 |--------|--------|
+| المفضلة | حفظ الأحاديث المفضلة وفلترتها |
 | متابعة القراءة | حفظ آخر حديث تمت قراءته |
 | التنقل | أزرار للحديث السابق والتالي |
 | المشاركة | مشاركة الحديث أو الشرح أو كليهما |
