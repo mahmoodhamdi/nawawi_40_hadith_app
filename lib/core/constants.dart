@@ -117,6 +117,9 @@ class PreferenceKeys {
 
   /// Key for storing description font size
   static const String descriptionFontSize = 'description_font_size';
+
+  /// Key for storing favorite hadiths
+  static const String favorites = 'favorite_hadiths';
 }
 
 /// Constants related to assets

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../cubit/audio_player_cubit.dart';
+import '../cubit/favorites_cubit.dart';
+import '../cubit/favorites_state.dart';
 import '../cubit/font_size_cubit.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
@@ -137,6 +139,25 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
       appBar: AppBar(
         title: Text(widget.hadith.hadith.split('\n').first.trim()),
         actions: [
+          BlocBuilder<FavoritesCubit, FavoritesState>(
+            builder: (context, favoritesState) {
+              final isFavorite = favoritesState.isFavorite(widget.index);
+              return Semantics(
+                label: isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة',
+                button: true,
+                child: IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? Colors.red : null,
+                  ),
+                  onPressed: () {
+                    context.read<FavoritesCubit>().toggleFavorite(widget.index);
+                  },
+                  tooltip: isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة',
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: _showShareOptions,

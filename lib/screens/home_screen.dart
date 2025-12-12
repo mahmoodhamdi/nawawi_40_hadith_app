@@ -6,6 +6,8 @@ import 'package:hadith_nawawi_audio/widgets/hadith_tile.dart';
 
 import '../core/strings.dart';
 import '../core/theme/app_theme.dart';
+import '../cubit/favorites_cubit.dart';
+import '../cubit/favorites_state.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
@@ -24,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  bool _showFavoritesOnly = false;
 
   // Debounce timer for search optimization
   Timer? _debounceTimer;
@@ -383,62 +386,122 @@ class _HomeScreenState extends State<HomeScreen> {
                         textAlign: TextAlign.right,
                       ),
                       const SizedBox(height: 16),
-                      Material(
-                        elevation: 1,
-                        borderRadius: BorderRadius.circular(30),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: AppStrings.searchHint,
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: searchIconColor,
-                            ),
-                            border: OutlineInputBorder(
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Material(
+                              elevation: 1,
                               borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: borderColor,
-                                width: 1,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: borderColor,
-                                width: 1,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: theme.colorScheme.primary,
-                                width: 2,
-                              ),
-                            ),
-                            filled: true,
-                            fillColor: searchFillColor,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 14,
-                            ),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: Icon(
-                                      Icons.clear,
-                                      color: searchIconColor,
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  hintText: AppStrings.searchHint,
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: searchIconColor,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide(
+                                      color: borderColor,
+                                      width: 1,
                                     ),
-                                    onPressed: () {
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide(
+                                      color: borderColor,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                    borderSide: BorderSide(
+                                      color: theme.colorScheme.primary,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  filled: true,
+                                  fillColor: searchFillColor,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                    vertical: 14,
+                                  ),
+                                  suffixIcon: _searchQuery.isNotEmpty
+                                      ? IconButton(
+                                          icon: Icon(
+                                            Icons.clear,
+                                            color: searchIconColor,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _searchController.clear();
+                                              _searchQuery = '';
+                                            });
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: _onSearchChanged,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          BlocBuilder<FavoritesCubit, FavoritesState>(
+                            builder: (context, favoritesState) {
+                              return Semantics(
+                                label: _showFavoritesOnly
+                                    ? 'إظهار كل الأحاديث'
+                                    : 'إظهار المفضلة فقط (${favoritesState.count})',
+                                button: true,
+                                child: Material(
+                                  elevation: 1,
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: _showFavoritesOnly
+                                      ? theme.colorScheme.primary
+                                      : searchFillColor,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(30),
+                                    onTap: () {
                                       setState(() {
-                                        _searchController.clear();
-                                        _searchQuery = '';
+                                        _showFavoritesOnly = !_showFavoritesOnly;
                                       });
                                     },
-                                  )
-                                : null,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            _showFavoritesOnly
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: _showFavoritesOnly
+                                                ? Colors.white
+                                                : Colors.red,
+                                          ),
+                                          if (favoritesState.count > 0) ...[
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              '${favoritesState.count}',
+                                              style: TextStyle(
+                                                color: _showFavoritesOnly
+                                                    ? Colors.white
+                                                    : theme.colorScheme.onSurface,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          onChanged: _onSearchChanged,
-                          textAlign: TextAlign.right,
-                        ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       BlocBuilder<LastReadCubit, LastReadState>(
@@ -459,46 +522,87 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               BlocBuilder<HadithCubit, HadithState>(
-                builder: (context, state) {
-                  if (state is HadithLoading) {
+                builder: (context, hadithState) {
+                  if (hadithState is HadithLoading) {
                     return const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator()),
                     );
-                  } else if (state is HadithLoaded) {
-                    // Use normalized Arabic text matching for better search results
-                    final filtered = _searchQuery.isEmpty
-                        ? state.hadiths
-                        : state.hadiths
-                              .where((h) => _hadithMatchesQuery(h, _searchQuery))
-                              .toList();
+                  } else if (hadithState is HadithLoaded) {
+                    return BlocBuilder<FavoritesCubit, FavoritesState>(
+                      builder: (context, favoritesState) {
+                        // Apply search filter
+                        var filtered = _searchQuery.isEmpty
+                            ? hadithState.hadiths
+                            : hadithState.hadiths
+                                .where((h) => _hadithMatchesQuery(h, _searchQuery))
+                                .toList();
 
-                    // Store hadiths for continue reading functionality
-                    // We don't want to automatically navigate, just make the button available
-                    if (filtered.isEmpty) {
-                      return const SliverFillRemaining(
-                        child: Center(
-                          child: Text(
-                            AppStrings.noResults,
-                            textAlign: TextAlign.right,
-                          ),
-                        ),
-                      );
-                    }
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final hadith = filtered[index];
-                        final originalIndex = state.hadiths.indexOf(hadith) + 1;
-                        return HadithTile(
-                          index: originalIndex,
-                          hadith: hadith,
-                          searchQuery: _searchQuery,
+                        // Apply favorites filter if enabled
+                        if (_showFavoritesOnly) {
+                          filtered = filtered.where((hadith) {
+                            final originalIndex =
+                                hadithState.hadiths.indexOf(hadith) + 1;
+                            return favoritesState.isFavorite(originalIndex);
+                          }).toList();
+                        }
+
+                        if (filtered.isEmpty) {
+                          return SliverFillRemaining(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _showFavoritesOnly
+                                        ? Icons.favorite_border
+                                        : Icons.search_off,
+                                    size: 64,
+                                    color: theme.colorScheme.primary
+                                        .withValues(alpha: 0.5),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _showFavoritesOnly
+                                        ? 'لا توجد أحاديث مفضلة'
+                                        : AppStrings.noResults,
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.titleMedium,
+                                  ),
+                                  if (_showFavoritesOnly) ...[
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'اضغط على القلب في صفحة الحديث لإضافته للمفضلة',
+                                      textAlign: TextAlign.center,
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.6),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        return SliverList(
+                          delegate: SliverChildBuilderDelegate((context, index) {
+                            final hadith = filtered[index];
+                            final originalIndex =
+                                hadithState.hadiths.indexOf(hadith) + 1;
+                            return HadithTile(
+                              index: originalIndex,
+                              hadith: hadith,
+                              searchQuery: _searchQuery,
+                            );
+                          }, childCount: filtered.length),
                         );
-                      }, childCount: filtered.length),
+                      },
                     );
-                  } else if (state is HadithError) {
+                  } else if (hadithState is HadithError) {
                     return SliverFillRemaining(
                       child: Center(
-                        child: Text(state.message, textAlign: TextAlign.right),
+                        child:
+                            Text(hadithState.message, textAlign: TextAlign.right),
                       ),
                     );
                   }
