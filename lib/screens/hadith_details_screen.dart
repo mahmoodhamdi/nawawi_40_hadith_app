@@ -304,29 +304,38 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                 // Add Next and Previous Hadith Navigation Buttons
                 const SliverToBoxAdapter(child: SizedBox(height: 30)),
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 30.0, left: 16.0, right: 16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildNavigationButton(
-                          context: context,
-                          icon: Icons.arrow_back_ios_rounded,
-                          label: 'الحديث السابق',
-                          onPressed: widget.index > 1
-                              ? () => _navigateToPreviousHadith(context)
-                              : null,
+                  child: BlocBuilder<HadithCubit, HadithState>(
+                    builder: (context, hadithState) {
+                      // Get total hadith count dynamically
+                      final totalHadiths = hadithState is HadithLoaded
+                          ? hadithState.hadiths.length
+                          : 0;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 30.0, left: 16.0, right: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildNavigationButton(
+                              context: context,
+                              icon: Icons.arrow_back_ios_rounded,
+                              label: 'الحديث السابق',
+                              onPressed: widget.index > 1
+                                  ? () => _navigateToPreviousHadith(context)
+                                  : null,
+                            ),
+                            _buildNavigationButton(
+                              context: context,
+                              icon: Icons.arrow_forward_ios_rounded,
+                              label: 'الحديث التالي',
+                              onPressed: widget.index < totalHadiths
+                                  ? () => _navigateToNextHadith(context)
+                                  : null,
+                            ),
+                          ],
                         ),
-                        _buildNavigationButton(
-                          context: context,
-                          icon: Icons.arrow_forward_ios_rounded,
-                          label: 'الحديث التالي',
-                          onPressed: widget.index < 42
-                              ? () => _navigateToNextHadith(context)
-                              : null,
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ],
