@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../cubit/audio_player_cubit.dart';
+import '../services/share_image_service.dart';
 import '../cubit/favorites_cubit.dart';
 import '../cubit/favorites_state.dart';
 import '../cubit/font_size_cubit.dart';
@@ -130,8 +131,205 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                 _shareBoth();
               },
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.image),
+              title: const Text('مشاركة كصورة'),
+              subtitle: const Text('صورة جميلة للحديث'),
+              onTap: () {
+                Navigator.pop(context);
+                _showShareAsImageDialog();
+              },
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showShareAsImageDialog() {
+    ShareImageTheme selectedTheme = ShareImageTheme.green;
+    bool includeDescription = false;
+    final repaintKey = GlobalKey();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: const EdgeInsets.all(16),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 400, maxHeight: 700),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        const Text(
+                          'مشاركة كصورة',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 48),
+                      ],
+                    ),
+                  ),
+
+                  // Preview
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          // Image preview
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: RepaintBoundary(
+                              key: repaintKey,
+                              child: ShareableHadithCard(
+                                index: widget.index,
+                                hadith: widget.hadith,
+                                includeDescription: includeDescription,
+                                backgroundColor: selectedTheme.backgroundColor,
+                                accentColor: selectedTheme.accentColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Theme selection
+                          const Text(
+                            'اختر اللون',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            children: ShareImageTheme.values.map((theme) {
+                              final isSelected = theme == selectedTheme;
+                              return GestureDetector(
+                                onTap: () {
+                                  setDialogState(() {
+                                    selectedTheme = theme;
+                                  });
+                                },
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: theme.backgroundColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? theme.accentColor
+                                          : Colors.transparent,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  child: isSelected
+                                      ? Icon(
+                                          Icons.check,
+                                          color: theme.accentColor,
+                                        )
+                                      : null,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Include description toggle
+                          SwitchListTile(
+                            title: const Text('تضمين الشرح'),
+                            subtitle: const Text('إضافة شرح الحديث للصورة'),
+                            value: includeDescription,
+                            onChanged: (value) {
+                              setDialogState(() {
+                                includeDescription = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Share button
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          try {
+                            // Show loading
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+
+                            // Wait for widget to render
+                            await Future.delayed(
+                              const Duration(milliseconds: 100),
+                            );
+
+                            // Share the image
+                            await ShareImageService.shareHadithAsImage(
+                              repaintKey: repaintKey,
+                              hadithIndex: widget.index,
+                            );
+
+                            // Close loading and dialog
+                            if (context.mounted) {
+                              Navigator.pop(context); // Loading
+                              Navigator.pop(context); // Dialog
+                            }
+                          } catch (e) {
+                            // Close loading
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                            // Show error
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('حدث خطأ أثناء إنشاء الصورة'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.share),
+                        label: const Text('مشاركة'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
