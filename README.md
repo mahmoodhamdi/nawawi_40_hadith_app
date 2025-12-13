@@ -67,6 +67,7 @@
 | المشاركة | مشاركة الحديث أو الشرح أو كليهما |
 | مشاركة كصورة | إنشاء صورة جميلة للحديث ومشاركتها |
 | نسبة الإنجاز | عرض التقدم في قراءة الأحاديث |
+| وضع القراءة المركز | قراءة غامرة بدون تشتيت مع التحكم بالإيماءات |
 
 ---
 
@@ -109,11 +110,13 @@ lib/
 ├── models/
 │   └── hadith.dart           # نموذج البيانات
 ├── screens/
-│   ├── home_screen.dart      # الشاشة الرئيسية
-│   └── hadith_details_screen.dart
+│   ├── home_screen.dart           # الشاشة الرئيسية
+│   ├── hadith_details_screen.dart # تفاصيل الحديث
+│   └── focused_reading_screen.dart # وضع القراءة المركز
 ├── services/
-│   ├── hadith_loader.dart    # تحميل البيانات
-│   └── preferences_service.dart
+│   ├── hadith_loader.dart       # تحميل البيانات
+│   ├── preferences_service.dart # حفظ الإعدادات
+│   └── share_image_service.dart # مشاركة كصورة
 └── widgets/
     ├── audio_player_widget.dart
     └── hadith_tile.dart
@@ -303,7 +306,7 @@ View (Screens/Widgets)
 
 ### الإصدار 1.2 (قادم)
 - [ ] التذكيرات اليومية
-- [ ] وضع القراءة المركز
+- [x] وضع القراءة المركز
 
 ### الإصدار 2.0
 - [ ] دعم اللغة الإنجليزية

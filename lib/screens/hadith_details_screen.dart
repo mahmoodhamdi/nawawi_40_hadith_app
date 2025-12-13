@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../cubit/audio_player_cubit.dart';
+import '../screens/focused_reading_screen.dart';
 import '../services/share_image_service.dart';
 import '../cubit/favorites_cubit.dart';
 import '../cubit/favorites_state.dart';
@@ -95,6 +96,18 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
   void _decreaseDescriptionFontSize() {
     context.read<FontSizeCubit>().decreaseDescriptionFontSize();
+  }
+
+  void _enterFocusedReadingMode() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FocusedReadingScreen(
+          initialIndex: widget.index,
+          initialHadith: widget.hadith,
+        ),
+      ),
+    );
   }
 
   void _showShareOptions() {
@@ -358,6 +371,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                 ),
               );
             },
+          ),
+          IconButton(
+            icon: const Icon(Icons.fullscreen),
+            onPressed: _enterFocusedReadingMode,
+            tooltip: 'وضع القراءة المركز',
           ),
           IconButton(
             icon: const Icon(Icons.share),
