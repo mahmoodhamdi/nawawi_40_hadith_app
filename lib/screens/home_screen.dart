@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hadith_nawawi_audio/widgets/hadith_tile.dart';
 
+import '../core/constants.dart';
 import '../core/l10n/app_localizations.dart';
 import '../core/theme/app_theme.dart';
 import '../cubit/favorites_cubit.dart';
@@ -15,6 +16,8 @@ import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
 import '../cubit/reading_stats_cubit.dart';
 import '../cubit/reading_stats_state.dart';
+import '../cubit/search_history_cubit.dart';
+import '../cubit/search_history_state.dart';
 import '../cubit/theme_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
@@ -29,8 +32,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
   String _searchQuery = '';
   bool _showFavoritesOnly = false;
+  bool _showSearchHistory = false;
+  int? _searchedHadithNumber;
 
   // Debounce timer for search optimization
   Timer? _debounceTimer;
@@ -344,11 +350,23 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LastReadCubit>().loadLastReadInfo();
     });
+
+    // Listen to search focus changes
+    _searchFocusNode.addListener(_onSearchFocusChanged);
+  }
+
+  void _onSearchFocusChanged() {
+    setState(() {
+      _showSearchHistory =
+          _searchFocusNode.hasFocus && _searchQuery.isEmpty;
+    });
   }
 
   @override
   void dispose() {
     _debounceTimer?.cancel();
+    _searchFocusNode.removeListener(_onSearchFocusChanged);
+    _searchFocusNode.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -358,14 +376,99 @@ class _HomeScreenState extends State<HomeScreen> {
     // Cancel previous timer if still active
     _debounceTimer?.cancel();
 
+    // Hide search history when typing
+    if (_showSearchHistory && value.isNotEmpty) {
+      setState(() {
+        _showSearchHistory = false;
+      });
+    }
+
     // Start new debounce timer
     _debounceTimer = Timer(_debounceDuration, () {
       if (mounted) {
+        final trimmedValue = value.trim();
         setState(() {
-          _searchQuery = value.trim();
+          _searchQuery = trimmedValue;
+          _searchedHadithNumber = _parseHadithNumber(trimmedValue);
         });
       }
     });
+  }
+
+  /// Parses hadith number from various query formats
+  ///
+  /// Supports:
+  /// - Direct number: "1", "15", "42"
+  /// - With hash: "#1", "#15"
+  /// - Arabic prefix: "حديث 1", "الحديث 1"
+  /// - English prefix: "hadith 1", "Hadith 15"
+  int? _parseHadithNumber(String query) {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return null;
+
+    // Direct number: "1", "15", "42"
+    final directNumber = int.tryParse(trimmed);
+    if (directNumber != null &&
+        directNumber >= ValidationConstants.minHadithIndex &&
+        directNumber <= ValidationConstants.maxHadithIndex) {
+      return directNumber;
+    }
+
+    // With hash: "#1", "#15"
+    if (trimmed.startsWith('#')) {
+      final num = int.tryParse(trimmed.substring(1).trim());
+      if (num != null &&
+          num >= ValidationConstants.minHadithIndex &&
+          num <= ValidationConstants.maxHadithIndex) {
+        return num;
+      }
+    }
+
+    // Arabic prefix: "حديث 1", "الحديث 1"
+    final arabicPattern = RegExp(r'(?:الحديث|حديث)\s*(\d+)');
+    final arabicMatch = arabicPattern.firstMatch(trimmed);
+    if (arabicMatch != null) {
+      final num = int.tryParse(arabicMatch.group(1)!);
+      if (num != null &&
+          num >= ValidationConstants.minHadithIndex &&
+          num <= ValidationConstants.maxHadithIndex) {
+        return num;
+      }
+    }
+
+    // English prefix: "hadith 1", "Hadith 15"
+    final englishPattern = RegExp(r'hadith\s*(\d+)', caseSensitive: false);
+    final englishMatch = englishPattern.firstMatch(trimmed);
+    if (englishMatch != null) {
+      final num = int.tryParse(englishMatch.group(1)!);
+      if (num != null &&
+          num >= ValidationConstants.minHadithIndex &&
+          num <= ValidationConstants.maxHadithIndex) {
+        return num;
+      }
+    }
+
+    return null;
+  }
+
+  /// Saves search query to history when user submits
+  void _onSearchSubmitted(String value) {
+    final trimmedValue = value.trim();
+    if (trimmedValue.length >= SearchConstants.minQueryLengthForHistory) {
+      context.read<SearchHistoryCubit>().addSearchQuery(trimmedValue);
+    }
+    _searchFocusNode.unfocus();
+  }
+
+  /// Selects a search history item
+  void _selectHistoryItem(String query) {
+    _searchController.text = query;
+    setState(() {
+      _searchQuery = query;
+      _searchedHadithNumber = _parseHadithNumber(query);
+      _showSearchHistory = false;
+    });
+    _searchFocusNode.unfocus();
   }
 
   /// Normalizes Arabic text for better search matching
@@ -390,8 +493,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Checks if hadith matches the search query
-  bool _hadithMatchesQuery(Hadith hadith, String query) {
+  bool _hadithMatchesQuery(Hadith hadith, String query, int hadithIndex) {
     if (query.isEmpty) return true;
+
+    // Check if searching by hadith number
+    if (_searchedHadithNumber != null) {
+      return hadithIndex == _searchedHadithNumber;
+    }
 
     final normalizedQuery = _normalizeArabicText(query);
     final normalizedHadith = _normalizeArabicText(hadith.hadith);
@@ -399,6 +507,95 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return normalizedHadith.contains(normalizedQuery) ||
         normalizedDescription.contains(normalizedQuery);
+  }
+
+  /// Builds the search history dropdown widget
+  Widget _buildSearchHistoryDropdown(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return BlocBuilder<SearchHistoryCubit, SearchHistoryState>(
+      builder: (context, state) {
+        if (state.isLoading || state.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Card(
+          elevation: 4,
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.history,
+                          size: 18,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.recentSearches,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.read<SearchHistoryCubit>().clearHistory();
+                      },
+                      child: Text(
+                        l10n.clearHistory,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              ...state.history.map((query) => ListTile(
+                    dense: true,
+                    leading: Icon(
+                      Icons.search,
+                      size: 20,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                    title: Text(
+                      query,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        size: 18,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
+                      onPressed: () {
+                        context.read<SearchHistoryCubit>().removeQuery(query);
+                      },
+                    ),
+                    onTap: () => _selectHistoryItem(query),
+                  )),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -534,6 +731,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(30),
                             child: TextField(
                               controller: _searchController,
+                              focusNode: _searchFocusNode,
                               decoration: InputDecoration(
                                 hintText: l10n.searchHint,
                                 prefixIcon: Icon(
@@ -577,12 +775,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                           setState(() {
                                             _searchController.clear();
                                             _searchQuery = '';
+                                            _searchedHadithNumber = null;
+                                            _showSearchHistory = _searchFocusNode.hasFocus;
                                           });
                                         },
                                       )
                                     : null,
                               ),
                               onChanged: _onSearchChanged,
+                              onSubmitted: _onSearchSubmitted,
+                              textInputAction: TextInputAction.search,
                             ),
                           ),
                         ),
@@ -643,21 +845,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    BlocBuilder<LastReadCubit, LastReadState>(
-                      builder: (context, lastReadState) {
-                        if (lastReadState.hadithIndex != null) {
-                          return _buildContinueReadingCard(
-                            context,
-                            lastReadState.hadithIndex,
-                            lastReadState.lastReadTime,
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    _buildReadingStatsCard(context),
-                    const SizedBox(height: 16),
+                    // Search history dropdown
+                    if (_showSearchHistory) _buildSearchHistoryDropdown(context),
+                    if (!_showSearchHistory) ...[
+                      BlocBuilder<LastReadCubit, LastReadState>(
+                        builder: (context, lastReadState) {
+                          if (lastReadState.hadithIndex != null) {
+                            return _buildContinueReadingCard(
+                              context,
+                              lastReadState.hadithIndex,
+                              lastReadState.lastReadTime,
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildReadingStatsCard(context),
+                      const SizedBox(height: 16),
+                    ],
                   ],
                 ),
               ),
@@ -671,12 +877,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else if (hadithState is HadithLoaded) {
                   return BlocBuilder<FavoritesCubit, FavoritesState>(
                     builder: (context, favoritesState) {
-                      // Apply search filter
+                      // Apply search filter with hadith index
                       var filtered = _searchQuery.isEmpty
                           ? hadithState.hadiths
-                          : hadithState.hadiths
-                              .where((h) => _hadithMatchesQuery(h, _searchQuery))
-                              .toList();
+                          : hadithState.hadiths.where((h) {
+                              final index = hadithState.hadiths.indexOf(h) + 1;
+                              return _hadithMatchesQuery(h, _searchQuery, index);
+                            }).toList();
 
                       // Apply favorites filter if enabled
                       if (_showFavoritesOnly) {

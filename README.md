@@ -3,13 +3,13 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/الإصدار-1.2.0-brightgreen)
+![Version](https://img.shields.io/badge/الإصدار-1.2.1-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.8+-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.8+-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-241%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-269%20passing-brightgreen)
 ![Languages](https://img.shields.io/badge/Languages-Arabic%20|%20English-purple)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
@@ -46,7 +46,8 @@ An **Islamic Flutter app** that displays the **Forty Hadith Nawawi** with audio 
 | النصوص | عرض الأحاديث بخط واضح | Texts | Clear hadith display |
 | الشرح | شرح مبسط لكل حديث | Explanation | Simple explanation for each hadith |
 | الصوت | تلاوة بصوت الشيخ أحمد النفيس | Audio | Narration by Sheikh Ahmad Al-Nafees |
-| البحث | بحث فوري في الأحاديث | Search | Instant search in hadiths |
+| البحث | بحث فوري في الأحاديث + بحث برقم الحديث | Search | Instant search + search by hadith number |
+| سجل البحث | حفظ عمليات البحث الأخيرة | Search History | Save recent searches |
 | اللغات | عربي وإنجليزي | Languages | Arabic and English |
 
 ### التحكم بالصوت | Audio Controls
@@ -119,6 +120,7 @@ lib/
 │   ├── last_read_cubit.dart
 │   ├── reading_stats_cubit.dart
 │   ├── reminder_cubit.dart
+│   ├── search_history_cubit.dart  # Search history
 │   └── theme_cubit.dart
 ├── models/
 │   └── hadith.dart           # Bilingual hadith model
@@ -206,11 +208,11 @@ flutter pub upgrade
 
 ### الاختبارات | Tests
 
-التطبيق يحتوي على **241 اختبار** شامل | The app contains **241 comprehensive tests**:
+التطبيق يحتوي على **269 اختبار** شامل | The app contains **269 comprehensive tests**:
 
 | النوع / Type | العدد / Count | الوصف / Description |
 |-------|-------|-------|
-| Unit Tests | 228 | Component unit tests |
+| Unit Tests | 256 | Component unit tests |
 | Integration Tests | 13 | Interface integration tests |
 
 ```
@@ -223,6 +225,7 @@ test/
 │   ├── last_read_cubit_test.dart       (14 tests)
 │   ├── reading_stats_cubit_test.dart   (33 tests)
 │   ├── reminder_cubit_test.dart        (23 tests)
+│   ├── search_history_cubit_test.dart  (28 tests)
 │   └── theme_cubit_test.dart           (15 tests)
 ├── models/
 │   └── hadith_test.dart                (16 tests)
@@ -258,6 +261,7 @@ View (Screens/Widgets)
 | FavoritesCubit | Favorites management |
 | ReadingStatsCubit | Reading statistics |
 | ReminderCubit | Daily reminders |
+| SearchHistoryCubit | Search history management |
 | LanguageCubit | Language switching (AR/EN) |
 
 ---
@@ -307,6 +311,8 @@ View (Screens/Widgets)
 - [x] Daily hadith reminder
 - [x] Focused reading mode
 - [x] English language support
+- [x] Search by hadith number
+- [x] Search history
 
 #### مميزات جديدة | New Features
 - [ ] French language support
@@ -334,7 +340,9 @@ View (Screens/Widgets)
 - [x] Focused reading mode
 - [x] English language support
 - [x] Bilingual UI
-- [x] 241 tests
+- [x] Search by hadith number
+- [x] Search history
+- [x] 269 tests
 
 ### الإصدار 2.0 | Version 2.0
 - [ ] Cloud sync

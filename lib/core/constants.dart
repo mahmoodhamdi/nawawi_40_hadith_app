@@ -60,6 +60,12 @@ class SearchConstants {
 
   /// Debounce duration for search input
   static const Duration debounceDuration = Duration(milliseconds: 300);
+
+  /// Maximum number of search history items to store
+  static const int maxHistoryItems = 10;
+
+  /// Minimum query length to save in history
+  static const int minQueryLengthForHistory = 2;
 }
 
 /// Constants related to UI and layout
@@ -132,6 +138,9 @@ class PreferenceKeys {
 
   /// Key for storing reminder minute
   static const String reminderMinute = 'reminder_minute';
+
+  /// Key for storing search history
+  static const String searchHistory = 'search_history';
 }
 
 /// Constants related to assets

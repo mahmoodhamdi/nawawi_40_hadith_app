@@ -14,6 +14,7 @@ import 'cubit/language_state.dart';
 import 'cubit/last_read_cubit.dart';
 import 'cubit/reading_stats_cubit.dart';
 import 'cubit/reminder_cubit.dart';
+import 'cubit/search_history_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/theme_state.dart';
 import 'screens/home_screen.dart';
@@ -53,6 +54,7 @@ class _NawawiAppState extends State<NawawiApp> {
         BlocProvider(create: (context) => FavoritesCubit()),
         BlocProvider(create: (context) => ReadingStatsCubit()),
         BlocProvider(create: (context) => ReminderCubit()),
+        BlocProvider(create: (context) => SearchHistoryCubit()),
       ],
       child: BlocBuilder<LanguageCubit, LanguageState>(
         builder: (context, languageState) {

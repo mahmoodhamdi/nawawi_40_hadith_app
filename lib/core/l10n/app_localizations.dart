@@ -33,6 +33,13 @@ class AppLocalizations {
   String get searchHint => isArabic ? 'ابحث عن حديث...' : 'Search for hadith...';
   String get noResults => isArabic ? 'لا يوجد نتائج للبحث.' : 'No search results found.';
 
+  // Search History
+  String get searchHistory => isArabic ? 'سجل البحث' : 'Search History';
+  String get clearHistory => isArabic ? 'مسح الكل' : 'Clear All';
+  String get noSearchHistory => isArabic ? 'لا يوجد سجل بحث' : 'No search history';
+  String get recentSearches => isArabic ? 'عمليات البحث الأخيرة' : 'Recent Searches';
+  String get searchByNumber => isArabic ? 'بحث برقم الحديث' : 'Search by hadith number';
+
   // Hadith
   String get hadithNumber => isArabic ? 'الحديث رقم' : 'Hadith No.';
   String get explanation => isArabic ? 'الشرح:' : 'Explanation:';
