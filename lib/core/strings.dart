@@ -21,4 +21,19 @@ class AppStrings {
   static const minutesAgo = 'منذ {minutes} دقيقة';
   static const hoursAgo = 'منذ {hours} ساعة';
   static const daysAgo = 'منذ {days} يوم';
+
+  // Settings Screen
+  static const settings = 'الإعدادات';
+  static const dailyReminder = 'التذكير اليومي';
+  static const dailyReminderDescription = 'تذكير يومي لقراءة حديث من الأربعين النووية';
+  static const reminderTime = 'وقت التذكير';
+  static const reminderEnabled = 'التذكير مفعّل';
+  static const reminderDisabled = 'التذكير معطّل';
+  static const permissionRequired = 'يرجى السماح بالإشعارات';
+  static const permissionDenied = 'تم رفض صلاحية الإشعارات';
+  static const selectTime = 'اختر الوقت';
+  static const cancel = 'إلغاء';
+  static const confirm = 'تأكيد';
+  static const am = 'صباحاً';
+  static const pm = 'مساءً';
 }

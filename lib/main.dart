@@ -11,12 +11,18 @@ import 'cubit/font_size_cubit.dart';
 import 'cubit/hadith_cubit.dart';
 import 'cubit/last_read_cubit.dart';
 import 'cubit/reading_stats_cubit.dart';
+import 'cubit/reminder_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/theme_state.dart';
 import 'screens/home_screen.dart';
+import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize notification service
+  await NotificationService.initialize();
+
   runApp(const NawawiApp());
 }
 
@@ -43,6 +49,7 @@ class _NawawiAppState extends State<NawawiApp> {
         BlocProvider(create: (context) => AudioPlayerCubit()),
         BlocProvider(create: (context) => FavoritesCubit()),
         BlocProvider(create: (context) => ReadingStatsCubit()),
+        BlocProvider(create: (context) => ReminderCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, themeState) {

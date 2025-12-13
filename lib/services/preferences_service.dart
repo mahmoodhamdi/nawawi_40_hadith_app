@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
@@ -120,5 +120,55 @@ class PreferencesService {
     await prefs.remove(PreferenceKeys.lastReadHadith);
     await prefs.remove(PreferenceKeys.lastReadTime);
     await prefs.remove(PreferenceKeys.theme);
+  }
+
+  // ============== Reminder Preferences ==============
+
+  /// Saves the reminder enabled state
+  static Future<void> saveReminderEnabled(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(PreferenceKeys.reminderEnabled, enabled);
+  }
+
+  /// Gets the reminder enabled state
+  static Future<bool> getReminderEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(PreferenceKeys.reminderEnabled) ?? false;
+  }
+
+  /// Saves the reminder time
+  static Future<void> saveReminderTime(TimeOfDay time) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(PreferenceKeys.reminderHour, time.hour);
+    await prefs.setInt(PreferenceKeys.reminderMinute, time.minute);
+  }
+
+  /// Gets the saved reminder time
+  ///
+  /// Returns default time (8:00 AM) if no time is saved
+  static Future<TimeOfDay> getReminderTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hour = prefs.getInt(PreferenceKeys.reminderHour);
+    final minute = prefs.getInt(PreferenceKeys.reminderMinute);
+
+    if (hour == null || minute == null) {
+      return const TimeOfDay(hour: 8, minute: 0);
+    }
+
+    // Validate stored values
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+      debugPrint('Invalid stored reminder time: $hour:$minute. Using default.');
+      return const TimeOfDay(hour: 8, minute: 0);
+    }
+
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  /// Clears reminder preferences
+  static Future<void> clearReminderData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(PreferenceKeys.reminderEnabled);
+    await prefs.remove(PreferenceKeys.reminderHour);
+    await prefs.remove(PreferenceKeys.reminderMinute);
   }
 }

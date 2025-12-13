@@ -123,6 +123,15 @@ class PreferenceKeys {
 
   /// Key for storing read hadiths
   static const String readHadiths = 'read_hadiths';
+
+  /// Key for storing reminder enabled state
+  static const String reminderEnabled = 'reminder_enabled';
+
+  /// Key for storing reminder hour
+  static const String reminderHour = 'reminder_hour';
+
+  /// Key for storing reminder minute
+  static const String reminderMinute = 'reminder_minute';
 }
 
 /// Constants related to assets

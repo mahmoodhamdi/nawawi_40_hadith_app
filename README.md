@@ -8,7 +8,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-214%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-237%20passing-brightgreen)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
 
@@ -68,19 +68,23 @@
 | مشاركة كصورة | إنشاء صورة جميلة للحديث ومشاركتها |
 | نسبة الإنجاز | عرض التقدم في قراءة الأحاديث |
 | وضع القراءة المركز | قراءة غامرة بدون تشتيت مع التحكم بالإيماءات |
+| التذكيرات اليومية | تذكير يومي لقراءة حديث مع اختيار الوقت |
+| شاشة الإعدادات | إعدادات التذكيرات وصلاحيات الإشعارات |
 
 ---
 
 ## التقنيات المستخدمة
 
 ```
-Flutter 3.8+          إطار العمل
-Dart 3.8+             لغة البرمجة
-flutter_bloc          إدارة الحالة (Cubit)
-just_audio            مشغل الصوت
-shared_preferences    حفظ الإعدادات
-responsive_framework  التصميم المتجاوب
-share_plus            مشاركة المحتوى
+Flutter 3.8+                   إطار العمل
+Dart 3.8+                      لغة البرمجة
+flutter_bloc                   إدارة الحالة (Cubit)
+just_audio                     مشغل الصوت
+shared_preferences             حفظ الإعدادات
+responsive_framework           التصميم المتجاوب
+share_plus                     مشاركة المحتوى
+flutter_local_notifications    الإشعارات المحلية
+timezone                       إدارة المناطق الزمنية
 ```
 
 ---
@@ -106,17 +110,20 @@ lib/
 │   ├── hadith_cubit.dart
 │   ├── last_read_cubit.dart
 │   ├── reading_stats_cubit.dart
+│   ├── reminder_cubit.dart
 │   └── theme_cubit.dart
 ├── models/
 │   └── hadith.dart           # نموذج البيانات
 ├── screens/
-│   ├── home_screen.dart           # الشاشة الرئيسية
-│   ├── hadith_details_screen.dart # تفاصيل الحديث
-│   └── focused_reading_screen.dart # وضع القراءة المركز
+│   ├── home_screen.dart            # الشاشة الرئيسية
+│   ├── hadith_details_screen.dart  # تفاصيل الحديث
+│   ├── focused_reading_screen.dart # وضع القراءة المركز
+│   └── settings_screen.dart        # شاشة الإعدادات
 ├── services/
-│   ├── hadith_loader.dart       # تحميل البيانات
-│   ├── preferences_service.dart # حفظ الإعدادات
-│   └── share_image_service.dart # مشاركة كصورة
+│   ├── hadith_loader.dart          # تحميل البيانات
+│   ├── notification_service.dart   # خدمة الإشعارات
+│   ├── preferences_service.dart    # حفظ الإعدادات
+│   └── share_image_service.dart    # مشاركة كصورة
 └── widgets/
     ├── audio_player_widget.dart
     └── hadith_tile.dart
@@ -189,11 +196,11 @@ flutter pub upgrade
 
 ### الاختبارات
 
-التطبيق يحتوي على **214 اختبار** شامل:
+التطبيق يحتوي على **237 اختبار** شامل:
 
 | النوع | العدد | الوصف |
 |-------|-------|-------|
-| Unit Tests | 201 | اختبارات الوحدة للمكونات |
+| Unit Tests | 224 | اختبارات الوحدة للمكونات |
 | Integration Tests | 13 | اختبارات التكامل للواجهات |
 
 ```
@@ -205,6 +212,7 @@ test/
 │   ├── hadith_cubit_test.dart          (12 اختبار)
 │   ├── last_read_cubit_test.dart       (14 اختبار)
 │   ├── reading_stats_cubit_test.dart   (33 اختبار)
+│   ├── reminder_cubit_test.dart        (23 اختبار)
 │   └── theme_cubit_test.dart           (15 اختبار)
 ├── models/
 │   └── hadith_test.dart                (10 اختبار)
@@ -238,6 +246,7 @@ View (Screens/Widgets)
 | LastReadCubit | آخر قراءة |
 | FavoritesCubit | إدارة المفضلة |
 | ReadingStatsCubit | إحصائيات القراءة |
+| ReminderCubit | إدارة التذكيرات اليومية |
 
 ---
 
@@ -284,9 +293,9 @@ View (Screens/Widgets)
 - [x] مشاركة كصورة
 
 #### مميزات جديدة
-- [ ] تذكير يومي بحديث
+- [x] تذكير يومي بحديث
 - [ ] دعم لغات إضافية (الإنجليزية/الفرنسية)
-- [ ] وضع القراءة المركز
+- [x] وضع القراءة المركز
 
 #### تحسينات
 - [ ] تحسين أداء البحث
@@ -304,8 +313,8 @@ View (Screens/Widgets)
 - [x] إحصائيات القراءة
 - [x] مشاركة كصورة
 
-### الإصدار 1.2 (قادم)
-- [ ] التذكيرات اليومية
+### الإصدار 1.2 (مكتمل)
+- [x] التذكيرات اليومية
 - [x] وضع القراءة المركز
 
 ### الإصدار 2.0

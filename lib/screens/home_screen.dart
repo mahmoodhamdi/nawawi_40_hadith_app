@@ -17,6 +17,7 @@ import '../cubit/reading_stats_state.dart';
 import '../cubit/theme_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
+import '../screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -92,9 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<HadithCubit, HadithState>(
       builder: (context, state) {
         if (state is HadithLoaded && lastReadIndex != null) {
-          // Calculate progress percentage
-          final progress = lastReadIndex / state.hadiths.length;
-
           return Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -118,78 +116,53 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ElevatedButton.icon(
+                    onPressed: () => _navigateToLastReadHadith(
+                      context,
+                      state.hadiths,
+                      lastReadIndex,
+                    ),
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text(AppStrings.continueReading),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDark
+                          ? theme.colorScheme.surface
+                          : Colors.white,
+                      foregroundColor: theme.colorScheme.primary,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      ElevatedButton.icon(
-                        onPressed: () => _navigateToLastReadHadith(
-                          context,
-                          state.hadiths,
-                          lastReadIndex,
-                        ),
-                        icon: const Icon(Icons.play_arrow),
-                        label: const Text(AppStrings.continueReading),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark
-                              ? theme.colorScheme.surface
-                              : Colors.white,
-                          foregroundColor: theme.colorScheme.primary,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
+                      Text(
+                        AppStrings.lastRead,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            AppStrings.lastRead,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: isDark ? Colors.white : Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${AppStrings.hadithNumber} $lastReadIndex',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              color: isDark ? Colors.white70 : Colors.white,
-                            ),
-                          ),
-                          if (lastReadTime != null)
-                            Text(
-                              timeAgo,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: isDark ? Colors.white60 : Colors.white70,
-                              ),
-                            ),
-                        ],
+                      Text(
+                        '${AppStrings.hadithNumber} $lastReadIndex',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.white70 : Colors.white,
+                        ),
                       ),
+                      if (lastReadTime != null)
+                        Text(
+                          timeAgo,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isDark ? Colors.white60 : Colors.white70,
+                          ),
+                        ),
                     ],
-                  ),
-                  const SizedBox(height: 16),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: isDark ? Colors.white24 : Colors.white38,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isDark ? Colors.white : Colors.white,
-                      ),
-                      minHeight: 8,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${(lastReadIndex * 100 ~/ state.hadiths.length)}% ${AppStrings.completed}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: isDark ? Colors.white70 : Colors.white,
-                    ),
-                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
@@ -463,6 +436,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 floating: true,
                 snap: true,
                 actions: [
+                  IconButton(
+                    icon: const Icon(Icons.settings),
+                    tooltip: 'الإعدادات',
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
                   PopupMenuButton<AppThemeType>(
                     icon: const Icon(Icons.color_lens),
                     tooltip: 'تغيير الثيم',

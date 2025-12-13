@@ -12,16 +12,19 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: 
-  equatable: 
-  flutter_bloc: 
+  cupertino_icons:
+  equatable:
+  flutter_bloc:
   path_provider:
-  responsive_framework: 
+  responsive_framework:
   flutter_localizations:
     sdk: flutter
   share_plus:
-  just_audio: 
+  just_audio:
   shared_preferences:
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.10.0
+  flutter_timezone: ^3.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
