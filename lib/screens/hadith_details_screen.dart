@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../core/l10n/app_localizations.dart';
+import '../core/theme/markdown_style.dart';
 import '../cubit/audio_player_cubit.dart';
 import '../cubit/language_cubit.dart';
 import '../screens/focused_reading_screen.dart';
@@ -541,19 +543,25 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          // Description text with BlocBuilder for font size
+                          // Description text with markdown rendering
                           BlocBuilder<FontSizeCubit, FontSizeState>(
                             builder: (context, fontState) {
-                              return SelectableText(
-                                descriptionText,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(fontSize: fontState.descriptionFontSize),
-                                textAlign: TextAlign.start,
-                                contextMenuBuilder: (context, editableTextState) {
-                                  return AdaptiveTextSelectionToolbar.editableText(
-                                    editableTextState: editableTextState,
-                                  );
-                                },
+                              final isArabic = l10n.isArabic;
+                              final markdownStyle = isArabic
+                                  ? getArabicMarkdownStyle(
+                                      context,
+                                      baseFontSize: fontState.descriptionFontSize,
+                                    )
+                                  : getHadithMarkdownStyle(
+                                      context,
+                                      baseFontSize: fontState.descriptionFontSize,
+                                    );
+
+                              return MarkdownBody(
+                                data: descriptionText,
+                                styleSheet: markdownStyle,
+                                selectable: true,
+                                softLineBreak: true,
                               );
                             },
                           ),

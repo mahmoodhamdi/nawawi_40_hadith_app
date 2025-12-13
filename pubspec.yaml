@@ -22,6 +22,7 @@ dependencies:
   share_plus:
   just_audio:
   shared_preferences:
+  flutter_markdown: ^0.7.4+3
   flutter_local_notifications: ^18.0.1
   timezone: ^0.10.0
   flutter_timezone: ^3.0.1

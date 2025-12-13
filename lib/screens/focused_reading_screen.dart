@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../core/l10n/app_localizations.dart';
 import '../cubit/audio_player_cubit.dart';
@@ -333,7 +334,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                 textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
               ),
 
-              // Description (if shown)
+              // Description (if shown) with markdown support
               if (_showDescription && descriptionText.isNotEmpty) ...[
                 const SizedBox(height: 32),
                 Container(
@@ -357,16 +358,18 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        descriptionText,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: fontState.descriptionFontSize,
-                          height: 1.8,
-                          color: Colors.white.withValues(alpha: 0.85),
-                        ),
-                        textAlign: TextAlign.center,
+                      Directionality(
                         textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                        child: MarkdownBody(
+                          data: descriptionText,
+                          styleSheet: _getFocusedMarkdownStyle(
+                            context,
+                            fontState.descriptionFontSize,
+                            isArabic,
+                          ),
+                          selectable: true,
+                          softLineBreak: true,
+                        ),
                       ),
                     ],
                   ),
@@ -526,5 +529,93 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
+  }
+
+  /// Custom markdown style for focused reading mode (dark theme)
+  MarkdownStyleSheet _getFocusedMarkdownStyle(
+    BuildContext context,
+    double baseFontSize,
+    bool isArabic,
+  ) {
+    const goldColor = Color(0xFFD4AF37);
+    const whiteText = Colors.white;
+
+    return MarkdownStyleSheet(
+      // Headers
+      h2: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: baseFontSize + 4,
+        fontWeight: FontWeight.bold,
+        color: goldColor,
+        height: 1.4,
+      ),
+      h3: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: baseFontSize + 2,
+        fontWeight: FontWeight.w600,
+        color: goldColor.withValues(alpha: 0.9),
+        height: 1.3,
+      ),
+
+      // Paragraphs
+      p: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: baseFontSize,
+        height: 1.8,
+        color: whiteText.withValues(alpha: 0.85),
+      ),
+
+      // Strong (bold)
+      strong: const TextStyle(
+        fontWeight: FontWeight.bold,
+        color: goldColor,
+      ),
+
+      // Emphasis (italic)
+      em: TextStyle(
+        fontStyle: FontStyle.italic,
+        color: whiteText.withValues(alpha: 0.9),
+      ),
+
+      // Lists
+      listBullet: TextStyle(
+        fontSize: baseFontSize,
+        color: goldColor,
+      ),
+      listIndent: 20.0,
+
+      // Blockquote
+      blockquote: TextStyle(
+        fontFamily: 'Cairo',
+        fontSize: baseFontSize,
+        fontStyle: FontStyle.italic,
+        color: whiteText.withValues(alpha: 0.8),
+        height: 1.6,
+      ),
+      blockquoteDecoration: BoxDecoration(
+        border: Border(
+          left: isArabic
+              ? BorderSide.none
+              : BorderSide(
+                  color: goldColor.withValues(alpha: 0.5),
+                  width: 3,
+                ),
+          right: isArabic
+              ? BorderSide(
+                  color: goldColor.withValues(alpha: 0.5),
+                  width: 3,
+                )
+              : BorderSide.none,
+        ),
+        color: whiteText.withValues(alpha: 0.05),
+      ),
+      blockquotePadding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+
+      // Spacing
+      h2Padding: const EdgeInsets.only(top: 16, bottom: 8),
+      h3Padding: const EdgeInsets.only(top: 12, bottom: 6),
+      pPadding: const EdgeInsets.only(bottom: 10),
+      blockSpacing: 10.0,
+    );
   }
 }
