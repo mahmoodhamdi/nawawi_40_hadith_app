@@ -62,8 +62,10 @@ void main() {
 
   group('ShareableHadithCard', () {
     final testHadith = Hadith(
-      hadith: 'الحديث الأول\nعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه',
-      description: 'شرح الحديث: هذا الحديث يتحدث عن النية وأهميتها في العمل.',
+      hadithAr: 'الحديث الأول\nعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه',
+      hadithEn: 'First Hadith\nOn the authority of Umar ibn al-Khattab',
+      descriptionAr: 'شرح الحديث: هذا الحديث يتحدث عن النية وأهميتها في العمل.',
+      descriptionEn: 'Explanation: This hadith discusses the importance of intention in actions.',
     );
 
     testWidgets('renders hadith card with default theme', (tester) async {
@@ -161,8 +163,10 @@ void main() {
 
     testWidgets('renders hadith text correctly', (tester) async {
       final hadithWithTitle = Hadith(
-        hadith: 'عنوان الحديث\nنص الحديث الفعلي هنا',
-        description: 'الشرح',
+        hadithAr: 'عنوان الحديث\nنص الحديث الفعلي هنا',
+        hadithEn: 'Hadith Title\nActual hadith text here',
+        descriptionAr: 'الشرح',
+        descriptionEn: 'Explanation',
       );
 
       await tester.pumpWidget(
@@ -182,8 +186,10 @@ void main() {
 
     testWidgets('renders single line hadith correctly', (tester) async {
       final singleLineHadith = Hadith(
-        hadith: 'حديث في سطر واحد فقط',
-        description: 'الشرح',
+        hadithAr: 'حديث في سطر واحد فقط',
+        hadithEn: 'Single line hadith only',
+        descriptionAr: 'الشرح',
+        descriptionEn: 'Explanation',
       );
 
       await tester.pumpWidget(

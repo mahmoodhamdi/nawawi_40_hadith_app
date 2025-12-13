@@ -138,8 +138,11 @@ class PreferenceKeys {
 class AssetPaths {
   AssetPaths._();
 
-  /// Path to hadith JSON data file
+  /// Path to Arabic hadith JSON data file
   static const String hadithJson = 'assets/json/40-hadith-nawawi.json';
+
+  /// Path to English hadith JSON data file
+  static const String hadithJsonEn = 'assets/json/40-hadith-nawawi-en.json';
 
   /// Path pattern for audio files (use with index)
   static String audioFile(int index) => 'assets/audio/audio_$index.mp3';

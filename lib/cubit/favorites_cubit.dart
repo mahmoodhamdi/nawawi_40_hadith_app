@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,6 +37,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
         ));
       }
     } catch (e) {
+      debugPrint('Error loading favorites: $e');
       emit(state.copyWith(isLoading: false));
     }
   }
@@ -101,7 +103,7 @@ class FavoritesCubit extends Cubit<FavoritesState> {
       final favoritesJson = favorites.map((i) => i.toString()).toList();
       await prefs.setStringList(PreferenceKeys.favorites, favoritesJson);
     } catch (e) {
-      // Silently fail - favorites will be lost on restart
+      debugPrint('Error saving favorites: $e');
     }
   }
 

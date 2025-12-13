@@ -1,23 +1,8 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hadith_nawawi_audio/cubit/hadith_cubit.dart';
 import 'package:hadith_nawawi_audio/cubit/hadith_state.dart';
 import 'package:hadith_nawawi_audio/models/hadith.dart';
 import 'package:hadith_nawawi_audio/services/hadith_loader.dart';
-import 'package:mocktail/mocktail.dart';
-
-// Mock class for HadithLoader
-class MockHadithLoader extends Mock {
-  static Future<List<Hadith>> Function()? _mockLoadHadiths;
-
-  static void setMockLoadHadiths(Future<List<Hadith>> Function() fn) {
-    _mockLoadHadiths = fn;
-  }
-
-  static void reset() {
-    _mockLoadHadiths = null;
-  }
-}
 
 void main() {
   group('HadithState', () {
@@ -31,8 +16,18 @@ void main() {
 
     test('HadithLoaded props contain hadiths list', () {
       final hadiths = [
-        Hadith(hadith: 'الحديث 1', description: 'شرح 1'),
-        Hadith(hadith: 'الحديث 2', description: 'شرح 2'),
+        Hadith(
+          hadithAr: 'الحديث 1',
+          hadithEn: 'Hadith 1',
+          descriptionAr: 'شرح 1',
+          descriptionEn: 'Explanation 1',
+        ),
+        Hadith(
+          hadithAr: 'الحديث 2',
+          hadithEn: 'Hadith 2',
+          descriptionAr: 'شرح 2',
+          descriptionEn: 'Explanation 2',
+        ),
       ];
       final state = HadithLoaded(hadiths);
 
@@ -57,7 +52,14 @@ void main() {
     });
 
     test('HadithLoaded equality', () {
-      final hadiths = [Hadith(hadith: 'الحديث', description: 'شرح')];
+      final hadiths = [
+        Hadith(
+          hadithAr: 'الحديث',
+          hadithEn: 'Hadith',
+          descriptionAr: 'شرح',
+          descriptionEn: 'Explanation',
+        ),
+      ];
       final state1 = HadithLoaded(hadiths);
       final state2 = HadithLoaded(hadiths);
 

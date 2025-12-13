@@ -1,16 +1,20 @@
 # الأربعون النووية – بصوت الشيخ أحمد النفيس
+# Forty Hadith Nawawi – Narrated by Sheikh Ahmad Al-Nafees
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/الإصدار-1.0.2-brightgreen)
+![Version](https://img.shields.io/badge/الإصدار-1.2.0-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.8+-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.8+-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-237%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-241%20passing-brightgreen)
+![Languages](https://img.shields.io/badge/Languages-Arabic%20|%20English-purple)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
+
+**Open source ongoing charity** – Join in the reward and develop with us
 
 [تحميل التطبيق](#-التثبيت) • [المساهمة](#-المساهمة) • [خطة التطوير](docs/IMPROVEMENT_PLAN.md)
 
@@ -18,147 +22,153 @@
 
 ---
 
-## نبذة عن التطبيق
+## نبذة عن التطبيق | About the App
 
-تطبيق **Flutter** إسلامي يعرض **الأحاديث النووية** مع إمكانية الاستماع إليها **بصوت الشيخ أحمد النفيس**، مع شرح مبسط وواجهة عصرية تدعم الوضع الليلي والفاتح.
+تطبيق **Flutter** إسلامي يعرض **الأحاديث النووية** مع إمكانية الاستماع إليها **بصوت الشيخ أحمد النفيس**، مع شرح مبسط وواجهة عصرية تدعم **العربية والإنجليزية**.
 
-### لماذا هذا التطبيق؟
+An **Islamic Flutter app** that displays the **Forty Hadith Nawawi** with audio narration by **Sheikh Ahmad Al-Nafees**, featuring explanations and a modern interface supporting **Arabic and English**.
 
-- **بدون إنترنت**: كل المحتوى متاح offline
-- **بدون إعلانات**: تجربة نقية بدون تشتيت
-- **مفتوح المصدر**: شارك في الأجر بالتطوير
-- **خفيف وسريع**: حجم صغير وأداء ممتاز
+### لماذا هذا التطبيق؟ | Why This App?
 
----
-
-## المميزات
-
-### المحتوى
-| الميزة | الوصف |
-|--------|--------|
-| النصوص | عرض الأحاديث بخط واضح وجميل |
-| الشرح | شرح مبسط لكل حديث |
-| الصوت | تلاوة بصوت الشيخ أحمد النفيس |
-| البحث | بحث فوري في الأحاديث والشروح |
-
-### التحكم بالصوت
-| الميزة | الوصف |
-|--------|--------|
-| تشغيل/إيقاف | التحكم الكامل في التشغيل |
-| تقديم/رجوع | القفز 10 ثواني للأمام أو الخلف |
-| سرعة التشغيل | تغيير سرعة الصوت (0.5x - 2x) |
-| شريط التقدم | التنقل في أي نقطة من الصوت |
-
-### واجهة المستخدم
-| الميزة | الوصف |
-|--------|--------|
-| الثيمات | فاتح، داكن، أزرق، بنفسجي، نظام |
-| حجم الخط | تكبير وتصغير منفصل للحديث والشرح |
-| RTL | دعم كامل للغة العربية |
-| متجاوب | يعمل على جميع أحجام الشاشات |
-
-### مميزات إضافية
-| الميزة | الوصف |
-|--------|--------|
-| المفضلة | حفظ الأحاديث المفضلة وفلترتها |
-| إحصائيات القراءة | عرض تقدم القراءة ونسبة الإنجاز |
-| متابعة القراءة | حفظ آخر حديث تمت قراءته |
-| التنقل | أزرار للحديث السابق والتالي |
-| المشاركة | مشاركة الحديث أو الشرح أو كليهما |
-| مشاركة كصورة | إنشاء صورة جميلة للحديث ومشاركتها |
-| نسبة الإنجاز | عرض التقدم في قراءة الأحاديث |
-| وضع القراءة المركز | قراءة غامرة بدون تشتيت مع التحكم بالإيماءات |
-| التذكيرات اليومية | تذكير يومي لقراءة حديث مع اختيار الوقت |
-| شاشة الإعدادات | إعدادات التذكيرات وصلاحيات الإشعارات |
+- **بدون إنترنت**: كل المحتوى متاح offline | **Offline**: All content available offline
+- **بدون إعلانات**: تجربة نقية بدون تشتيت | **Ad-free**: Pure experience without distractions
+- **مفتوح المصدر**: شارك في الأجر بالتطوير | **Open source**: Earn reward by contributing
+- **خفيف وسريع**: حجم صغير وأداء ممتاز | **Light & fast**: Small size, excellent performance
+- **ثنائي اللغة**: دعم كامل للعربية والإنجليزية | **Bilingual**: Full Arabic and English support
 
 ---
 
-## التقنيات المستخدمة
+## المميزات | Features
+
+### المحتوى | Content
+| الميزة | الوصف | Feature | Description |
+|--------|--------|---------|-------------|
+| النصوص | عرض الأحاديث بخط واضح | Texts | Clear hadith display |
+| الشرح | شرح مبسط لكل حديث | Explanation | Simple explanation for each hadith |
+| الصوت | تلاوة بصوت الشيخ أحمد النفيس | Audio | Narration by Sheikh Ahmad Al-Nafees |
+| البحث | بحث فوري في الأحاديث | Search | Instant search in hadiths |
+| اللغات | عربي وإنجليزي | Languages | Arabic and English |
+
+### التحكم بالصوت | Audio Controls
+| الميزة | الوصف | Feature | Description |
+|--------|--------|---------|-------------|
+| تشغيل/إيقاف | التحكم الكامل | Play/Pause | Full control |
+| تقديم/رجوع | القفز 10 ثواني | Skip | Jump 10 seconds |
+| سرعة التشغيل | 0.5x - 2x | Speed | 0.5x - 2x playback |
+| شريط التقدم | التنقل في الصوت | Progress | Navigate audio |
+
+### واجهة المستخدم | User Interface
+| الميزة | الوصف | Feature | Description |
+|--------|--------|---------|-------------|
+| الثيمات | فاتح، داكن، أزرق، بنفسجي | Themes | Light, Dark, Blue, Purple |
+| حجم الخط | تكبير وتصغير | Font Size | Increase and decrease |
+| RTL/LTR | دعم العربية والإنجليزية | RTL/LTR | Arabic and English support |
+| متجاوب | جميع أحجام الشاشات | Responsive | All screen sizes |
+
+### مميزات إضافية | Additional Features
+| الميزة | الوصف | Feature | Description |
+|--------|--------|---------|-------------|
+| المفضلة | حفظ الأحاديث المفضلة | Favorites | Save favorite hadiths |
+| الإحصائيات | تقدم القراءة | Statistics | Reading progress |
+| متابعة القراءة | آخر حديث | Continue | Last read hadith |
+| المشاركة | نص أو صورة | Share | Text or image |
+| القراءة المركزة | وضع غامر | Focused Reading | Immersive mode |
+| التذكيرات | تذكير يومي | Reminders | Daily reminder |
+| تبديل اللغة | عربي/إنجليزي | Language Switch | Arabic/English |
+
+---
+
+## التقنيات المستخدمة | Technologies
 
 ```
-Flutter 3.8+                   إطار العمل
-Dart 3.8+                      لغة البرمجة
-flutter_bloc                   إدارة الحالة (Cubit)
-just_audio                     مشغل الصوت
-shared_preferences             حفظ الإعدادات
-responsive_framework           التصميم المتجاوب
-share_plus                     مشاركة المحتوى
-flutter_local_notifications    الإشعارات المحلية
-timezone                       إدارة المناطق الزمنية
+Flutter 3.8+                   Framework
+Dart 3.8+                      Language
+flutter_bloc                   State Management (Cubit)
+just_audio                     Audio Player
+shared_preferences             Settings Storage
+responsive_framework           Responsive Design
+share_plus                     Content Sharing
+flutter_local_notifications    Local Notifications
+timezone                       Timezone Management
+flutter_localizations          Localization
 ```
 
 ---
 
-## هيكل المشروع
+## هيكل المشروع | Project Structure
 
 ```
 lib/
-├── main.dart                 # نقطة الدخول
+├── main.dart                 # Entry point
 ├── core/
-│   ├── constants.dart        # الثوابت المركزية
-│   ├── strings.dart          # النصوص المركزية
-│   └── theme/                # نظام الثيمات
+│   ├── constants.dart        # Centralized constants
+│   ├── l10n/                 # Localization
+│   │   └── app_localizations.dart
+│   └── theme/                # Theme system
 │       ├── app_theme.dart
 │       ├── light_theme.dart
 │       ├── dark_theme.dart
 │       ├── blue_theme.dart
 │       └── purple_theme.dart
-├── cubit/                    # إدارة الحالة
+├── cubit/                    # State management
 │   ├── audio_player_cubit.dart
 │   ├── favorites_cubit.dart
 │   ├── font_size_cubit.dart
 │   ├── hadith_cubit.dart
+│   ├── language_cubit.dart   # Language management
 │   ├── last_read_cubit.dart
 │   ├── reading_stats_cubit.dart
 │   ├── reminder_cubit.dart
 │   └── theme_cubit.dart
 ├── models/
-│   └── hadith.dart           # نموذج البيانات
+│   └── hadith.dart           # Bilingual hadith model
 ├── screens/
-│   ├── home_screen.dart            # الشاشة الرئيسية
-│   ├── hadith_details_screen.dart  # تفاصيل الحديث
-│   ├── focused_reading_screen.dart # وضع القراءة المركز
-│   └── settings_screen.dart        # شاشة الإعدادات
+│   ├── home_screen.dart
+│   ├── hadith_details_screen.dart
+│   ├── focused_reading_screen.dart
+│   └── settings_screen.dart  # Language & reminder settings
 ├── services/
-│   ├── hadith_loader.dart          # تحميل البيانات
-│   ├── notification_service.dart   # خدمة الإشعارات
-│   ├── preferences_service.dart    # حفظ الإعدادات
-│   └── share_image_service.dart    # مشاركة كصورة
+│   ├── hadith_loader.dart    # Loads Arabic & English
+│   ├── notification_service.dart
+│   ├── preferences_service.dart
+│   └── share_image_service.dart
 └── widgets/
     ├── audio_player_widget.dart
     └── hadith_tile.dart
 
 assets/
-├── audio/                    # ملفات MP3 (42 ملف)
-├── fonts/                    # خط Cairo
-└── json/                     # بيانات الأحاديث
+├── audio/                    # MP3 files (42 files)
+├── fonts/                    # Cairo font
+└── json/
+    ├── 40-hadith-nawawi.json     # Arabic hadiths
+    └── 40-hadith-nawawi-en.json  # English hadiths
 ```
 
 ---
 
-## التثبيت
+## التثبيت | Installation
 
-### متطلبات التشغيل
-- Flutter 3.8 أو أحدث
-- Dart 3.8 أو أحدث
+### متطلبات التشغيل | Requirements
+- Flutter 3.8 or later
+- Dart 3.8 or later
 
-### خطوات التثبيت
+### خطوات التثبيت | Installation Steps
 
 ```bash
-# 1. استنساخ المشروع
+# 1. Clone the project
 git clone https://github.com/mahmoodhamdi/nawawi_40_hadith_app.git
 
-# 2. الدخول للمجلد
+# 2. Enter the directory
 cd nawawi_40_hadith_app
 
-# 3. تثبيت الاعتماديات
+# 3. Install dependencies
 flutter pub get
 
-# 4. تشغيل التطبيق
+# 4. Run the app
 flutter run
 ```
 
-### بناء التطبيق
+### بناء التطبيق | Building the App
 
 ```bash
 # Android APK
@@ -176,58 +186,59 @@ flutter build web --release
 
 ---
 
-## التطوير
+## التطوير | Development
 
-### الأوامر المفيدة
+### الأوامر المفيدة | Useful Commands
 
 ```bash
-# تشغيل الاختبارات
+# Run tests
 flutter test
 
-# تحليل الكود
+# Analyze code
 flutter analyze
 
-# تنسيق الكود
+# Format code
 dart format lib/
 
-# تحديث الاعتماديات
+# Update dependencies
 flutter pub upgrade
 ```
 
-### الاختبارات
+### الاختبارات | Tests
 
-التطبيق يحتوي على **237 اختبار** شامل:
+التطبيق يحتوي على **241 اختبار** شامل | The app contains **241 comprehensive tests**:
 
-| النوع | العدد | الوصف |
+| النوع / Type | العدد / Count | الوصف / Description |
 |-------|-------|-------|
-| Unit Tests | 224 | اختبارات الوحدة للمكونات |
-| Integration Tests | 13 | اختبارات التكامل للواجهات |
+| Unit Tests | 228 | Component unit tests |
+| Integration Tests | 13 | Interface integration tests |
 
 ```
 test/
 ├── cubit/
-│   ├── audio_player_cubit_test.dart    (25 اختبار)
-│   ├── favorites_cubit_test.dart       (27 اختبار)
-│   ├── font_size_cubit_test.dart       (20 اختبار)
-│   ├── hadith_cubit_test.dart          (12 اختبار)
-│   ├── last_read_cubit_test.dart       (14 اختبار)
-│   ├── reading_stats_cubit_test.dart   (33 اختبار)
-│   ├── reminder_cubit_test.dart        (23 اختبار)
-│   └── theme_cubit_test.dart           (15 اختبار)
+│   ├── audio_player_cubit_test.dart    (25 tests)
+│   ├── favorites_cubit_test.dart       (27 tests)
+│   ├── font_size_cubit_test.dart       (20 tests)
+│   ├── hadith_cubit_test.dart          (12 tests)
+│   ├── last_read_cubit_test.dart       (14 tests)
+│   ├── reading_stats_cubit_test.dart   (33 tests)
+│   ├── reminder_cubit_test.dart        (23 tests)
+│   └── theme_cubit_test.dart           (15 tests)
 ├── models/
-│   └── hadith_test.dart                (10 اختبار)
+│   └── hadith_test.dart                (16 tests)
 ├── services/
-│   ├── preferences_service_test.dart   (34 اختبار)
-│   └── share_image_service_test.dart   (19 اختبار)
-└── widget_test.dart                    (5 اختبار)
+│   ├── preferences_service_test.dart   (34 tests)
+│   └── share_image_service_test.dart   (19 tests)
+└── widget_test.dart                    (10 tests)
 
 integration_test/
-└── app_test.dart                       (13 اختبار)
+└── app_test.dart                       (13 tests)
 ```
 
-### البنية المعمارية
+### البنية المعمارية | Architecture
 
 التطبيق يستخدم **BLoC/Cubit Pattern** لإدارة الحالة:
+The app uses **BLoC/Cubit Pattern** for state management:
 
 ```
 View (Screens/Widgets)
@@ -237,115 +248,130 @@ View (Screens/Widgets)
 View (Screens/Widgets)
 ```
 
-| Cubit | المسؤولية |
+| Cubit | المسؤولية / Responsibility |
 |-------|-----------|
-| HadithCubit | تحميل وإدارة الأحاديث |
-| AudioPlayerCubit | التحكم في الصوت |
-| ThemeCubit | إدارة الثيمات |
-| FontSizeCubit | حجم الخط |
-| LastReadCubit | آخر قراءة |
-| FavoritesCubit | إدارة المفضلة |
-| ReadingStatsCubit | إحصائيات القراءة |
-| ReminderCubit | إدارة التذكيرات اليومية |
+| HadithCubit | Load and manage hadiths |
+| AudioPlayerCubit | Audio control |
+| ThemeCubit | Theme management |
+| FontSizeCubit | Font size |
+| LastReadCubit | Last read tracking |
+| FavoritesCubit | Favorites management |
+| ReadingStatsCubit | Reading statistics |
+| ReminderCubit | Daily reminders |
+| LanguageCubit | Language switching (AR/EN) |
 
 ---
 
-## المساهمة
+## المساهمة | Contributing
 
 > **كل مساهمة = أجر صدقة جارية بإذن الله**
+> **Every contribution = ongoing charity reward, God willing**
 
-### كيف تساهم؟
+### كيف تساهم؟ | How to Contribute?
 
-1. **Fork** المشروع
-2. أنشئ **Branch** جديد
+1. **Fork** the project
+2. Create a new **Branch**
    ```bash
    git checkout -b feature/amazing-feature
    ```
-3. اكتب **الاختبارات** أولاً
-4. نفذ التغييرات
-5. تأكد من مرور الاختبارات
+3. Write **tests** first
+4. Implement changes
+5. Ensure tests pass
    ```bash
    flutter test
    flutter analyze
    ```
-6. **Commit** التغييرات
+6. **Commit** changes
    ```bash
    git commit -m "feat: add amazing feature"
    ```
-7. **Push** للـ Branch
+7. **Push** to branch
    ```bash
    git push origin feature/amazing-feature
    ```
-8. افتح **Pull Request**
+8. Open **Pull Request**
 
-### أفكار للمساهمة
+### أفكار للمساهمة | Contribution Ideas
 
-راجع [خطة التطوير](docs/IMPROVEMENT_PLAN.md) للقائمة الكاملة:
+راجع [خطة التطوير](docs/IMPROVEMENT_PLAN.md) | See [Development Plan](docs/IMPROVEMENT_PLAN.md)
 
-#### مكتمل
-- [x] إضافة اختبارات الوحدة (214 اختبار)
-- [x] تحسين البحث (debounce + case-insensitive + تطبيع النص العربي)
-- [x] إضافة Accessibility labels
-- [x] معالجة الأخطاء في تحميل البيانات
-- [x] التحقق من صحة المدخلات
-- [x] نظام المفضلة/الإشارات المرجعية
-- [x] إحصائيات القراءة
-- [x] مشاركة كصورة
+#### مكتمل | Completed
+- [x] Unit tests (241 tests)
+- [x] Improved search (debounce + Arabic normalization)
+- [x] Accessibility labels
+- [x] Error handling in data loading
+- [x] Input validation
+- [x] Favorites/bookmarks system
+- [x] Reading statistics
+- [x] Share as image
+- [x] Daily hadith reminder
+- [x] Focused reading mode
+- [x] English language support
 
-#### مميزات جديدة
-- [x] تذكير يومي بحديث
-- [ ] دعم لغات إضافية (الإنجليزية/الفرنسية)
-- [x] وضع القراءة المركز
+#### مميزات جديدة | New Features
+- [ ] French language support
+- [ ] Cloud sync
+- [ ] Apple Watch app
 
-#### تحسينات
-- [ ] تحسين أداء البحث
-- [ ] إضافة تحريكات (Animations)
-- [ ] دعم الأجهزة اللوحية بشكل أفضل
-
----
-
-## خارطة الطريق
-
-### الإصدار 1.1 (مكتمل)
-- [x] نظام المفضلة
-- [x] تحسين البحث
-- [x] اختبارات شاملة (214 اختبار)
-- [x] إحصائيات القراءة
-- [x] مشاركة كصورة
-
-### الإصدار 1.2 (مكتمل)
-- [x] التذكيرات اليومية
-- [x] وضع القراءة المركز
-
-### الإصدار 2.0
-- [ ] دعم اللغة الإنجليزية
-- [ ] المزامنة السحابية
-- [ ] تطبيق Apple Watch
+#### تحسينات | Improvements
+- [ ] Search performance
+- [ ] Animations
+- [ ] Better tablet support
 
 ---
 
-## الترخيص
+## خارطة الطريق | Roadmap
+
+### الإصدار 1.1 | Version 1.1 (Completed)
+- [x] Favorites system
+- [x] Improved search
+- [x] Comprehensive tests
+- [x] Reading statistics
+- [x] Share as image
+
+### الإصدار 1.2 | Version 1.2 (Current)
+- [x] Daily reminders
+- [x] Focused reading mode
+- [x] English language support
+- [x] Bilingual UI
+- [x] 241 tests
+
+### الإصدار 2.0 | Version 2.0
+- [ ] Cloud sync
+- [ ] French language
+- [ ] Apple Watch app
+
+---
+
+## الترخيص | License
 
 هذا المشروع مرخص تحت رخصة **MIT** - راجع ملف [LICENSE](LICENSE) للتفاصيل.
 
+This project is licensed under the **MIT** License - see [LICENSE](LICENSE) for details.
+
 الغرض الأساسي من المشروع هو **نشر العلم** ونيل **أجر الصدقة الجارية** بإذن الله.
+
+The main purpose is to **spread knowledge** and earn **ongoing charity reward**, God willing.
 
 ---
 
-## المطوّر
+## المطوّر | Developer
 
-**[محمود حمدي](https://github.com/mahmoodhamdi)**
+**[محمود حمدي | Mahmoud Hamdi](https://github.com/mahmoodhamdi)**
 
-للتواصل والمساهمة:
-- افتح [Issue](https://github.com/mahmoodhamdi/nawawi_40_hadith_app/issues)
-- أو تواصل عبر GitHub
+للتواصل والمساهمة | For contact and contribution:
+- Open an [Issue](https://github.com/mahmoodhamdi/nawawi_40_hadith_app/issues)
+- Or connect via GitHub
 
 ---
 
 <div align="center">
 
 **إذا أعجبك المشروع، لا تنسى إضافة نجمة** ⭐
+**If you like the project, don't forget to add a star** ⭐
 
 اللهم اجعل هذا العمل خالصًا لوجهك الكريم، وارزقنا به الأجر والمغفرة
+
+O Allah, make this work sincere for Your noble sake, and grant us reward and forgiveness
 
 </div>

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../core/l10n/app_localizations.dart';
 import '../cubit/audio_player_cubit.dart';
+import '../cubit/language_cubit.dart';
 import '../screens/focused_reading_screen.dart';
 import '../services/share_image_service.dart';
 import '../cubit/favorites_cubit.dart';
@@ -69,16 +71,25 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
 
 
+  String _getCurrentLanguageCode() {
+    return context.read<LanguageCubit>().state.language.code;
+  }
+
   void _shareHadithOnly() {
-    SharePlus.instance.share(ShareParams(text: widget.hadith.hadith));
+    final languageCode = _getCurrentLanguageCode();
+    SharePlus.instance.share(ShareParams(text: widget.hadith.getHadith(languageCode)));
   }
 
   void _shareDescriptionOnly() {
-    SharePlus.instance.share(ShareParams(text: widget.hadith.description));
+    final languageCode = _getCurrentLanguageCode();
+    SharePlus.instance.share(ShareParams(text: widget.hadith.getDescription(languageCode)));
   }
 
   void _shareBoth() {
-    SharePlus.instance.share(ShareParams(text: '${widget.hadith.hadith}\n\n${widget.hadith.description}'));
+    final languageCode = _getCurrentLanguageCode();
+    final hadithText = widget.hadith.getHadith(languageCode);
+    final descriptionText = widget.hadith.getDescription(languageCode);
+    SharePlus.instance.share(ShareParams(text: '$hadithText\n\n$descriptionText'));
   }
 
   // Font size adjustment methods - now uses FontSizeCubit
@@ -111,6 +122,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   }
 
   void _showShareOptions() {
+    final l10n = AppLocalizations.read(context);
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -122,7 +134,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.short_text),
-              title: const Text('مشاركة الحديث فقط'),
+              title: Text(l10n.shareHadithOnly),
               onTap: () {
                 Navigator.pop(context);
                 _shareHadithOnly();
@@ -130,7 +142,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.description),
-              title: const Text('مشاركة الشرح فقط'),
+              title: Text(l10n.shareDescriptionOnly),
               onTap: () {
                 Navigator.pop(context);
                 _shareDescriptionOnly();
@@ -138,7 +150,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.library_books),
-              title: const Text('مشاركة الحديث مع الشرح'),
+              title: Text(l10n.shareBoth),
               onTap: () {
                 Navigator.pop(context);
                 _shareBoth();
@@ -147,8 +159,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.image),
-              title: const Text('مشاركة كصورة'),
-              subtitle: const Text('صورة جميلة للحديث'),
+              title: Text(l10n.shareAsImage),
+              subtitle: Text(l10n.isArabic ? 'صورة جميلة للحديث' : 'Beautiful hadith image'),
               onTap: () {
                 Navigator.pop(context);
                 _showShareAsImageDialog();
@@ -164,6 +176,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     ShareImageTheme selectedTheme = ShareImageTheme.green;
     bool includeDescription = false;
     final repaintKey = GlobalKey();
+    final l10n = AppLocalizations.read(context);
 
     showDialog(
       context: context,
@@ -191,9 +204,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           icon: const Icon(Icons.close),
                           onPressed: () => Navigator.pop(context),
                         ),
-                        const Text(
-                          'مشاركة كصورة',
-                          style: TextStyle(
+                        Text(
+                          l10n.shareAsImage,
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -226,9 +239,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           const SizedBox(height: 16),
 
                           // Theme selection
-                          const Text(
-                            'اختر اللون',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          Text(
+                            l10n.selectTheme,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           Wrap(
@@ -268,8 +281,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
                           // Include description toggle
                           SwitchListTile(
-                            title: const Text('تضمين الشرح'),
-                            subtitle: const Text('إضافة شرح الحديث للصورة'),
+                            title: Text(l10n.isArabic ? 'تضمين الشرح' : 'Include explanation'),
+                            subtitle: Text(l10n.isArabic ? 'إضافة شرح الحديث للصورة' : 'Add hadith explanation to image'),
                             value: includeDescription,
                             onChanged: (value) {
                               setDialogState(() {
@@ -323,15 +336,17 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             // Show error
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('حدث خطأ أثناء إنشاء الصورة'),
+                                SnackBar(
+                                  content: Text(l10n.isArabic
+                                      ? 'حدث خطأ أثناء إنشاء الصورة'
+                                      : 'Error creating image'),
                                 ),
                               );
                             }
                           }
                         },
                         icon: const Icon(Icons.share),
-                        label: const Text('مشاركة'),
+                        label: Text(l10n.share),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
@@ -349,15 +364,20 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final languageCode = context.watch<LanguageCubit>().state.language.code;
+    final hadithText = widget.hadith.getHadith(languageCode);
+    final descriptionText = widget.hadith.getDescription(languageCode);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.hadith.hadith.split('\n').first.trim()),
+        title: Text(l10n.hadithTitle(widget.index)),
         actions: [
           BlocBuilder<FavoritesCubit, FavoritesState>(
             builder: (context, favoritesState) {
               final isFavorite = favoritesState.isFavorite(widget.index);
               return Semantics(
-                label: isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة',
+                label: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
                 button: true,
                 child: IconButton(
                   icon: Icon(
@@ -367,7 +387,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                   onPressed: () {
                     context.read<FavoritesCubit>().toggleFavorite(widget.index);
                   },
-                  tooltip: isFavorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة',
+                  tooltip: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
                 ),
               );
             },
@@ -375,12 +395,12 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.fullscreen),
             onPressed: _enterFocusedReadingMode,
-            tooltip: 'وضع القراءة المركز',
+            tooltip: l10n.focusedReading,
           ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: _showShareOptions,
-            tooltip: 'مشاركة',
+            tooltip: l10n.share,
           ),
         ],
       ),
@@ -410,7 +430,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'الحديث:',
+                                l10n.isArabic ? 'الحديث:' : 'Hadith:',
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
@@ -419,12 +439,12 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.text_increase),
                                     onPressed: _increaseHadithFontSize,
-                                    tooltip: 'زيادة حجم الخط',
+                                    tooltip: l10n.hadithFontSize,
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.text_decrease),
                                     onPressed: _decreaseHadithFontSize,
-                                    tooltip: 'تقليل حجم الخط',
+                                    tooltip: l10n.hadithFontSize,
                                   ),
                                 ],
                               ),
@@ -434,12 +454,13 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           // Hadith Text with BlocBuilder for Font Size
                           BlocBuilder<FontSizeCubit, FontSizeState>(
                             builder: (context, fontState) {
+                              // Get the hadith text without the first line (title)
+                              final lines = hadithText.split('\n');
+                              final displayText = lines.length > 1
+                                  ? lines.skip(1).join('\n').trim()
+                                  : hadithText;
                               return SelectableText(
-                                widget.hadith.hadith
-                                    .split('\n')
-                                    .skip(1)
-                                    .join('\n')
-                                    .trim(),
+                                displayText,
                                 style: Theme.of(context).textTheme.titleLarge
                                     ?.copyWith(
                                       fontWeight: FontWeight.bold,
@@ -499,7 +520,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'الشرح:',
+                                l10n.explanation,
                                 style: Theme.of(context).textTheme.titleMedium
                                     ?.copyWith(fontWeight: FontWeight.bold),
                               ),
@@ -508,12 +529,12 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.text_increase),
                                     onPressed: _increaseDescriptionFontSize,
-                                    tooltip: 'زيادة حجم الخط',
+                                    tooltip: l10n.descriptionFontSize,
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.text_decrease),
                                     onPressed: _decreaseDescriptionFontSize,
-                                    tooltip: 'تقليل حجم الخط',
+                                    tooltip: l10n.descriptionFontSize,
                                   ),
                                 ],
                               ),
@@ -524,7 +545,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           BlocBuilder<FontSizeCubit, FontSizeState>(
                             builder: (context, fontState) {
                               return SelectableText(
-                                widget.hadith.description,
+                                descriptionText,
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(fontSize: fontState.descriptionFontSize),
                                 textAlign: TextAlign.start,
@@ -559,7 +580,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             _buildNavigationButton(
                               context: context,
                               icon: Icons.arrow_back_ios_rounded,
-                              label: 'الحديث السابق',
+                              label: l10n.previousHadith,
                               onPressed: widget.index > 1
                                   ? () => _navigateToPreviousHadith(context)
                                   : null,
@@ -567,7 +588,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             _buildNavigationButton(
                               context: context,
                               icon: Icons.arrow_forward_ios_rounded,
-                              label: 'الحديث التالي',
+                              label: l10n.nextHadith,
                               onPressed: widget.index < totalHadiths
                                   ? () => _navigateToNextHadith(context)
                                   : null,
@@ -668,13 +689,16 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   }) {
     final isDisabled = onPressed == null;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.read(context);
 
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Semantics(
           label: label,
-          hint: isDisabled ? 'غير متاح' : 'انقر للانتقال',
+          hint: isDisabled
+              ? (l10n.isArabic ? 'غير متاح' : 'Not available')
+              : (l10n.isArabic ? 'انقر للانتقال' : 'Tap to navigate'),
           enabled: !isDisabled,
           button: true,
           child: ElevatedButton(
@@ -700,7 +724,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                   const SizedBox(width: 8),
                   Text(
                     label,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),

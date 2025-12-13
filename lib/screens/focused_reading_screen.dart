@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/l10n/app_localizations.dart';
 import '../cubit/audio_player_cubit.dart';
 import '../cubit/font_size_cubit.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
+import '../cubit/language_cubit.dart';
 import '../cubit/reading_stats_cubit.dart';
 import '../models/hadith.dart';
 
@@ -176,38 +178,50 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                       ),
 
                       // Hadith number
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          'الحديث $_currentIndex',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context);
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              l10n.hadithTitle(_currentIndex),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          );
+                        },
                       ),
 
                       // Toggle description button
-                      IconButton(
-                        icon: Icon(
-                          _showDescription ? Icons.article : Icons.article_outlined,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _showDescription = !_showDescription;
-                          });
+                      Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context);
+                          return IconButton(
+                            icon: Icon(
+                              _showDescription ? Icons.article : Icons.article_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _showDescription = !_showDescription;
+                              });
+                            },
+                            tooltip: _showDescription
+                                ? (l10n.isArabic ? 'إخفاء الشرح' : 'Hide explanation')
+                                : (l10n.isArabic ? 'عرض الشرح' : 'Show explanation'),
+                          );
                         },
-                        tooltip: _showDescription ? 'إخفاء الشرح' : 'عرض الشرح',
                       ),
                     ],
                   ),
@@ -231,26 +245,31 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                       _buildAudioControls(),
 
                       // Navigation hint
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.swipe,
-                              color: Colors.white.withValues(alpha: 0.5),
-                              size: 20,
+                      Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context);
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.swipe,
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  l10n.swipeToNavigate,
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.5),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'اسحب للتنقل بين الأحاديث',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -278,6 +297,12 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
   Widget _buildHadithPage(Hadith hadith, int index) {
     return BlocBuilder<FontSizeCubit, FontSizeState>(
       builder: (context, fontState) {
+        final languageCode = context.watch<LanguageCubit>().state.language.code;
+        final l10n = AppLocalizations.of(context);
+        final isArabic = l10n.isArabic;
+        final hadithText = hadith.getHadith(languageCode);
+        final descriptionText = hadith.getDescription(languageCode);
+
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 100),
           child: Column(
@@ -296,7 +321,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
 
               // Hadith text
               Text(
-                _getHadithText(hadith),
+                _getHadithText(hadithText),
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: fontState.hadithFontSize + 4,
@@ -305,11 +330,11 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
               ),
 
               // Description (if shown)
-              if (_showDescription && hadith.description.isNotEmpty) ...[
+              if (_showDescription && descriptionText.isNotEmpty) ...[
                 const SizedBox(height: 32),
                 Container(
                   padding: const EdgeInsets.all(20),
@@ -322,9 +347,9 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                   ),
                   child: Column(
                     children: [
-                      const Text(
-                        'الشرح',
-                        style: TextStyle(
+                      Text(
+                        l10n.isArabic ? 'الشرح' : 'Explanation',
+                        style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -333,7 +358,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        hadith.description,
+                        descriptionText,
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: fontState.descriptionFontSize,
@@ -341,7 +366,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                           color: Colors.white.withValues(alpha: 0.85),
                         ),
                         textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
+                        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                       ),
                     ],
                   ),
@@ -489,12 +514,12 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
     );
   }
 
-  String _getHadithText(Hadith hadith) {
-    final lines = hadith.hadith.split('\n');
+  String _getHadithText(String hadithText) {
+    final lines = hadithText.split('\n');
     if (lines.length > 1) {
       return lines.skip(1).join('\n').trim();
     }
-    return hadith.hadith;
+    return hadithText;
   }
 
   String _formatDuration(Duration duration) {

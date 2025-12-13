@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '../core/constants.dart';
 import '../models/hadith.dart';
@@ -16,8 +17,13 @@ class HadithLoadException implements Exception {
 
 /// Service responsible for loading hadith data from assets
 class HadithLoader {
+  /// Path to Arabic hadiths JSON
+  static const String _arabicPath = AssetPaths.hadithJson;
 
-  /// Loads all hadiths from the JSON asset file
+  /// Path to English hadiths JSON
+  static const String _englishPath = 'assets/json/40-hadith-nawawi-en.json';
+
+  /// Loads all hadiths from both Arabic and English JSON asset files
   ///
   /// Throws [HadithLoadException] if:
   /// - The asset file cannot be found or read
@@ -25,44 +31,81 @@ class HadithLoader {
   /// - The data structure doesn't match expected format
   static Future<List<Hadith>> loadHadiths() async {
     try {
-      final String jsonString = await rootBundle.loadString(AssetPaths.hadithJson);
+      // Load Arabic hadiths (required)
+      final String arabicJson = await rootBundle.loadString(_arabicPath);
+      final List<dynamic> arabicList = _parseJsonList(arabicJson, 'Arabic');
 
-      final dynamic decoded = json.decode(jsonString);
-
-      if (decoded is! List) {
-        throw HadithLoadException(
-          'تنسيق البيانات غير صحيح: المتوقع قائمة من الأحاديث',
-        );
+      // Try to load English hadiths (optional)
+      List<dynamic>? englishList;
+      try {
+        final String englishJson = await rootBundle.loadString(_englishPath);
+        englishList = _parseJsonList(englishJson, 'English');
+      } catch (e) {
+        // English file is optional, continue with Arabic only
+        debugPrint('English hadiths not available: $e');
       }
 
-      final List<dynamic> jsonList = decoded;
-
-      if (jsonList.isEmpty) {
-        throw HadithLoadException('ملف البيانات فارغ');
-      }
-
-      return jsonList.map((item) {
-        if (item is! Map<String, dynamic>) {
-          throw HadithLoadException(
-            'تنسيق الحديث غير صحيح',
-            item,
-          );
-        }
-        return Hadith.fromJson(item);
-      }).toList();
-
+      // Merge Arabic and English hadiths
+      return _mergeHadiths(arabicList, englishList);
     } on FormatException catch (e) {
       throw HadithLoadException(
-        'خطأ في تنسيق ملف JSON',
+        'خطأ في تنسيق ملف JSON / JSON format error',
         e,
       );
     } catch (e) {
       if (e is HadithLoadException) rethrow;
-      // Handle asset loading errors and other unexpected errors
       final errorMessage = e.toString().contains('Unable to load asset')
-          ? 'فشل تحميل ملف البيانات'
-          : 'خطأ غير متوقع أثناء تحميل الأحاديث';
+          ? 'فشل تحميل ملف البيانات / Failed to load data file'
+          : 'خطأ غير متوقع أثناء تحميل الأحاديث / Unexpected error loading hadiths';
       throw HadithLoadException(errorMessage, e);
     }
+  }
+
+  /// Parse JSON string into a list
+  static List<dynamic> _parseJsonList(String jsonString, String source) {
+    final dynamic decoded = json.decode(jsonString);
+
+    if (decoded is! List) {
+      throw HadithLoadException(
+        'تنسيق البيانات غير صحيح ($source): المتوقع قائمة من الأحاديث',
+      );
+    }
+
+    if (decoded.isEmpty) {
+      throw HadithLoadException('ملف البيانات فارغ ($source)');
+    }
+
+    return decoded;
+  }
+
+  /// Merge Arabic and English hadith lists
+  static List<Hadith> _mergeHadiths(
+    List<dynamic> arabicList,
+    List<dynamic>? englishList,
+  ) {
+    final List<Hadith> hadiths = [];
+
+    for (int i = 0; i < arabicList.length; i++) {
+      final arabicItem = arabicList[i];
+
+      if (arabicItem is! Map<String, dynamic>) {
+        throw HadithLoadException(
+          'تنسيق الحديث غير صحيح (index: $i)',
+          arabicItem,
+        );
+      }
+
+      Map<String, dynamic>? englishItem;
+      if (englishList != null && i < englishList.length) {
+        final item = englishList[i];
+        if (item is Map<String, dynamic>) {
+          englishItem = item;
+        }
+      }
+
+      hadiths.add(Hadith.fromJson(arabicItem, englishItem));
+    }
+
+    return hadiths;
   }
 }

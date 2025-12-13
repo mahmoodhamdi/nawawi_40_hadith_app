@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hadith_nawawi_audio/widgets/hadith_tile.dart';
 
-import '../core/strings.dart';
+import '../core/l10n/app_localizations.dart';
 import '../core/theme/app_theme.dart';
 import '../cubit/favorites_cubit.dart';
 import '../cubit/favorites_state.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
+import '../cubit/language_cubit.dart';
 import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
 import '../cubit/reading_stats_cubit.dart';
@@ -67,26 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     // Format the last read time
     String timeAgo = '';
     if (lastReadTime != null) {
       final difference = DateTime.now().difference(lastReadTime);
-      if (difference.inMinutes < 60) {
-        timeAgo = AppStrings.minutesAgo.replaceAll(
-          '{minutes}',
-          '${difference.inMinutes}',
-        );
+      if (difference.inMinutes < 1) {
+        timeAgo = l10n.justNow;
+      } else if (difference.inMinutes < 60) {
+        timeAgo = l10n.minutesAgo(difference.inMinutes);
       } else if (difference.inHours < 24) {
-        timeAgo = AppStrings.hoursAgo.replaceAll(
-          '{hours}',
-          '${difference.inHours}',
-        );
+        timeAgo = l10n.hoursAgo(difference.inHours);
       } else {
-        timeAgo = AppStrings.daysAgo.replaceAll(
-          '{days}',
-          '${difference.inDays}',
-        );
+        timeAgo = l10n.daysAgo(difference.inDays);
       }
     }
 
@@ -126,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       lastReadIndex,
                     ),
                     icon: const Icon(Icons.play_arrow),
-                    label: const Text(AppStrings.continueReading),
+                    label: Text(l10n.continueReading),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: isDark
                           ? theme.colorScheme.surface
@@ -143,14 +138,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        AppStrings.lastRead,
+                        l10n.lastRead,
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '${AppStrings.hadithNumber} $lastReadIndex',
+                        '${l10n.hadithNumber} $lastReadIndex',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: isDark ? Colors.white70 : Colors.white,
                         ),
@@ -178,6 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildReadingStatsCard(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<ReadingStatsCubit, ReadingStatsState>(
       builder: (context, statsState) {
@@ -222,11 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           size: 28,
                         ),
                         Text(
-                          'إحصائيات القراءة',
+                          l10n.readingProgress,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
-                          textAlign: TextAlign.right,
                         ),
                       ],
                     ),
@@ -237,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildStatItem(
                           context,
                           '${statsState.readCount}',
-                          'مقروءة',
+                          l10n.hadithsRead,
                           Icons.check_circle,
                           Colors.green,
                         ),
@@ -249,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildStatItem(
                           context,
                           '${statsState.remainingCount}',
-                          'متبقية',
+                          l10n.remaining,
                           Icons.schedule,
                           Colors.orange,
                         ),
@@ -261,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         _buildStatItem(
                           context,
                           '${statsState.progressPercent}%',
-                          'مكتمل',
+                          l10n.completed,
                           Icons.pie_chart,
                           theme.colorScheme.primary,
                         ),
@@ -286,7 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (statsState.isComplete) ...[
                       const SizedBox(height: 12),
                       Text(
-                        'مبارك! لقد أتممت قراءة جميع الأحاديث',
+                        l10n.isArabic
+                            ? 'مبارك! لقد أتممت قراءة جميع الأحاديث'
+                            : 'Congratulations! You have read all hadiths',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
@@ -408,6 +405,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    final languageState = context.watch<LanguageCubit>().state;
     final welcomeColor = isDark
         ? theme.colorScheme.onSurface
         : theme.colorScheme.primary;
@@ -422,350 +421,337 @@ class _HomeScreenState extends State<HomeScreen> {
         // Use the existing LastReadCubit instance from the parent context
         BlocProvider.value(value: BlocProvider.of<LastReadCubit>(context)),
       ],
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                title: const Text(
-                  AppStrings.appTitle,
-                  textAlign: TextAlign.right,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              title: Text(l10n.appTitle),
+              centerTitle: true,
+              floating: true,
+              snap: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  tooltip: l10n.settings,
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
+                    );
+                  },
                 ),
-                centerTitle: true,
-                floating: true,
-                snap: true,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    tooltip: 'الإعدادات',
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  PopupMenuButton<AppThemeType>(
-                    icon: const Icon(Icons.color_lens),
-                    tooltip: 'تغيير الثيم',
-                    onSelected: (themeType) {
-                      context.read<ThemeCubit>().changeTheme(themeType);
-                    },
-                    initialValue: context.read<ThemeCubit>().state.themeType,
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: AppThemeType.light,
-                        child: Row(
-                          children: [
-                            Icon(Icons.light_mode, color: Colors.amber[700]),
-                            const SizedBox(width: 8),
-                            const Text('ثيم فاتح', textAlign: TextAlign.right),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppThemeType.dark,
-                        child: Row(
-                          children: [
-                            Icon(Icons.dark_mode, color: Colors.blueGrey[700]),
-                            const SizedBox(width: 8),
-                            const Text('ثيم داكن', textAlign: TextAlign.right),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppThemeType.blue,
-                        child: Row(
-                          children: [
-                            Icon(Icons.water_drop, color: Colors.blue[700]),
-                            const SizedBox(width: 8),
-                            const Text('ثيم أزرق', textAlign: TextAlign.right),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppThemeType.purple,
-                        child: Row(
-                          children: [
-                            Icon(Icons.palette, color: Colors.purple[700]),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'ثيم بنفسجي',
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppThemeType.system,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.brightness_auto,
-                              color: Colors.grey,
-                            ),
-                            const SizedBox(width: 8),
-                            const Text(
-                              'حسب النظام',
-                              textAlign: TextAlign.right,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 8.0,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 16),
-                      Text(
-                        AppStrings.welcome,
-
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: welcomeColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.right,
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
+                PopupMenuButton<AppThemeType>(
+                  icon: const Icon(Icons.color_lens),
+                  tooltip: l10n.theme,
+                  onSelected: (themeType) {
+                    context.read<ThemeCubit>().changeTheme(themeType);
+                  },
+                  initialValue: context.read<ThemeCubit>().state.themeType,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: AppThemeType.light,
+                      child: Row(
                         children: [
-                          Expanded(
-                            child: Material(
-                              elevation: 1,
-                              borderRadius: BorderRadius.circular(30),
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: InputDecoration(
-                                  hintText: AppStrings.searchHint,
-                                  prefixIcon: Icon(
-                                    Icons.search,
-                                    color: searchIconColor,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: borderColor,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: borderColor,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(
-                                      color: theme.colorScheme.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  filled: true,
-                                  fillColor: searchFillColor,
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 14,
-                                  ),
-                                  suffixIcon: _searchQuery.isNotEmpty
-                                      ? IconButton(
-                                          icon: Icon(
-                                            Icons.clear,
-                                            color: searchIconColor,
-                                          ),
-                                          onPressed: () {
-                                            setState(() {
-                                              _searchController.clear();
-                                              _searchQuery = '';
-                                            });
-                                          },
-                                        )
-                                      : null,
-                                ),
-                                onChanged: _onSearchChanged,
-                                textAlign: TextAlign.right,
-                              ),
-                            ),
-                          ),
+                          Icon(Icons.light_mode, color: Colors.amber[700]),
                           const SizedBox(width: 8),
-                          BlocBuilder<FavoritesCubit, FavoritesState>(
-                            builder: (context, favoritesState) {
-                              return Semantics(
-                                label: _showFavoritesOnly
-                                    ? 'إظهار كل الأحاديث'
-                                    : 'إظهار المفضلة فقط (${favoritesState.count})',
-                                button: true,
-                                child: Material(
-                                  elevation: 1,
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: _showFavoritesOnly
-                                      ? theme.colorScheme.primary
-                                      : searchFillColor,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.circular(30),
-                                    onTap: () {
-                                      setState(() {
-                                        _showFavoritesOnly = !_showFavoritesOnly;
-                                      });
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            _showFavoritesOnly
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            color: _showFavoritesOnly
-                                                ? Colors.white
-                                                : Colors.red,
-                                          ),
-                                          if (favoritesState.count > 0) ...[
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${favoritesState.count}',
-                                              style: TextStyle(
-                                                color: _showFavoritesOnly
-                                                    ? Colors.white
-                                                    : theme.colorScheme.onSurface,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                          Text(l10n.lightTheme),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      BlocBuilder<LastReadCubit, LastReadState>(
-                        builder: (context, lastReadState) {
-                          if (lastReadState.hadithIndex != null) {
-                            return _buildContinueReadingCard(
-                              context,
-                              lastReadState.hadithIndex,
-                              lastReadState.lastReadTime,
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
+                    ),
+                    PopupMenuItem(
+                      value: AppThemeType.dark,
+                      child: Row(
+                        children: [
+                          Icon(Icons.dark_mode, color: Colors.blueGrey[700]),
+                          const SizedBox(width: 8),
+                          Text(l10n.darkTheme),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      _buildReadingStatsCard(context),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                    ),
+                    PopupMenuItem(
+                      value: AppThemeType.blue,
+                      child: Row(
+                        children: [
+                          Icon(Icons.water_drop, color: Colors.blue[700]),
+                          const SizedBox(width: 8),
+                          Text(l10n.blueTheme),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: AppThemeType.purple,
+                      child: Row(
+                        children: [
+                          Icon(Icons.palette, color: Colors.purple[700]),
+                          const SizedBox(width: 8),
+                          Text(l10n.purpleTheme),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: AppThemeType.system,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.brightness_auto,
+                            color: Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(l10n.systemTheme),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              BlocBuilder<HadithCubit, HadithState>(
-                builder: (context, hadithState) {
-                  if (hadithState is HadithLoading) {
-                    return const SliverFillRemaining(
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  } else if (hadithState is HadithLoaded) {
-                    return BlocBuilder<FavoritesCubit, FavoritesState>(
-                      builder: (context, favoritesState) {
-                        // Apply search filter
-                        var filtered = _searchQuery.isEmpty
-                            ? hadithState.hadiths
-                            : hadithState.hadiths
-                                .where((h) => _hadithMatchesQuery(h, _searchQuery))
-                                .toList();
-
-                        // Apply favorites filter if enabled
-                        if (_showFavoritesOnly) {
-                          filtered = filtered.where((hadith) {
-                            final originalIndex =
-                                hadithState.hadiths.indexOf(hadith) + 1;
-                            return favoritesState.isFavorite(originalIndex);
-                          }).toList();
-                        }
-
-                        if (filtered.isEmpty) {
-                          return SliverFillRemaining(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    _showFavoritesOnly
-                                        ? Icons.favorite_border
-                                        : Icons.search_off,
-                                    size: 64,
-                                    color: theme.colorScheme.primary
-                                        .withValues(alpha: 0.5),
+              ],
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 16),
+                    Text(
+                      l10n.welcome,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: welcomeColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: languageState.isArabic ? TextAlign.right : TextAlign.left,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Material(
+                            elevation: 1,
+                            borderRadius: BorderRadius.circular(30),
+                            child: TextField(
+                              controller: _searchController,
+                              decoration: InputDecoration(
+                                hintText: l10n.searchHint,
+                                prefixIcon: Icon(
+                                  Icons.search,
+                                  color: searchIconColor,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide(
+                                    color: borderColor,
+                                    width: 1,
                                   ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    _showFavoritesOnly
-                                        ? 'لا توجد أحاديث مفضلة'
-                                        : AppStrings.noResults,
-                                    textAlign: TextAlign.center,
-                                    style: theme.textTheme.titleMedium,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide(
+                                    color: borderColor,
+                                    width: 1,
                                   ),
-                                  if (_showFavoritesOnly) ...[
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'اضغط على القلب في صفحة الحديث لإضافته للمفضلة',
-                                      textAlign: TextAlign.center,
-                                      style: theme.textTheme.bodyMedium?.copyWith(
-                                        color: theme.colorScheme.onSurface
-                                            .withValues(alpha: 0.6),
-                                      ),
-                                    ),
-                                  ],
-                                ],
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                    width: 2,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: searchFillColor,
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 14,
+                                ),
+                                suffixIcon: _searchQuery.isNotEmpty
+                                    ? IconButton(
+                                        icon: Icon(
+                                          Icons.clear,
+                                          color: searchIconColor,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _searchController.clear();
+                                            _searchQuery = '';
+                                          });
+                                        },
+                                      )
+                                    : null,
                               ),
+                              onChanged: _onSearchChanged,
                             ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        BlocBuilder<FavoritesCubit, FavoritesState>(
+                          builder: (context, favoritesState) {
+                            return Semantics(
+                              label: _showFavoritesOnly
+                                  ? l10n.allHadiths
+                                  : '${l10n.favorites} (${favoritesState.count})',
+                              button: true,
+                              child: Material(
+                                elevation: 1,
+                                borderRadius: BorderRadius.circular(30),
+                                color: _showFavoritesOnly
+                                    ? theme.colorScheme.primary
+                                    : searchFillColor,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(30),
+                                  onTap: () {
+                                    setState(() {
+                                      _showFavoritesOnly = !_showFavoritesOnly;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          _showFavoritesOnly
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: _showFavoritesOnly
+                                              ? Colors.white
+                                              : Colors.red,
+                                        ),
+                                        if (favoritesState.count > 0) ...[
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${favoritesState.count}',
+                                            style: TextStyle(
+                                              color: _showFavoritesOnly
+                                                  ? Colors.white
+                                                  : theme.colorScheme.onSurface,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    BlocBuilder<LastReadCubit, LastReadState>(
+                      builder: (context, lastReadState) {
+                        if (lastReadState.hadithIndex != null) {
+                          return _buildContinueReadingCard(
+                            context,
+                            lastReadState.hadithIndex,
+                            lastReadState.lastReadTime,
                           );
                         }
-                        return SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                            final hadith = filtered[index];
-                            final originalIndex =
-                                hadithState.hadiths.indexOf(hadith) + 1;
-                            return HadithTile(
-                              index: originalIndex,
-                              hadith: hadith,
-                              searchQuery: _searchQuery,
-                            );
-                          }, childCount: filtered.length),
-                        );
+                        return const SizedBox.shrink();
                       },
-                    );
-                  } else if (hadithState is HadithError) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child:
-                            Text(hadithState.message, textAlign: TextAlign.right),
-                      ),
-                    );
-                  }
-                  return const SliverToBoxAdapter(child: SizedBox());
-                },
+                    ),
+                    const SizedBox(height: 12),
+                    _buildReadingStatsCard(context),
+                    const SizedBox(height: 16),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+            BlocBuilder<HadithCubit, HadithState>(
+              builder: (context, hadithState) {
+                if (hadithState is HadithLoading) {
+                  return const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (hadithState is HadithLoaded) {
+                  return BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, favoritesState) {
+                      // Apply search filter
+                      var filtered = _searchQuery.isEmpty
+                          ? hadithState.hadiths
+                          : hadithState.hadiths
+                              .where((h) => _hadithMatchesQuery(h, _searchQuery))
+                              .toList();
+
+                      // Apply favorites filter if enabled
+                      if (_showFavoritesOnly) {
+                        filtered = filtered.where((hadith) {
+                          final originalIndex =
+                              hadithState.hadiths.indexOf(hadith) + 1;
+                          return favoritesState.isFavorite(originalIndex);
+                        }).toList();
+                      }
+
+                      if (filtered.isEmpty) {
+                        return SliverFillRemaining(
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  _showFavoritesOnly
+                                      ? Icons.favorite_border
+                                      : Icons.search_off,
+                                  size: 64,
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.5),
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _showFavoritesOnly
+                                      ? l10n.noFavorites
+                                      : l10n.noResults,
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                                if (_showFavoritesOnly) ...[
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    l10n.isArabic
+                                        ? 'اضغط على القلب في صفحة الحديث لإضافته للمفضلة'
+                                        : 'Tap the heart icon on the hadith page to add to favorites',
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: theme.colorScheme.onSurface
+                                          .withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final hadith = filtered[index];
+                          final originalIndex =
+                              hadithState.hadiths.indexOf(hadith) + 1;
+                          return HadithTile(
+                            index: originalIndex,
+                            hadith: hadith,
+                            searchQuery: _searchQuery,
+                          );
+                        }, childCount: filtered.length),
+                      );
+                    },
+                  );
+                } else if (hadithState is HadithError) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(hadithState.message, textAlign: TextAlign.center),
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(child: SizedBox());
+              },
+            ),
+          ],
         ),
       ),
     );

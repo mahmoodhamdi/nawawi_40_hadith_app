@@ -55,10 +55,28 @@ class FontSizeCubit extends Cubit<FontSizeState> {
     final descriptionSize = prefs.getDouble(PreferenceKeys.descriptionFontSize) ??
         FontSizeConstants.defaultDescriptionFontSize;
 
+    // Validate loaded values are within bounds
+    final validatedHadithSize = _clampFontSize(hadithSize);
+    final validatedDescriptionSize = _clampFontSize(descriptionSize);
+
     emit(state.copyWith(
-      hadithFontSize: hadithSize,
-      descriptionFontSize: descriptionSize,
+      hadithFontSize: validatedHadithSize,
+      descriptionFontSize: validatedDescriptionSize,
     ));
+  }
+
+  /// Clamp font size to valid range
+  double _clampFontSize(double size) {
+    if (size < FontSizeConstants.minFontSize) {
+      return FontSizeConstants.minFontSize;
+    }
+    if (size > FontSizeConstants.maxFontSize) {
+      return FontSizeConstants.maxFontSize;
+    }
+    if (size.isNaN || size.isInfinite) {
+      return FontSizeConstants.defaultHadithFontSize;
+    }
+    return size;
   }
 
   /// Save current font size preferences to storage

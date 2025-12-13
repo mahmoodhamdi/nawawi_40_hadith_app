@@ -3,7 +3,7 @@ description: "تطبيق الأربعين النووية بصوت الشيخ أ�
 
 publish_to: "none"
 
-version: 1.0.2+5
+version: 1.2.0+6
 
 environment:
   sdk: ^3.8.0

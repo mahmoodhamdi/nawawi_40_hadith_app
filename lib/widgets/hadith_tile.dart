@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../core/l10n/app_localizations.dart';
+import '../cubit/language_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
 
@@ -51,6 +54,11 @@ class HadithTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final languageCode = context.watch<LanguageCubit>().state.language.code;
+    final isArabic = l10n.isArabic;
+    final hadithText = hadith.getHadith(languageCode);
+
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
       color: theme.colorScheme.secondary,
       backgroundColor: theme.colorScheme.secondary.withAlpha(38),
@@ -66,11 +74,11 @@ class HadithTile extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
 
-    final preview = hadith.hadith.split('\n').first.trim();
+    final preview = hadithText.split('\n').first.trim();
 
     return Semantics(
-      label: 'الحديث رقم $index. $preview',
-      hint: 'انقر لعرض تفاصيل الحديث',
+      label: '${l10n.hadithNumber} $index. $preview',
+      hint: isArabic ? 'انقر لعرض تفاصيل الحديث' : 'Tap to view hadith details',
       button: true,
       child: Card(
         elevation: 3,
@@ -84,7 +92,7 @@ class HadithTile extends StatelessWidget {
           ),
           title: ExcludeSemantics(
             child: RichText(
-              textAlign: TextAlign.end,
+              textAlign: isArabic ? TextAlign.end : TextAlign.start,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               text: _highlightText(
@@ -97,9 +105,9 @@ class HadithTile extends StatelessWidget {
           ),
           subtitle: ExcludeSemantics(
             child: RichText(
-              textAlign: TextAlign.end,
+              textAlign: isArabic ? TextAlign.end : TextAlign.start,
               text: _highlightText(
-                _extractHadithMainStatement(hadith.hadith),
+                _extractHadithMainStatement(hadithText),
                 searchQuery,
                 normalStyle,
                 highlightStyle,

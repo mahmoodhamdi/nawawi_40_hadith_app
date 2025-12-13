@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +33,7 @@ class ReadingStatsCubit extends Cubit<ReadingStatsState> {
         isLoading: false,
       ));
     } catch (e) {
-      // On error, emit empty state
+      debugPrint('Error loading reading stats: $e');
       emit(state.copyWith(
         readHadithIndices: {},
         isLoading: false,

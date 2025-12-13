@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../core/strings.dart';
+import '../core/l10n/app_localizations.dart';
+import '../cubit/language_cubit.dart';
+import '../cubit/language_state.dart';
 import '../cubit/reading_stats_cubit.dart';
 import '../cubit/reminder_cubit.dart';
 import '../cubit/reminder_state.dart';
@@ -13,25 +15,135 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(AppStrings.settings),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.settings),
+        centerTitle: true,
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildLanguageSection(context, theme, l10n),
+          const SizedBox(height: 16),
+          _buildReminderSection(context, theme, l10n),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageSection(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    return BlocBuilder<LanguageCubit, LanguageState>(
+      builder: (context, state) {
+        return Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Section header
+                Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: theme.colorScheme.primary,
+                      size: 28,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.languageLabel,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const Divider(height: 24),
+
+                // Language options
+                _buildLanguageOption(
+                  context: context,
+                  theme: theme,
+                  language: AppLanguage.arabic,
+                  isSelected: state.isArabic,
+                ),
+                const SizedBox(height: 8),
+                _buildLanguageOption(
+                  context: context,
+                  theme: theme,
+                  language: AppLanguage.english,
+                  isSelected: state.isEnglish,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption({
+    required BuildContext context,
+    required ThemeData theme,
+    required AppLanguage language,
+    required bool isSelected,
+  }) {
+    return InkWell(
+      onTap: () => context.read<LanguageCubit>().changeLanguage(language),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? theme.colorScheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
+        child: Row(
           children: [
-            _buildReminderSection(context, theme),
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.outline,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                language.displayName,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle,
+                color: theme.colorScheme.primary,
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReminderSection(BuildContext context, ThemeData theme) {
+  Widget _buildReminderSection(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return BlocBuilder<ReminderCubit, ReminderState>(
       builder: (context, state) {
         if (state.isLoading) {
@@ -67,14 +179,14 @@ class SettingsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppStrings.dailyReminder,
+                            l10n.dailyReminder,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            AppStrings.dailyReminderDescription,
+                            l10n.dailyReminderDescription,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                             ),
@@ -89,14 +201,12 @@ class SettingsScreen extends StatelessWidget {
                 // Toggle switch
                 SwitchListTile(
                   title: Text(
-                    state.isEnabled
-                        ? AppStrings.reminderEnabled
-                        : AppStrings.reminderDisabled,
+                    state.isEnabled ? l10n.reminderEnabled : l10n.reminderDisabled,
                     style: theme.textTheme.bodyLarge,
                   ),
                   subtitle: state.isEnabled
                       ? Text(
-                          '${AppStrings.reminderTime}: ${state.formattedTimeArabic}',
+                          '${l10n.reminderTime}: ${state.formattedTimeArabic}',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                           ),
@@ -119,7 +229,7 @@ class SettingsScreen extends StatelessWidget {
                       Icons.access_time,
                       color: theme.colorScheme.primary,
                     ),
-                    title: const Text(AppStrings.selectTime),
+                    title: Text(l10n.selectTime),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -137,7 +247,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onTap: () => _selectTime(context, state.reminderTime),
+                    onTap: () => _selectTime(context, state.reminderTime, l10n),
                   ),
                 ],
 
@@ -162,7 +272,7 @@ class SettingsScreen extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            AppStrings.permissionRequired,
+                            l10n.permissionRequired,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: Colors.orange[800],
                             ),
@@ -170,7 +280,7 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () => _requestPermissions(context),
-                          child: const Text('السماح'),
+                          child: Text(l10n.allowPermission),
                         ),
                       ],
                     ),
@@ -201,18 +311,19 @@ class SettingsScreen extends StatelessWidget {
     reminderCubit.toggleReminder(nextHadithNumber: nextHadith);
   }
 
-  void _selectTime(BuildContext context, TimeOfDay currentTime) async {
+  void _selectTime(BuildContext context, TimeOfDay currentTime, AppLocalizations l10n) async {
     final theme = Theme.of(context);
+    final languageState = context.read<LanguageCubit>().state;
 
     final selectedTime = await showTimePicker(
       context: context,
       initialTime: currentTime,
-      helpText: AppStrings.selectTime,
-      cancelText: AppStrings.cancel,
-      confirmText: AppStrings.confirm,
+      helpText: l10n.selectTime,
+      cancelText: l10n.cancel,
+      confirmText: l10n.confirm,
       builder: (context, child) {
         return Directionality(
-          textDirection: TextDirection.rtl,
+          textDirection: languageState.textDirection,
           child: Theme(
             data: theme.copyWith(
               timePickerTheme: TimePickerThemeData(
