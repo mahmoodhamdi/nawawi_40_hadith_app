@@ -58,6 +58,7 @@ class HadithTile extends StatelessWidget {
     final languageCode = context.watch<LanguageCubit>().state.language.code;
     final isArabic = l10n.isArabic;
     final hadithText = hadith.getHadith(languageCode);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
       color: theme.colorScheme.secondary,
@@ -76,6 +77,18 @@ class HadithTile extends StatelessWidget {
 
     final preview = hadithText.split('\n').first.trim();
 
+    // Arrow icon that flips in RTL
+    Widget arrowIcon = Icon(
+      Icons.arrow_forward_ios,
+      color: theme.colorScheme.primary,
+    );
+    if (isRtl) {
+      arrowIcon = Transform.scale(
+        scaleX: -1,
+        child: arrowIcon,
+      );
+    }
+
     return Semantics(
       label: '${l10n.hadithNumber} $index. $preview',
       hint: isArabic ? 'انقر لعرض تفاصيل الحديث' : 'Tap to view hadith details',
@@ -92,7 +105,7 @@ class HadithTile extends StatelessWidget {
           ),
           title: ExcludeSemantics(
             child: RichText(
-              textAlign: isArabic ? TextAlign.end : TextAlign.start,
+              textAlign: TextAlign.start,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               text: _highlightText(
@@ -105,7 +118,7 @@ class HadithTile extends StatelessWidget {
           ),
           subtitle: ExcludeSemantics(
             child: RichText(
-              textAlign: isArabic ? TextAlign.end : TextAlign.start,
+              textAlign: TextAlign.start,
               text: _highlightText(
                 _extractHadithMainStatement(hadithText),
                 searchQuery,
@@ -114,12 +127,7 @@ class HadithTile extends StatelessWidget {
               ),
             ),
           ),
-          trailing: ExcludeSemantics(
-            child: Icon(
-              Icons.arrow_forward_ios,
-              color: theme.colorScheme.primary,
-            ),
-          ),
+          trailing: ExcludeSemantics(child: arrowIcon),
           onTap: () {
             // Navigate to hadith details and update last read info via cubit
             Navigator.push(

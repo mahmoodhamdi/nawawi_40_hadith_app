@@ -572,28 +572,34 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           ? hadithState.hadiths.length
                           : 0;
 
+                      // Check if RTL for proper button order
+                      final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+                      final previousButton = _buildNavigationButton(
+                        context: context,
+                        icon: Icons.arrow_back_ios_rounded,
+                        label: l10n.previousHadith,
+                        onPressed: widget.index > 1
+                            ? () => _navigateToPreviousHadith(context)
+                            : null,
+                      );
+
+                      final nextButton = _buildNavigationButton(
+                        context: context,
+                        icon: Icons.arrow_forward_ios_rounded,
+                        label: l10n.nextHadith,
+                        onPressed: widget.index < totalHadiths
+                            ? () => _navigateToNextHadith(context)
+                            : null,
+                      );
+
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 30.0, left: 16.0, right: 16.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildNavigationButton(
-                              context: context,
-                              icon: Icons.arrow_back_ios_rounded,
-                              label: l10n.previousHadith,
-                              onPressed: widget.index > 1
-                                  ? () => _navigateToPreviousHadith(context)
-                                  : null,
-                            ),
-                            _buildNavigationButton(
-                              context: context,
-                              icon: Icons.arrow_forward_ios_rounded,
-                              label: l10n.nextHadith,
-                              onPressed: widget.index < totalHadiths
-                                  ? () => _navigateToNextHadith(context)
-                                  : null,
-                            ),
-                          ],
+                          children: isRtl
+                              ? [nextButton, previousButton]  // RTL: Next on left, Previous on right
+                              : [previousButton, nextButton], // LTR: Previous on left, Next on right
                         ),
                       );
                     },
@@ -690,6 +696,16 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     final isDisabled = onPressed == null;
     final theme = Theme.of(context);
     final l10n = AppLocalizations.read(context);
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    // Mirror the icon in RTL mode
+    Widget iconWidget = Icon(icon, size: 18);
+    if (isRtl) {
+      iconWidget = Transform.scale(
+        scaleX: -1,
+        child: iconWidget,
+      );
+    }
 
     return Expanded(
       child: Padding(
@@ -720,7 +736,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 18),
+                  iconWidget,
                   const SizedBox(width: 8),
                   Text(
                     label,

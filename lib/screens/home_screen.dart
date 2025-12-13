@@ -11,7 +11,6 @@ import '../cubit/favorites_cubit.dart';
 import '../cubit/favorites_state.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
-import '../cubit/language_cubit.dart';
 import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
 import '../cubit/reading_stats_cubit.dart';
@@ -603,7 +602,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
-    final languageState = context.watch<LanguageCubit>().state;
     final welcomeColor = isDark
         ? theme.colorScheme.onSurface
         : theme.colorScheme.primary;
@@ -720,7 +718,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: welcomeColor,
                         fontWeight: FontWeight.bold,
                       ),
-                      textAlign: languageState.isArabic ? TextAlign.right : TextAlign.left,
+                      textAlign: TextAlign.start,
                     ),
                     const SizedBox(height: 16),
                     Row(
