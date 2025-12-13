@@ -216,13 +216,13 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
             ),
 
             // Bottom controls (audio, navigation hints)
-            AnimatedOpacity(
-              opacity: _showControls ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 300),
-              child: Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AnimatedOpacity(
+                opacity: _showControls ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 300),
                 child: SafeArea(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
