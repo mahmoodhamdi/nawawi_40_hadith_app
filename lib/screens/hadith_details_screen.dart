@@ -370,10 +370,28 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     final languageCode = context.watch<LanguageCubit>().state.language.code;
     final hadithText = widget.hadith.getHadith(languageCode);
     final descriptionText = widget.hadith.getDescription(languageCode);
+    final hadithTitle = widget.hadith.getTitle(languageCode);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.hadithTitle(widget.index)),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.hadithTitle(widget.index),
+              style: const TextStyle(fontSize: 16),
+            ),
+            if (hadithTitle.isNotEmpty)
+              Text(
+                hadithTitle,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                  color: Theme.of(context).colorScheme.onPrimary.withAlpha(200),
+                ),
+              ),
+          ],
+        ),
         actions: [
           BlocBuilder<FavoritesCubit, FavoritesState>(
             builder: (context, favoritesState) {

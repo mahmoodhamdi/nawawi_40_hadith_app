@@ -58,6 +58,7 @@ class HadithTile extends StatelessWidget {
     final languageCode = context.watch<LanguageCubit>().state.language.code;
     final isArabic = l10n.isArabic;
     final hadithText = hadith.getHadith(languageCode);
+    final hadithTitle = hadith.getTitle(languageCode);
     final isRtl = Directionality.of(context) == TextDirection.rtl;
 
     final highlightStyle = theme.textTheme.titleMedium?.copyWith(
@@ -76,6 +77,7 @@ class HadithTile extends StatelessWidget {
     );
 
     final preview = hadithText.split('\n').first.trim();
+    final displayTitle = hadithTitle.isNotEmpty ? hadithTitle : preview;
 
     // Arrow icon that flips in RTL
     Widget arrowIcon = Icon(
@@ -90,7 +92,7 @@ class HadithTile extends StatelessWidget {
     }
 
     return Semantics(
-      label: '${l10n.hadithNumber} $index. $preview',
+      label: '${l10n.hadithNumber} $index. $displayTitle',
       hint: isArabic ? 'انقر لعرض تفاصيل الحديث' : 'Tap to view hadith details',
       button: true,
       child: Card(
@@ -103,27 +105,40 @@ class HadithTile extends StatelessWidget {
             horizontal: 20,
             vertical: 12,
           ),
+          leading: CircleAvatar(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+            child: Text(
+              '$index',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
           title: ExcludeSemantics(
             child: RichText(
               textAlign: TextAlign.start,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
               text: _highlightText(
-                preview,
+                displayTitle,
                 searchQuery,
-                subtitleStyle,
-                subtitleHighlight,
+                normalStyle,
+                highlightStyle,
               ),
             ),
           ),
           subtitle: ExcludeSemantics(
-            child: RichText(
-              textAlign: TextAlign.start,
-              text: _highlightText(
-                _extractHadithMainStatement(hadithText),
-                searchQuery,
-                normalStyle,
-                highlightStyle,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: RichText(
+                textAlign: TextAlign.start,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                text: _highlightText(
+                  _extractHadithMainStatement(hadithText),
+                  searchQuery,
+                  subtitleStyle,
+                  subtitleHighlight,
+                ),
               ),
             ),
           ),

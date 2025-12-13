@@ -17,12 +17,16 @@ void main() {
     test('HadithLoaded props contain hadiths list', () {
       final hadiths = [
         Hadith(
+          titleAr: 'العنوان 1',
+          titleEn: 'Title 1',
           hadithAr: 'الحديث 1',
           hadithEn: 'Hadith 1',
           descriptionAr: 'شرح 1',
           descriptionEn: 'Explanation 1',
         ),
         Hadith(
+          titleAr: 'العنوان 2',
+          titleEn: 'Title 2',
           hadithAr: 'الحديث 2',
           hadithEn: 'Hadith 2',
           descriptionAr: 'شرح 2',
@@ -54,6 +58,8 @@ void main() {
     test('HadithLoaded equality', () {
       final hadiths = [
         Hadith(
+          titleAr: 'العنوان',
+          titleEn: 'Title',
           hadithAr: 'الحديث',
           hadithEn: 'Hadith',
           descriptionAr: 'شرح',

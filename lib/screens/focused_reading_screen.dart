@@ -178,10 +178,15 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                         onPressed: () => Navigator.pop(context),
                       ),
 
-                      // Hadith number
+                      // Hadith number and title
                       Builder(
                         builder: (context) {
                           final l10n = AppLocalizations.of(context);
+                          final languageCode = context.watch<LanguageCubit>().state.language.code;
+                          final hadithState = context.watch<HadithCubit>().state;
+                          final hadithTitle = hadithState is HadithLoaded
+                              ? hadithState.hadiths[_currentIndex - 1].getTitle(languageCode)
+                              : '';
                           return Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
@@ -191,13 +196,26 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                               color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Text(
-                              l10n.hadithTitle(_currentIndex),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  l10n.hadithTitle(_currentIndex),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (hadithTitle.isNotEmpty)
+                                  Text(
+                                    hadithTitle,
+                                    style: TextStyle(
+                                      color: Colors.white.withAlpha(220),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                              ],
                             ),
                           );
                         },

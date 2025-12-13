@@ -5,23 +5,30 @@ void main() {
   group('Hadith Model', () {
     test('creates Hadith with required fields', () {
       final hadith = Hadith(
+        titleAr: 'الأعمال بالنيات',
+        titleEn: 'Actions Are By Intentions',
         hadithAr: 'الحديث الأول',
         hadithEn: 'First hadith',
         descriptionAr: 'شرح الحديث الأول',
         descriptionEn: 'First hadith explanation',
       );
 
+      expect(hadith.titleAr, 'الأعمال بالنيات');
+      expect(hadith.titleEn, 'Actions Are By Intentions');
       expect(hadith.hadithAr, 'الحديث الأول');
       expect(hadith.hadithEn, 'First hadith');
       expect(hadith.descriptionAr, 'شرح الحديث الأول');
       expect(hadith.descriptionEn, 'First hadith explanation');
       // Test legacy getters
+      expect(hadith.title, 'الأعمال بالنيات');
       expect(hadith.hadith, 'الحديث الأول');
       expect(hadith.description, 'شرح الحديث الأول');
     });
 
     test('getHadith returns correct language text', () {
       final hadith = Hadith(
+        titleAr: 'العنوان',
+        titleEn: 'Title',
         hadithAr: 'الحديث بالعربية',
         hadithEn: 'Hadith in English',
         descriptionAr: 'شرح بالعربية',
@@ -34,6 +41,8 @@ void main() {
 
     test('getDescription returns correct language text', () {
       final hadith = Hadith(
+        titleAr: 'العنوان',
+        titleEn: 'Title',
         hadithAr: 'الحديث',
         hadithEn: 'Hadith',
         descriptionAr: 'شرح بالعربية',
@@ -42,6 +51,20 @@ void main() {
 
       expect(hadith.getDescription('ar'), 'شرح بالعربية');
       expect(hadith.getDescription('en'), 'Explanation in English');
+    });
+
+    test('getTitle returns correct language text', () {
+      final hadith = Hadith(
+        titleAr: 'العنوان بالعربية',
+        titleEn: 'Title in English',
+        hadithAr: 'الحديث',
+        hadithEn: 'Hadith',
+        descriptionAr: 'شرح',
+        descriptionEn: 'Explanation',
+      );
+
+      expect(hadith.getTitle('ar'), 'العنوان بالعربية');
+      expect(hadith.getTitle('en'), 'Title in English');
     });
 
     test('creates Hadith from valid Arabic JSON', () {
@@ -162,12 +185,16 @@ void main() {
 
     test('creates Hadith using fromBilingual factory', () {
       final hadith = Hadith.fromBilingual(
+        titleAr: 'العنوان',
+        titleEn: 'Title',
         hadithAr: 'الحديث',
         hadithEn: 'Hadith',
         descriptionAr: 'شرح',
         descriptionEn: 'Explanation',
       );
 
+      expect(hadith.titleAr, 'العنوان');
+      expect(hadith.titleEn, 'Title');
       expect(hadith.hadithAr, 'الحديث');
       expect(hadith.hadithEn, 'Hadith');
       expect(hadith.descriptionAr, 'شرح');

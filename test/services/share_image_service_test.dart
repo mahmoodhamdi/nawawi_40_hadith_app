@@ -62,6 +62,8 @@ void main() {
 
   group('ShareableHadithCard', () {
     final testHadith = Hadith(
+      titleAr: 'الأعمال بالنيات',
+      titleEn: 'Actions Are By Intentions',
       hadithAr: 'الحديث الأول\nعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه',
       hadithEn: 'First Hadith\nOn the authority of Umar ibn al-Khattab',
       descriptionAr: 'شرح الحديث: هذا الحديث يتحدث عن النية وأهميتها في العمل.',
@@ -163,6 +165,8 @@ void main() {
 
     testWidgets('renders hadith text correctly', (tester) async {
       final hadithWithTitle = Hadith(
+        titleAr: 'عنوان الحديث',
+        titleEn: 'Hadith Title',
         hadithAr: 'عنوان الحديث\nنص الحديث الفعلي هنا',
         hadithEn: 'Hadith Title\nActual hadith text here',
         descriptionAr: 'الشرح',
@@ -186,6 +190,8 @@ void main() {
 
     testWidgets('renders single line hadith correctly', (tester) async {
       final singleLineHadith = Hadith(
+        titleAr: 'حديث',
+        titleEn: 'Hadith',
         hadithAr: 'حديث في سطر واحد فقط',
         hadithEn: 'Single line hadith only',
         descriptionAr: 'الشرح',
