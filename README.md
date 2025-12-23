@@ -3,13 +3,13 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/الإصدار-1.2.1-brightgreen)
+![Version](https://img.shields.io/badge/الإصدار-1.3.0-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.8+-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.8+-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-269%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-270%20passing-brightgreen)
 ![Languages](https://img.shields.io/badge/Languages-Arabic%20|%20English-purple)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
@@ -208,11 +208,11 @@ flutter pub upgrade
 
 ### الاختبارات | Tests
 
-التطبيق يحتوي على **269 اختبار** شامل | The app contains **269 comprehensive tests**:
+التطبيق يحتوي على **270 اختبار** شامل | The app contains **270 comprehensive tests**:
 
 | النوع / Type | العدد / Count | الوصف / Description |
 |-------|-------|-------|
-| Unit Tests | 256 | Component unit tests |
+| Unit Tests | 257 | Component unit tests |
 | Integration Tests | 13 | Interface integration tests |
 
 ```
@@ -300,7 +300,7 @@ View (Screens/Widgets)
 راجع [خطة التطوير](docs/IMPROVEMENT_PLAN.md) | See [Development Plan](docs/IMPROVEMENT_PLAN.md)
 
 #### مكتمل | Completed
-- [x] Unit tests (241 tests)
+- [x] Unit tests (270 tests)
 - [x] Improved search (debounce + Arabic normalization)
 - [x] Accessibility labels
 - [x] Error handling in data loading
@@ -313,6 +313,8 @@ View (Screens/Widgets)
 - [x] English language support
 - [x] Search by hadith number
 - [x] Search history
+- [x] Hadith titles display
+- [x] Enhanced markdown descriptions
 
 #### مميزات جديدة | New Features
 - [ ] French language support
@@ -335,14 +337,19 @@ View (Screens/Widgets)
 - [x] Reading statistics
 - [x] Share as image
 
-### الإصدار 1.2 | Version 1.2 (Current)
+### الإصدار 1.2 | Version 1.2 (Completed)
 - [x] Daily reminders
 - [x] Focused reading mode
 - [x] English language support
 - [x] Bilingual UI
 - [x] Search by hadith number
 - [x] Search history
-- [x] 269 tests
+
+### الإصدار 1.3 | Version 1.3 (Current)
+- [x] Hadith titles in Arabic and English
+- [x] Enhanced markdown descriptions
+- [x] Improved UI/UX
+- [x] 270 comprehensive tests
 
 ### الإصدار 2.0 | Version 2.0
 - [ ] Cloud sync
