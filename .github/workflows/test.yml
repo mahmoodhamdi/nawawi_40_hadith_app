@@ -1,0 +1,61 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit + widget tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests with coverage
+        run: flutter test --coverage --reporter=expanded
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          retention-days: 14
+
+      # Coverage floor — fail if global line coverage drops below this.
+      # Today's baseline is ~27% because the UI screens lack widget tests.
+      # Cubits, services, and models are all 85%+ covered. As widget tests
+      # are added, raise this gate (target: 60% by end of 2026).
+      - name: Coverage floor check
+        run: |
+          if [ ! -f coverage/lcov.info ]; then
+            echo "::error::coverage/lcov.info not found"
+            exit 1
+          fi
+          lh=$(grep -h '^LH:' coverage/lcov.info | awk -F: '{s+=$2} END {print s+0}')
+          lf=$(grep -h '^LF:' coverage/lcov.info | awk -F: '{s+=$2} END {print s+0}')
+          if [ "$lf" = "0" ]; then
+            echo "::error::No instrumented lines reported"
+            exit 1
+          fi
+          pct=$(awk -v lh=$lh -v lf=$lf 'BEGIN{printf "%.2f", (lh/lf)*100}')
+          floor=25
+          echo "::notice::Line coverage: $pct% ($lh / $lf, floor=$floor%)"
+          if awk -v p=$pct -v f=$floor 'BEGIN{exit !(p < f)}'; then
+            echo "::error::Coverage $pct% below $floor% floor"
+            exit 1
+          fi

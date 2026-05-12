@@ -1,0 +1,39 @@
+name: Static analysis
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Cancel older runs of this workflow on the same ref when a new commit lands.
+concurrency:
+  group: analyze-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: flutter analyze + dart format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show toolchain versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed lib/ test/ integration_test/
+
+      - name: Analyze
+        run: flutter analyze --fatal-warnings --fatal-infos

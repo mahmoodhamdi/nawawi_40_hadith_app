@@ -1,0 +1,74 @@
+name: Web build & Pages deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'web/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'assets/**'
+      - '.github/workflows/build_web.yml'
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: flutter build web
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      artifact-name: web-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web (offline-first PWA)
+        # GitHub Pages serves from a subpath when using a project page;
+        # base href is set so deep links and asset URLs resolve correctly.
+        run: |
+          flutter build web --release \
+            --pwa-strategy=offline-first \
+            --base-href "/nawawi_40_hadith_app/"
+
+      - name: Show build size
+        run: |
+          du -sh build/web
+          ls -la build/web
+
+      - name: Upload Pages artifact
+        # Only on main branch pushes — PRs just verify the build compiles.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
