@@ -12,7 +12,11 @@ import 'cubit/hadith_cubit.dart';
 import 'cubit/language_cubit.dart';
 import 'cubit/language_state.dart';
 import 'cubit/last_read_cubit.dart';
+import 'cubit/memorize_cubit.dart';
+import 'cubit/notes_cubit.dart';
+import 'cubit/quiz_cubit.dart';
 import 'cubit/reading_stats_cubit.dart';
+import 'cubit/reading_streaks_cubit.dart';
 import 'cubit/reminder_cubit.dart';
 import 'cubit/search_history_cubit.dart';
 import 'cubit/theme_cubit.dart';
@@ -53,8 +57,12 @@ class _NawawiAppState extends State<NawawiApp> {
         BlocProvider(create: (context) => AudioPlayerCubit()),
         BlocProvider(create: (context) => FavoritesCubit()),
         BlocProvider(create: (context) => ReadingStatsCubit()),
+        BlocProvider(create: (context) => ReadingStreaksCubit()),
         BlocProvider(create: (context) => ReminderCubit()),
         BlocProvider(create: (context) => SearchHistoryCubit()),
+        BlocProvider(create: (context) => NotesCubit()),
+        BlocProvider(create: (context) => MemorizeCubit()),
+        BlocProvider(create: (context) => QuizCubit()),
       ],
       child: BlocBuilder<LanguageCubit, LanguageState>(
         builder: (context, languageState) {
