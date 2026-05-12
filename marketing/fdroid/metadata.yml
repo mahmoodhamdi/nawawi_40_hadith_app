@@ -1,0 +1,63 @@
+# F-Droid metadata
+# Copy this file to: fdroiddata/metadata/com.mahmoodhamdi.hadith_nawawi_audio.yml
+# in the F-Droid data repository, then submit a merge request.
+
+Categories:
+  - Reading
+AuthorName: Mahmood Hamdi
+AuthorEmail: mwm.softwars.solutions@gmail.com
+WebSite: https://github.com/mahmoodhamdi/nawawi_40_hadith_app
+SourceCode: https://github.com/mahmoodhamdi/nawawi_40_hadith_app
+IssueTracker: https://github.com/mahmoodhamdi/nawawi_40_hadith_app/issues
+License: MIT
+AutoName: Forty Hadith Nawawi
+
+Description: |-
+    A free Islamic app presenting the 42 Hadiths compiled by Imam an-Nawawi,
+    with audio recitation by Sheikh Ahmad Al-Nafees and a simple explanation
+    for each hadith. Fully offline, no advertising, no tracking, no analytics.
+
+    Features:
+
+    * 42 hadiths with verified citations (narrator, source, sunnah.com link)
+    * Audio recitation by Sheikh Ahmad Al-Nafees for every hadith
+    * Simple explanation of each hadith
+    * Smart search by text or hadith number
+    * Favorites and reading progress
+    * Four themes (Light, Dark, Blue, Purple)
+    * Arabic and English with full RTL support
+    * Daily hadith reminder
+    * Focused reading mode
+    * Share hadith as a beautiful image
+
+    The app is offered as a continuing charity (sadaqah jariyah) for every
+    Muslim. It works 100% offline. No data is collected or transmitted.
+
+RepoType: git
+Repo: https://github.com/mahmoodhamdi/nawawi_40_hadith_app
+
+Builds:
+  - versionName: '1.3.0'
+    versionCode: 9
+    commit: v1.3.0
+    subdir: .
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk
+    gradle:
+      - yes
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      - flutter@3.24.0
+    prebuild:
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter pub get
+    scanignore:
+      - android/gradle/wrapper/gradle-wrapper.jar
+    build:
+      - $$flutter$$/bin/flutter build apk --release
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: '1.3.0'
+CurrentVersionCode: 9
