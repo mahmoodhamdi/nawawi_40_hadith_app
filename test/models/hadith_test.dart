@@ -199,6 +199,89 @@ void main() {
       expect(hadith.hadithEn, 'Hadith');
       expect(hadith.descriptionAr, 'شرح');
       expect(hadith.descriptionEn, 'Explanation');
+      expect(hadith.citation, isNull);
+    });
+
+    test('citation is null when JSON omits the citation field', () {
+      final hadith = Hadith.fromJson({'hadith': 'الحديث', 'description': 'شرح'});
+      expect(hadith.citation, isNull);
+    });
+
+    test('parses bilingual citation from JSON', () {
+      final jsonAr = {
+        'hadith': 'الحديث',
+        'description': 'شرح',
+        'citation': {
+          'number': 1,
+          'narrator': 'عمر بن الخطاب رضي الله عنه',
+          'collection': 'البخاري ومسلم',
+          'sunnah_url': 'https://sunnah.com/nawawi40:1',
+        },
+      };
+      final jsonEn = {
+        'hadith': 'Hadith',
+        'description': 'Explanation',
+        'citation': {
+          'number': 1,
+          'narrator': 'Umar ibn al-Khattab (RA)',
+          'collection': 'al-Bukhari and Muslim',
+          'sunnah_url': 'https://sunnah.com/nawawi40:1',
+        },
+      };
+      final hadith = Hadith.fromJson(jsonAr, jsonEn);
+
+      expect(hadith.citation, isNotNull);
+      expect(hadith.citation!.number, 1);
+      expect(hadith.citation!.narratorAr, 'عمر بن الخطاب رضي الله عنه');
+      expect(hadith.citation!.narratorEn, 'Umar ibn al-Khattab (RA)');
+      expect(hadith.citation!.collectionAr, 'البخاري ومسلم');
+      expect(hadith.citation!.collectionEn, 'al-Bukhari and Muslim');
+      expect(hadith.citation!.sunnahUrl, 'https://sunnah.com/nawawi40:1');
+      expect(hadith.citation!.getNarrator('ar'), 'عمر بن الخطاب رضي الله عنه');
+      expect(hadith.citation!.getNarrator('en'), 'Umar ibn al-Khattab (RA)');
+      expect(hadith.citation!.getCollection('ar'), 'البخاري ومسلم');
+      expect(hadith.citation!.getCollection('en'), 'al-Bukhari and Muslim');
+    });
+
+    test('citation falls back to Arabic when English citation is missing', () {
+      final jsonAr = {
+        'hadith': 'الحديث',
+        'description': 'شرح',
+        'citation': {
+          'number': 2,
+          'narrator': 'عمر بن الخطاب',
+          'collection': 'مسلم',
+          'sunnah_url': 'https://sunnah.com/nawawi40:2',
+        },
+      };
+      final jsonEn = {
+        'hadith': 'Hadith',
+        'description': 'Explanation',
+      };
+      final hadith = Hadith.fromJson(jsonAr, jsonEn);
+
+      expect(hadith.citation, isNotNull);
+      expect(hadith.citation!.narratorEn, 'عمر بن الخطاب');
+      expect(hadith.citation!.collectionEn, 'مسلم');
+      expect(hadith.citation!.getNarrator('en'), 'عمر بن الخطاب');
+    });
+  });
+
+  group('HadithCitation', () {
+    test('returns Arabic for ar language and English for en', () {
+      const citation = HadithCitation(
+        number: 5,
+        narratorAr: 'عائشة رضي الله عنها',
+        narratorEn: 'Aisha (RA)',
+        collectionAr: 'البخاري ومسلم',
+        collectionEn: 'al-Bukhari and Muslim',
+        sunnahUrl: 'https://sunnah.com/nawawi40:5',
+      );
+
+      expect(citation.getNarrator('ar'), 'عائشة رضي الله عنها');
+      expect(citation.getNarrator('en'), 'Aisha (RA)');
+      expect(citation.getCollection('ar'), 'البخاري ومسلم');
+      expect(citation.getCollection('en'), 'al-Bukhari and Muslim');
     });
   });
 }
