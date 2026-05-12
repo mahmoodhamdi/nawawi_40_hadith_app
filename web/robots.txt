@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location (relative to the deployed origin)
+Sitemap: /nawawi_40_hadith_app/sitemap.xml
+
+# This app collects no data and uses no tracking. There is nothing
+# behind authentication to disallow.

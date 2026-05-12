@@ -1,13 +1,16 @@
 {
-    "name": "hadith_nawawi_audio",
-    "short_name": "hadith_nawawi_audio",
+    "name": "Forty Hadith Nawawi - الأربعون النووية",
+    "short_name": "Hadith Nawawi",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#FAFAF5",
+    "theme_color": "#1F6E3A",
+    "description": "Open-source Islamic app: 42 Hadiths of Imam an-Nawawi with audio recitation by Sheikh Ahmad Al-Nafees. Fully offline, no ads, no tracking. صدقة جارية.",
+    "orientation": "any",
+    "lang": "ar",
+    "dir": "rtl",
     "prefer_related_applications": false,
+    "categories": ["education", "books"],
     "icons": [
         {
             "src": "icons/Icon-192.png",

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!--
+    Single-page PWA. The Flutter web app handles client-side routing,
+    so search engines only need to crawl the root. If we add SSR or
+    static rendering in the future, expand this list with per-hadith
+    URLs (https://.../hadith/N for N in 1..42).
+  -->
+  <url>
+    <loc>https://mahmoodhamdi.github.io/nawawi_40_hadith_app/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

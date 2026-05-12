@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Hadith Nawawi</ShortName>
+  <Description>Search the Forty Hadith of Imam an-Nawawi — open-source, offline.</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image height="192" width="192" type="image/png">/nawawi_40_hadith_app/icons/Icon-192.png</Image>
+  <Url type="text/html"
+       template="https://mahmoodhamdi.github.io/nawawi_40_hadith_app/?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml"
+       rel="self"
+       template="https://mahmoodhamdi.github.io/nawawi_40_hadith_app/opensearch.xml"/>
+  <moz:SearchForm xmlns:moz="http://www.mozilla.org/2006/browser/search/">https://mahmoodhamdi.github.io/nawawi_40_hadith_app/</moz:SearchForm>
+</OpenSearchDescription>
