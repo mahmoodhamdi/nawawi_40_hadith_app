@@ -1,0 +1,125 @@
+name: Release
+
+# Triggered when a semantic version tag is pushed. Builds Android + Web
+# artifacts and attaches them to a GitHub Release that the developer
+# creates manually after reviewing the artifacts. We deliberately do NOT
+# auto-publish to Google Play / App Store — store submission stays a
+# human-reviewed step.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    name: Android release artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APKs and AAB
+        run: |
+          flutter build apk --release --split-per-abi
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Stage release assets
+        run: |
+          mkdir -p release_artifacts
+          VERSION=${GITHUB_REF_NAME}
+          for f in build/app/outputs/flutter-apk/app-*-release.apk; do
+            abi=$(basename "$f" | sed -E 's/^app-(.*)-release\.apk$/\1/')
+            cp "$f" "release_artifacts/nawawi-40-${VERSION}-${abi}.apk"
+          done
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             "release_artifacts/nawawi-40-${VERSION}-universal.apk" || true
+          cp build/app/outputs/bundle/release/app-release.aab \
+             "release_artifacts/nawawi-40-${VERSION}.aab"
+          ls -la release_artifacts/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-android-${{ github.ref_name }}
+          path: release_artifacts/
+
+  build-web:
+    name: Web release archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --pwa-strategy=offline-first
+
+      - name: Archive
+        run: |
+          VERSION=${GITHUB_REF_NAME}
+          (cd build && zip -qr "../nawawi-40-${VERSION}-web.zip" web)
+          ls -la nawawi-40-${VERSION}-web.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-web-${{ github.ref_name }}
+          path: nawawi-40-*-web.zip
+
+  publish:
+    name: Create draft GitHub Release
+    needs: [build-android, build-web]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Android artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-android-${{ github.ref_name }}
+          path: dist/android/
+
+      - name: Download Web artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-web-${{ github.ref_name }}
+          path: dist/web/
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --draft \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "Artifacts attached. Review and publish manually after smoke-test." \
+            dist/android/*.apk dist/android/*.aab dist/web/*.zip
