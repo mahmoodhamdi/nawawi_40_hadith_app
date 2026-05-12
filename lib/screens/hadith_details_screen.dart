@@ -15,9 +15,14 @@ import '../cubit/font_size_cubit.dart';
 import '../cubit/hadith_cubit.dart';
 import '../cubit/hadith_state.dart';
 import '../cubit/last_read_cubit.dart';
+import '../cubit/memorize_cubit.dart';
 import '../cubit/reading_stats_cubit.dart';
+import '../cubit/reading_streaks_cubit.dart';
 import '../models/hadith.dart';
 import '../widgets/audio_player_widget.dart';
+import '../widgets/hadith_citation_card.dart';
+import '../widgets/hadith_note_card.dart';
+import '../widgets/related_hadiths_card.dart';
 
 class HadithDetailsScreen extends StatefulWidget {
   final int index;
@@ -34,12 +39,18 @@ class HadithDetailsScreen extends StatefulWidget {
 }
 
 class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
+  /// Local reveal-state for memorize mode. Resets to false on every
+  /// hadith navigation (because the screen is reconstructed via
+  /// `pushReplacement`).
+  bool _memorizeRevealed = false;
 
   // Save the current hadith as last read and mark as read
   void _saveLastReadHadith() {
     context.read<LastReadCubit>().updateLastReadHadith(widget.index);
     // Mark this hadith as read for statistics
     context.read<ReadingStatsCubit>().markAsRead(widget.index);
+    // Update the daily consistency streak.
+    context.read<ReadingStreaksCubit>().recordRead();
   }
 
   @override
@@ -176,6 +187,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
   void _showShareAsImageDialog() {
     ShareImageTheme selectedTheme = ShareImageTheme.green;
+    ShareCardTemplate selectedTemplate = ShareCardTemplate.classic;
     bool includeDescription = false;
     final repaintKey = GlobalKey();
     final l10n = AppLocalizations.read(context);
@@ -235,8 +247,39 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                 includeDescription: includeDescription,
                                 backgroundColor: selectedTheme.backgroundColor,
                                 accentColor: selectedTheme.accentColor,
+                                template: selectedTemplate,
                               ),
                             ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Template selection — three visual styles
+                          Text(
+                            l10n.isArabic ? 'النمط' : 'Style',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          SegmentedButton<ShareCardTemplate>(
+                            segments: [
+                              ButtonSegment(
+                                value: ShareCardTemplate.classic,
+                                label: Text(l10n.isArabic ? 'كلاسيكي' : 'Classic'),
+                              ),
+                              ButtonSegment(
+                                value: ShareCardTemplate.minimalist,
+                                label: Text(l10n.isArabic ? 'بسيط' : 'Minimal'),
+                              ),
+                              ButtonSegment(
+                                value: ShareCardTemplate.ornate,
+                                label: Text(l10n.isArabic ? 'مزخرف' : 'Ornate'),
+                              ),
+                            ],
+                            selected: {selectedTemplate},
+                            onSelectionChanged: (set) {
+                              setDialogState(() {
+                                selectedTemplate = set.first;
+                              });
+                            },
                           ),
                           const SizedBox(height: 16),
 
@@ -417,6 +460,20 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             onPressed: _enterFocusedReadingMode,
             tooltip: l10n.focusedReading,
           ),
+          BlocBuilder<MemorizeCubit, bool>(
+            builder: (context, isMemorizing) {
+              return IconButton(
+                icon: Icon(isMemorizing
+                    ? Icons.visibility_off
+                    : Icons.school_outlined),
+                tooltip: isMemorizing ? l10n.exitMemorize : l10n.memorize,
+                onPressed: () {
+                  context.read<MemorizeCubit>().toggle();
+                  setState(() => _memorizeRevealed = false);
+                },
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: _showShareOptions,
@@ -471,25 +528,44 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          // Hadith Text with BlocBuilder for Font Size
-                          BlocBuilder<FontSizeCubit, FontSizeState>(
-                            builder: (context, fontState) {
-                              // Get the hadith text without the first line (title)
-                              final lines = hadithText.split('\n');
-                              final displayText = lines.length > 1
-                                  ? lines.skip(1).join('\n').trim()
-                                  : hadithText;
-                              return SelectableText(
-                                displayText,
-                                style: Theme.of(context).textTheme.titleLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: fontState.hadithFontSize,
-                                    ),
-                                textAlign: TextAlign.start,
-                                contextMenuBuilder: (context, editableTextState) {
-                                  return AdaptiveTextSelectionToolbar.editableText(
-                                    editableTextState: editableTextState,
+                          // Hadith Text — in memorize mode this is hidden
+                          // behind a tap-to-reveal surface.
+                          BlocBuilder<MemorizeCubit, bool>(
+                            builder: (context, isMemorizing) {
+                              return BlocBuilder<FontSizeCubit, FontSizeState>(
+                                builder: (context, fontState) {
+                                  final lines = hadithText.split('\n');
+                                  final displayText = lines.length > 1
+                                      ? lines.skip(1).join('\n').trim()
+                                      : hadithText;
+
+                                  final hadithWidget = SelectableText(
+                                    displayText,
+                                    style: Theme.of(context).textTheme.titleLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontState.hadithFontSize,
+                                        ),
+                                    textAlign: TextAlign.start,
+                                    contextMenuBuilder:
+                                        (context, editableTextState) {
+                                      return AdaptiveTextSelectionToolbar
+                                          .editableText(
+                                        editableTextState: editableTextState,
+                                      );
+                                    },
+                                  );
+
+                                  if (!isMemorizing) return hadithWidget;
+
+                                  return _MemorizeRevealSurface(
+                                    revealed: _memorizeRevealed,
+                                    hint: _memorizeRevealed
+                                        ? l10n.tapToHide
+                                        : l10n.tapToReveal,
+                                    onTap: () => setState(() =>
+                                        _memorizeRevealed = !_memorizeRevealed),
+                                    child: hadithWidget,
                                   );
                                 },
                               );
@@ -522,6 +598,16 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                       ),
                     ),
                   ),
+                ),
+                if (widget.hadith.citation != null) ...[
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(
+                    child: HadithCitationCard(citation: widget.hadith.citation!),
+                  ),
+                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                SliverToBoxAdapter(
+                  child: HadithNoteCard(hadithIndex: widget.index),
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 SliverToBoxAdapter(
@@ -586,6 +672,13 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                         ],
                       ),
                     ),
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                SliverToBoxAdapter(
+                  child: RelatedHadithsCard(
+                    current: widget.hadith,
+                    currentIndex: widget.index,
                   ),
                 ),
                 // Add Next and Previous Hadith Navigation Buttons
@@ -776,6 +869,72 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// In memorize mode this widget hides the hadith body behind a soft surface
+/// with a "Tap to reveal" hint. Tapping flips local state so users can
+/// recall the hadith from memory before checking themselves against the
+/// canonical text. We never persist the reveal state — every navigation
+/// or memorize toggle resets it.
+class _MemorizeRevealSurface extends StatelessWidget {
+  final bool revealed;
+  final String hint;
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _MemorizeRevealSurface({
+    required this.revealed,
+    required this.hint,
+    required this.onTap,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        child: revealed
+            ? Padding(
+                key: const ValueKey('revealed'),
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: child,
+              )
+            : Container(
+                key: const ValueKey('hidden'),
+                padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.visibility_outlined,
+                        color: theme.colorScheme.primary, size: 40),
+                    const SizedBox(height: 12),
+                    Text(
+                      hint,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
