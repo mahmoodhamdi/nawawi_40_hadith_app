@@ -4,14 +4,20 @@ import 'blue_theme.dart';
 import 'dark_theme.dart';
 import 'light_theme.dart';
 import 'purple_theme.dart';
+import 'sepia_theme.dart';
 
-enum AppThemeType { light, dark, blue, purple, system }
+// IMPORTANT — enum order is persisted as the integer index in
+// SharedPreferences. Never reorder the first 5 values (light/dark/blue/
+// purple/system) — that would silently change every user's saved theme
+// when they upgrade. New themes must be appended at the end.
+enum AppThemeType { light, dark, blue, purple, system, sepia }
 
 class AppTheme {
   static ThemeData get light => lightTheme;
   static ThemeData get dark => darkTheme;
   static ThemeData get blue => blueTheme;
   static ThemeData get purple => purpleTheme;
+  static ThemeData get sepia => sepiaTheme;
 
   static List<ThemeMode> get modes => [
     ThemeMode.light,
@@ -19,11 +25,15 @@ class AppTheme {
     ThemeMode.system,
   ];
 
+  /// Order for display purposes only — Sepia is shown above System in
+  /// the picker even though the enum order has it last (for backwards-
+  /// compatible storage indices).
   static List<AppThemeType> get themeTypes => [
     AppThemeType.light,
     AppThemeType.dark,
     AppThemeType.blue,
     AppThemeType.purple,
+    AppThemeType.sepia,
     AppThemeType.system,
   ];
 
@@ -37,6 +47,8 @@ class AppTheme {
         return 'Blue';
       case AppThemeType.purple:
         return 'Purple';
+      case AppThemeType.sepia:
+        return 'Sepia';
       case AppThemeType.system:
         return 'System';
     }
@@ -52,6 +64,8 @@ class AppTheme {
         return blueTheme;
       case AppThemeType.purple:
         return purpleTheme;
+      case AppThemeType.sepia:
+        return sepiaTheme;
       case AppThemeType.system:
         return lightTheme; // Default to light for system
     }
