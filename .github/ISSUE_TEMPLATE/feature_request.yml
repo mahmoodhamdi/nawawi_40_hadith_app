@@ -1,0 +1,48 @@
+name: ✨ Feature suggestion
+description: Suggest a new feature or improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for thinking about how to improve the app. Please remember
+        the project's guarantees: **no ads, no tracking, no cloud, fully
+        offline**. Suggestions that conflict with these are not accepted.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the user need, not the implementation.
+      placeholder: "When I want to memorise a hadith, I currently have to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How would the app feel after the change?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: alignment
+    attributes:
+      label: Alignment with project guarantees
+      options:
+        - label: This feature doesn't require internet access at runtime.
+          required: true
+        - label: This feature doesn't introduce analytics, telemetry, or tracking.
+          required: true
+        - label: This feature doesn't add ads or paywalls.
+          required: true
+        - label: This feature doesn't modify the Arabic hadith text without scholarly review.
+          required: true

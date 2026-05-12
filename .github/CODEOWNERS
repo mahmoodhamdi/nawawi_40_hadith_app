@@ -1,0 +1,27 @@
+# CODEOWNERS for nawawi_40_hadith_app
+#
+# Each line picks a path pattern and lists the owners. The last
+# matching pattern wins. Owners are automatically requested for review
+# when a PR modifies matching files.
+
+# Default owner for everything not otherwise covered
+*                               @mahmoodhamdi
+
+# Arabic hadith content — requires native-speaker review.
+# Any new co-maintainer added here MUST be a confirmed native Arabic
+# speaker with verified scholarly credentials or recommendation.
+/assets/json/40-hadith-nawawi.json      @mahmoodhamdi
+/assets/json/40-hadith-nawawi-en.json   @mahmoodhamdi
+
+# Privacy + security surface — extra eyes
+/PRIVACY.md                     @mahmoodhamdi
+/lib/services/                  @mahmoodhamdi
+/android/app/src/main/AndroidManifest.xml   @mahmoodhamdi
+
+# CI and release infrastructure
+/.github/                       @mahmoodhamdi
+/docs/KEYSTORE_SETUP.md         @mahmoodhamdi
+
+# Da'wah / marketing — anyone designated as a community coordinator
+# can be added here.
+/marketing/                     @mahmoodhamdi
