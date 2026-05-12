@@ -13,6 +13,9 @@ class NotificationService {
   static const String _channelName = 'تذكير الحديث اليومي';
   static const String _channelDescription = 'تذكيرات يومية لقراءة الأحاديث النووية';
   static const int _dailyNotificationId = 1;
+  // Distinct notification IDs so the standard daily reminder and the
+  // Friday special can coexist without overwriting each other.
+  static const int _jumuahNotificationId = 2;
 
   /// Initialize the notification service
   static Future<void> initialize() async {
@@ -152,6 +155,97 @@ class NotificationService {
   static Future<void> cancelReminder() async {
     await _notifications.cancel(_dailyNotificationId);
     debugPrint('Daily reminder cancelled');
+  }
+
+  /// Schedule a recurring Friday-morning notification — used to highlight
+  /// Friday-related hadiths (e.g. on the etiquette of Jumu'ah). Caller
+  /// passes the local time-of-day to fire; the engine picks the next
+  /// Friday at that time and `matchDateTimeComponents` repeats weekly.
+  ///
+  /// Cancellable independently of the daily reminder via [cancelJumuahReminder].
+  static Future<void> scheduleJumuahReminder({
+    required TimeOfDay time,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    await cancelJumuahReminder();
+
+    const androidDetails = AndroidNotificationDetails(
+      _channelId,
+      _channelName,
+      channelDescription: _channelDescription,
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    const darwinDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: darwinDetails,
+      macOS: darwinDetails,
+    );
+
+    final scheduledDate = _nextFridayAtTime(time);
+
+    await _notifications.zonedSchedule(
+      _jumuahNotificationId,
+      title,
+      body,
+      scheduledDate,
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      // dayOfWeekAndTime so it repeats every Friday at the same time.
+      matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+      payload: payload,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+    );
+
+    debugPrint('Jumu\'ah reminder scheduled for Friday ${time.hour}:${time.minute}');
+  }
+
+  /// Cancel the Friday reminder without touching the daily one.
+  static Future<void> cancelJumuahReminder() async {
+    await _notifications.cancel(_jumuahNotificationId);
+    debugPrint('Jumu\'ah reminder cancelled');
+  }
+
+  /// Heuristic local-time anchors used when the user chooses
+  /// "after Fajr" or "before Maghrib" without configuring a precise time.
+  /// We don't compute true astronomical prayer times (would require GPS
+  /// or city DB; that's out of scope for an offline app) — these are
+  /// conservative-but-useful approximations that the user can override.
+  static const TimeOfDay afterFajrApprox = TimeOfDay(hour: 6, minute: 0);
+  static const TimeOfDay afterDhuhrApprox = TimeOfDay(hour: 13, minute: 30);
+  static const TimeOfDay afterAsrApprox = TimeOfDay(hour: 16, minute: 30);
+  static const TimeOfDay beforeMaghribApprox = TimeOfDay(hour: 18, minute: 0);
+  static const TimeOfDay afterIshaApprox = TimeOfDay(hour: 20, minute: 30);
+
+  /// Compute the next Friday at [time] in the local timezone.
+  static tz.TZDateTime _nextFridayAtTime(TimeOfDay time) {
+    final now = tz.TZDateTime.now(tz.local);
+    var candidate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      time.hour,
+      time.minute,
+    );
+    // DateTime.weekday: Monday=1, ..., Friday=5, Saturday=6, Sunday=7
+    while (candidate.weekday != DateTime.friday || candidate.isBefore(now)) {
+      candidate = candidate.add(const Duration(days: 1));
+    }
+    return candidate;
   }
 
   /// Calculate the next instance of a given time
