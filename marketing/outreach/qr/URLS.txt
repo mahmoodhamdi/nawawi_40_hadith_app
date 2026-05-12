@@ -1,0 +1,61 @@
+Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=Forty Hadith Nawawi — QR code targets
+=
+
+github                https://github.com/mahmoodhamdi/nawawi_40_hadith_app
+github_releases       https://github.com/mahmoodhamdi/nawawi_40_hadith_app/releases/latest
+play_store            https://play.google.com/store/apps/details?id=com.ashwah.hadith_nawawi_audio
+app_store             https://apps.apple.com/app/nawawi-40-hadith/idTBD
+huawei                https://appgallery.huawei.com/app/Cxxx
+fdroid                https://f-droid.org/packages/com.ashwah.hadith_nawawi_audio/
+web_pwa               https://mahmoodhamdi.github.io/nawawi_40_hadith_app/
+
+Replace placeholder Play/App Store IDs once the listings exist.
