@@ -1,0 +1,142 @@
+{
+  "@@locale": "ar",
+  "appTitle": "الأربعون النووية",
+  "welcome": "وَما آتاكُمُ الرَّسُولُ فَخُذُوهُ\nوَما نَهاكُمْ عَنْهُ فَانْتَهُوا",
+  "searchHint": "ابحث عن حديث...",
+  "noResults": "لا يوجد نتائج للبحث.",
+  "searchHistory": "سجل البحث",
+  "clearHistory": "مسح الكل",
+  "noSearchHistory": "لا يوجد سجل بحث",
+  "recentSearches": "عمليات البحث الأخيرة",
+  "searchByNumber": "بحث برقم الحديث",
+  "hadithNumber": "الحديث رقم",
+  "explanation": "الشرح:",
+  "share": "مشاركة",
+  "shareHadithOnly": "مشاركة الحديث فقط",
+  "shareDescriptionOnly": "مشاركة الشرح فقط",
+  "shareBoth": "مشاركة الحديث مع الشرح",
+  "shareAsImage": "مشاركة كصورة",
+  "selectTheme": "اختر الثيم",
+  "play": "تشغيل الصوت",
+  "pause": "إيقاف الصوت",
+  "replay": "إعادة",
+  "skipForward": "تقديم 10 ثواني",
+  "skipBackward": "رجوع 10 ثواني",
+  "playbackSpeed": "سرعة التشغيل",
+  "continueReading": "متابعة القراءة",
+  "lastRead": "آخر قراءة",
+  "completed": "مكتمل",
+  "readingProgress": "تقدم القراءة",
+  "hadithsRead": "أحاديث مقروءة",
+  "remaining": "متبقي",
+  "markAsRead": "تحديد كمقروء",
+  "markAsUnread": "تحديد كغير مقروء",
+  "favorites": "المفضلة",
+  "allHadiths": "كل الأحاديث",
+  "addToFavorites": "إضافة للمفضلة",
+  "removeFromFavorites": "إزالة من المفضلة",
+  "noFavorites": "لا توجد أحاديث مفضلة",
+  "settings": "الإعدادات",
+  "languageLabel": "اللغة",
+  "arabic": "العربية",
+  "english": "الإنجليزية",
+  "theme": "المظهر",
+  "lightTheme": "فاتح",
+  "darkTheme": "داكن",
+  "systemTheme": "النظام",
+  "blueTheme": "أزرق",
+  "purpleTheme": "بنفسجي",
+  "dailyReminder": "التذكير اليومي",
+  "dailyReminderDescription": "تذكير يومي لقراءة حديث من الأربعين النووية",
+  "reminderTime": "وقت التذكير",
+  "reminderEnabled": "التذكير مفعّل",
+  "reminderDisabled": "التذكير معطّل",
+  "permissionRequired": "يرجى السماح بالإشعارات",
+  "permissionDenied": "تم رفض صلاحية الإشعارات",
+  "selectTime": "اختر الوقت",
+  "allowPermission": "السماح",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "am": "صباحاً",
+  "pm": "مساءً",
+  "justNow": "الآن",
+  "next": "التالي",
+  "previous": "السابق",
+  "nextHadith": "الحديث التالي",
+  "previousHadith": "الحديث السابق",
+  "focusedReading": "وضع القراءة المركز",
+  "tapToShowControls": "انقر لإظهار عناصر التحكم",
+  "swipeToNavigate": "اسحب للتنقل",
+  "fontSize": "حجم الخط",
+  "hadithFontSize": "حجم خط الحديث",
+  "descriptionFontSize": "حجم خط الشرح",
+  "error": "خطأ",
+  "loadingError": "حدث خطأ أثناء التحميل",
+  "retry": "إعادة المحاولة",
+  "aboutApp": "عن التطبيق",
+  "version": "الإصدار",
+  "developer": "المطور",
+  "reciter": "القارئ",
+  "sheikhAhmadAlNafees": "الشيخ أحمد النفيس",
+  "narrator": "الراوي",
+  "source": "المصدر",
+  "citation": "المرجع",
+  "viewOnSunnah": "الرجوع إلى sunnah.com",
+  "hadithTitle": "الحديث {number}",
+  "@hadithTitle": {
+    "placeholders": {
+      "numberHadith": {
+        "type": "int"
+      },
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesAgo": "منذ {minutes} دقيقة",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "منذ {hours} ساعة",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "منذ {days} يوم",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "narratedBy": "رواه {name}",
+  "@narratedBy": {
+    "placeholders": {
+      "nameNarrated": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportedIn": "أخرجه {collection}",
+  "@reportedIn": {
+    "placeholders": {
+      "collectionReported": {
+        "type": "String"
+      },
+      "collection": {
+        "type": "String"
+      }
+    }
+  }
+}

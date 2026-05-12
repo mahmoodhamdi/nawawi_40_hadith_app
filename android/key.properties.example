@@ -1,0 +1,17 @@
+# Example keystore properties for Android release signing.
+#
+# Copy this file to `android/key.properties` (gitignored) and fill in
+# real values. Never commit the real file.
+#
+# Generate a keystore with:
+#   keytool -genkey -v -keystore android/app/upload-keystore.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# Store the keystore + this file securely (1Password / Bitwarden /
+# encrypted backup) — losing the keystore means you can never publish
+# an update to the same Play Store listing.
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=../app/upload-keystore.jks

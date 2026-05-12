@@ -3,20 +3,24 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/الإصدار-1.3.0-brightgreen)
+![Version](https://img.shields.io/badge/الإصدار-1.4.0-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.8+-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.8+-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Platform](https://img.shields.io/badge/Platform-Android%20|%20iOS%20|%20Web-orange)
 ![Status](https://img.shields.io/badge/Status-Active-success)
-![Tests](https://img.shields.io/badge/Tests-270%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-300+%20passing-brightgreen)
 ![Languages](https://img.shields.io/badge/Languages-Arabic%20|%20English-purple)
+![Offline](https://img.shields.io/badge/Offline-100%25-success)
+![No%20Ads](https://img.shields.io/badge/No%20ads-✓-success)
+![No%20Tracking](https://img.shields.io/badge/No%20tracking-✓-success)
+![Sadaqah](https://img.shields.io/badge/صدقة%20جارية-🌿-brightgreen)
 
 **صدقة جارية مفتوحة المصدر** – شارك في الأجر وطور معنا
 
 **Open source ongoing charity** – Join in the reward and develop with us
 
-[تحميل التطبيق](#-التثبيت) • [المساهمة](#-المساهمة) • [خطة التطوير](docs/IMPROVEMENT_PLAN.md)
+[التثبيت](#-التثبيت) • [المساهمة](#-المساهمة) • [الخصوصية](PRIVACY.md) • [خطة التطوير](docs/IMPROVEMENT_PLAN.md) • [خطة الدعوة](marketing/DAWAH_PLAN.md)
 
 </div>
 
@@ -32,6 +36,8 @@ An **Islamic Flutter app** that displays the **Forty Hadith Nawawi** with audio 
 
 - **بدون إنترنت**: كل المحتوى متاح offline | **Offline**: All content available offline
 - **بدون إعلانات**: تجربة نقية بدون تشتيت | **Ad-free**: Pure experience without distractions
+- **بدون تتبع**: خصوصيتك محفوظة 100% | **No tracking**: 100% private, no analytics, no SDKs
+- **مرجع موثق**: كل حديث مع رابط sunnah.com والراوي والمصدر | **Verified citations**: every hadith with narrator, collection, and sunnah.com URL
 - **مفتوح المصدر**: شارك في الأجر بالتطوير | **Open source**: Earn reward by contributing
 - **خفيف وسريع**: حجم صغير وأداء ممتاز | **Light & fast**: Small size, excellent performance
 - **ثنائي اللغة**: دعم كامل للعربية والإنجليزية | **Bilingual**: Full Arabic and English support
@@ -72,10 +78,24 @@ An **Islamic Flutter app** that displays the **Forty Hadith Nawawi** with audio 
 | المفضلة | حفظ الأحاديث المفضلة | Favorites | Save favorite hadiths |
 | الإحصائيات | تقدم القراءة | Statistics | Reading progress |
 | متابعة القراءة | آخر حديث | Continue | Last read hadith |
-| المشاركة | نص أو صورة | Share | Text or image |
+| المشاركة | نص أو صورة (3 أنماط) | Share | Text or image (3 templates) |
 | القراءة المركزة | وضع غامر | Focused Reading | Immersive mode |
 | التذكيرات | تذكير يومي | Reminders | Daily reminder |
 | تبديل اللغة | عربي/إنجليزي | Language Switch | Arabic/English |
+
+### الميزات الجديدة في 1.4.0 | New in 1.4.0
+
+| الميزة | الوصف | Feature | Description |
+|--------|--------|---------|-------------|
+| المراجع | الراوي والمصدر ورابط sunnah.com لكل حديث | Citations | Narrator, source, sunnah.com URL per hadith |
+| استمرارية القراءة | حساب الأيام المتتالية بدون gamification | Reading Streaks | Daily consistency tracking, gentle framing |
+| ملاحظاتك | ملاحظات شخصية لكل حديث (Markdown، محلية) | Personal Notes | Per-hadith Markdown notes (local) |
+| وضع الحفظ | إخفاء النص + كشف باللمس | Memorize Mode | Hide-and-reveal for memorization |
+| اختبار المعرفة | 10 أسئلة على الأحاديث (الراوي/المصدر/الرقم) | Quiz Mode | 10-question MCQ session |
+| نسخ احتياطي محلي | تصدير/استيراد JSON بدون cloud | Local Backup | Local export/import — no cloud |
+| ملاحظات | إرسال ملاحظات عبر share sheet إلى GitHub | Feedback | Share-sheet feedback to GitHub |
+| تصدير PDF | حفظ حديث واحد أو الكل كـ PDF | PDF Export | Single or full collection as PDF |
+| ثيم سيبيا | ثيم خامس للراحة البصرية | Sepia Theme | 5th theme for eye-care reading |
 
 ---
 
