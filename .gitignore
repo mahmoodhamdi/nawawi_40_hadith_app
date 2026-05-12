@@ -50,3 +50,9 @@ android/key.jks
 android/app/key.properties
 **/*.keystore
 **/*.jks
+.agent/
+
+# Test coverage output (generated, not committed)
+/coverage/
+/coverage_html/
+
