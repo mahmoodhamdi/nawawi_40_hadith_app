@@ -90,6 +90,22 @@ class AppLocalizations {
   String get blueTheme => isArabic ? 'أزرق' : 'Blue';
   String get purpleTheme => isArabic ? 'بنفسجي' : 'Purple';
 
+  // Friday / Jumu'ah reminder
+  String get jumuahReminder => isArabic ? 'تذكير الجمعة' : 'Friday reminder';
+  String get jumuahReminderDescription => isArabic
+      ? 'تذكير خاص بحديث الجمعة كل أسبوع'
+      : 'Special weekly reminder about Jumu\'ah etiquette';
+
+  // Prayer-time anchors (approximate, no GPS required)
+  String get afterFajr => isArabic ? 'بعد الفجر' : 'After Fajr';
+  String get afterDhuhr => isArabic ? 'بعد الظهر' : 'After Dhuhr';
+  String get afterAsr => isArabic ? 'بعد العصر' : 'After Asr';
+  String get beforeMaghrib => isArabic ? 'قبل المغرب' : 'Before Maghrib';
+  String get afterIsha => isArabic ? 'بعد العشاء' : 'After Isha';
+  String get prayerAnchorsNote => isArabic
+      ? 'الأوقات تقريبية — يمكنك ضبط الوقت يدوياً'
+      : 'Approximate times — adjust manually if needed';
+
   // Daily Reminder
   String get dailyReminder => isArabic ? 'التذكير اليومي' : 'Daily Reminder';
   String get dailyReminderDescription => isArabic
@@ -140,4 +156,124 @@ class AppLocalizations {
   String get developer => isArabic ? 'المطور' : 'Developer';
   String get reciter => isArabic ? 'القارئ' : 'Reciter';
   String get sheikhAhmadAlNafees => isArabic ? 'الشيخ أحمد النفيس' : 'Sheikh Ahmad Al-Nafees';
+
+  // Related hadiths
+  String get relatedHadiths =>
+      isArabic ? 'أحاديث ذات صلة' : 'Related hadiths';
+  String get topics => isArabic ? 'المواضيع' : 'Topics';
+  String get browseByTopic => isArabic ? 'تصفح حسب الموضوع' : 'Browse by topic';
+
+  // Citation
+  String get narrator => isArabic ? 'الراوي' : 'Narrator';
+  String get source => isArabic ? 'المصدر' : 'Source';
+  String get citation => isArabic ? 'المرجع' : 'Citation';
+  String get viewOnSunnah => isArabic ? 'الرجوع إلى sunnah.com' : 'Reference on sunnah.com';
+  String narratedBy(String name) => isArabic ? 'رواه $name' : 'Narrated by $name';
+  String reportedIn(String collection) => isArabic ? 'أخرجه $collection' : 'Reported in $collection';
+
+  // Reading streaks — phrased gently around istiqamah, not gamification.
+  String get streakCurrentLabel => isArabic ? 'تواصلك الحالي' : 'Current streak';
+  String get streakLongestLabel => isArabic ? 'أطول تواصل' : 'Longest streak';
+  String streakDays(int count) {
+    if (isArabic) {
+      if (count == 0) return 'لم تبدأ بعد';
+      if (count == 1) return 'يوم واحد';
+      if (count == 2) return 'يومان';
+      if (count <= 10) return '$count أيام';
+      return '$count يوماً';
+    }
+    return count == 1 ? '$count day' : '$count days';
+  }
+  String get streakEncouragement => isArabic
+      ? 'اقرأ حديثاً اليوم لاستمرار التواصل'
+      : 'Read one hadith today to keep your streak';
+  String get streakReset => isArabic ? 'إعادة تصفير' : 'Reset streak';
+
+  // Notes
+  String get notes => isArabic ? 'الملاحظات' : 'Notes';
+  String get yourNotes => isArabic ? 'ملاحظاتك' : 'Your notes';
+  String get addNote => isArabic ? 'إضافة ملاحظة' : 'Add note';
+  String get editNote => isArabic ? 'تعديل الملاحظة' : 'Edit note';
+  String get deleteNote => isArabic ? 'حذف الملاحظة' : 'Delete note';
+  String get noteHint => isArabic
+      ? 'اكتب ملاحظتك على الحديث هنا (Markdown مدعوم)...'
+      : 'Write your note here (Markdown supported)...';
+  String get clearAllNotes => isArabic ? 'حذف كل الملاحظات' : 'Clear all notes';
+  String notesCount(int n) => isArabic ? '$n ملاحظة' : '$n notes';
+
+  // Backup
+  String get backup => isArabic ? 'النسخ الاحتياطي' : 'Backup';
+  String get exportBackup => isArabic ? 'تصدير نسخة احتياطية' : 'Export backup';
+  String get importBackup => isArabic ? 'استيراد نسخة احتياطية' : 'Import backup';
+  String get backupHint => isArabic
+      ? 'يمكنك تصدير إعداداتك ومفضلتك كملف JSON محفوظ على جهازك. لا يتم رفع أي شيء على الإنترنت.'
+      : 'Export your settings and favorites to a local JSON file. Nothing is uploaded.';
+  String get pasteBackupJson => isArabic
+      ? 'الصق محتوى ملف النسخة الاحتياطية هنا'
+      : 'Paste the backup JSON content here';
+  String backupRestored(int count) => isArabic
+      ? 'تم استرجاع $count عنصراً'
+      : 'Restored $count items';
+  String get backupFailed => isArabic
+      ? 'فشل استيراد النسخة الاحتياطية'
+      : 'Failed to import backup';
+  String get backupSubject => isArabic
+      ? 'الأربعون النووية — نسخة احتياطية'
+      : 'Forty Hadith Nawawi — backup';
+
+  // Feedback
+  String get sendFeedback => isArabic ? 'إرسال ملاحظة' : 'Send feedback';
+  String get feedbackHint => isArabic
+      ? 'اكتب ملاحظتك أو اقتراحك أو بلّغ عن خطأ...'
+      : 'Write your feedback, suggestion, or bug report...';
+  String get feedbackThanks => isArabic
+      ? 'جزاك الله خيراً، اختر تطبيقاً لإرسال الملاحظة'
+      : 'Thank you. Choose an app to send your feedback';
+  String get feedbackCopied => isArabic
+      ? 'تم نسخ الملاحظة. الصقها في GitHub Issues'
+      : 'Feedback copied. Paste into GitHub Issues';
+
+  // Memorization mode
+  String get memorize => isArabic ? 'وضع الحفظ' : 'Memorize';
+  String get exitMemorize => isArabic ? 'خروج من الحفظ' : 'Exit memorize';
+  String get tapToReveal => isArabic
+      ? 'انقر لكشف الحديث'
+      : 'Tap to reveal the hadith';
+  String get tapToHide => isArabic ? 'انقر لإخفاء الحديث' : 'Tap to hide';
+
+  // Sepia / themes
+  String get sepiaTheme => isArabic ? 'سيبيا (راحة للعين)' : 'Sepia (eye-care)';
+  String get autoTheme => isArabic ? 'تبديل تلقائي عند الغروب' : 'Auto dark after sunset';
+
+  // Misc dialog
+  String get confirmAction => isArabic ? 'تأكيد الإجراء' : 'Confirm action';
+  String get yes => isArabic ? 'نعم' : 'Yes';
+  String get no => isArabic ? 'لا' : 'No';
+  String get done => isArabic ? 'تم' : 'Done';
+  String get linkCopied => isArabic ? 'تم نسخ الرابط' : 'Link copied';
+
+  // Quiz
+  String get quizTitle => isArabic ? 'اختبر معرفتك' : 'Test Your Knowledge';
+  String get quizIntro => isArabic
+      ? 'عشرة أسئلة على الأربعين النووية لمراجعة ما تعلمته. لا توقيت ولا ضغط — هدفنا التعلم.'
+      : 'Ten questions on the Forty Hadith to review what you learned. No timer, no pressure — this is for learning.';
+  String get quizStart => isArabic ? 'ابدأ' : 'Start';
+  String get quizRetry => isArabic ? 'إعادة' : 'Try again';
+  String quizProgress(int current, int total) =>
+      isArabic ? '$current من $total' : '$current of $total';
+  String quizResultScore(int correct, int total) => isArabic
+      ? 'النتيجة: $correct من $total'
+      : 'Score: $correct of $total';
+  String get quizVerdictExcellent => isArabic
+      ? 'ما شاء الله، إجابات ممتازة!'
+      : 'Mashallah, excellent work!';
+  String get quizVerdictGood => isArabic
+      ? 'جيد، استمر في المراجعة'
+      : 'Good — keep reviewing!';
+  String get quizVerdictKeepLearning => isArabic
+      ? 'الاستمرارية أهم من النتيجة. أعد المحاولة.'
+      : 'Consistency matters more than score. Try again.';
+  String get quizReviewCorrect => isArabic ? 'الإجابة الصحيحة' : 'Correct answer';
+  String quizReviewHadithRef(int index) =>
+      isArabic ? 'الحديث رقم $index' : 'Hadith #$index';
 }

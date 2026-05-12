@@ -141,6 +141,42 @@ class PreferenceKeys {
 
   /// Key for storing search history
   static const String searchHistory = 'search_history';
+
+  /// Key for storing the date a hadith was last read (yyyy-MM-dd, local).
+  /// Used to compute reading streaks.
+  static const String streakLastDate = 'streak_last_date';
+
+  /// Key for storing the current consecutive-day reading streak count.
+  static const String streakCurrent = 'streak_current';
+
+  /// Key for storing the longest streak ever achieved on this device.
+  static const String streakLongest = 'streak_longest';
+
+  /// Key for storing per-hadith notes (JSON map: hadith index → markdown).
+  static const String hadithNotes = 'hadith_notes';
+
+  /// Key for the Friday (Jumu'ah) reminder enabled flag.
+  static const String jumuahReminderEnabled = 'jumuah_reminder_enabled';
+
+  /// Key for the Friday reminder hour (0-23, local time).
+  static const String jumuahReminderHour = 'jumuah_reminder_hour';
+
+  /// Key for the Friday reminder minute (0-59).
+  static const String jumuahReminderMinute = 'jumuah_reminder_minute';
+}
+
+/// App identity constants.
+///
+/// `appVersion` is duplicated from `pubspec.yaml` because reading
+/// pubspec at runtime requires the `package_info_plus` plugin, which is a
+/// new dependency we deliberately avoid (keeps APK size + permission
+/// surface minimal). When bumping `pubspec.yaml`, also update this value;
+/// CI can catch drift later if a check is added.
+class AppInfo {
+  AppInfo._();
+
+  /// Keep in sync with `version:` line in `pubspec.yaml`.
+  static const String appVersion = '1.4.0+10';
 }
 
 /// Constants related to assets

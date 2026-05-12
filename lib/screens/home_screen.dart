@@ -15,12 +15,15 @@ import '../cubit/last_read_cubit.dart';
 import '../cubit/last_read_state.dart';
 import '../cubit/reading_stats_cubit.dart';
 import '../cubit/reading_stats_state.dart';
+import '../cubit/reading_streaks_cubit.dart';
+import '../cubit/reading_streaks_state.dart';
 import '../cubit/search_history_cubit.dart';
 import '../cubit/search_history_state.dart';
 import '../cubit/theme_cubit.dart';
 import '../models/hadith.dart';
 import '../screens/hadith_details_screen.dart';
 import '../screens/settings_screen.dart';
+import '../services/search_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -470,16 +473,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _searchFocusNode.unfocus();
   }
 
-  /// Normalizes Arabic text for better search matching
-  ///
-  /// Removes diacritics (tashkeel) and normalizes common character variations
+  /// Normalizes Arabic text for better search matching.
+  /// Retained as a private helper; the home screen now delegates to
+  /// [SearchService.matches] for the actual hit test.
+  // ignore: unused_element
   String _normalizeArabicText(String text) {
-    // Remove Arabic diacritics (tashkeel)
     final diacritics = RegExp(
       '[\u064B-\u065F\u0670\u06D6-\u06ED]',
     );
 
-    // Normalize alef variations
     String normalized = text
         .replaceAll(diacritics, '')
         .replaceAll('أ', 'ا')
@@ -491,21 +493,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return normalized;
   }
 
-  /// Checks if hadith matches the search query
+  /// Checks if hadith matches the search query.
+  ///
+  /// Delegates to [SearchService.matches] which adds:
+  ///   - Latin → Arabic transliteration (typing "niyyah" finds "نية")
+  ///   - Fuzzy match on tokens for queries ≥ 4 chars
+  ///   - Matches against title, topics, and citation narrator/source
+  ///
+  /// The legacy `_normalizeArabicText` is retained for any other
+  /// callers and as a tested fast-path; SearchService internally uses
+  /// the same normalization rules.
   bool _hadithMatchesQuery(Hadith hadith, String query, int hadithIndex) {
     if (query.isEmpty) return true;
 
-    // Check if searching by hadith number
+    // Check if searching by hadith number — exact-only intent.
     if (_searchedHadithNumber != null) {
       return hadithIndex == _searchedHadithNumber;
     }
 
-    final normalizedQuery = _normalizeArabicText(query);
-    final normalizedHadith = _normalizeArabicText(hadith.hadith);
-    final normalizedDescription = _normalizeArabicText(hadith.description);
-
-    return normalizedHadith.contains(normalizedQuery) ||
-        normalizedDescription.contains(normalizedQuery);
+    return SearchService.matches(query, hadith);
   }
 
   /// Builds the search history dropdown widget
@@ -686,6 +692,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     PopupMenuItem(
+                      value: AppThemeType.sepia,
+                      child: Row(
+                        children: [
+                          Icon(Icons.menu_book, color: Colors.brown[600]),
+                          const SizedBox(width: 8),
+                          Text(l10n.sepiaTheme),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
                       value: AppThemeType.system,
                       child: Row(
                         children: [
@@ -720,7 +736,62 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       textAlign: TextAlign.start,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
+                    BlocBuilder<ReadingStreaksCubit, ReadingStreaksState>(
+                      builder: (context, streakState) {
+                        if (streakState.isLoading || streakState.current == 0) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: const EdgeInsetsDirectional.only(bottom: 12),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const SettingsScreen(),
+                                ),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.12),
+                                  border: Border.all(
+                                    color: theme.colorScheme.primary
+                                        .withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.local_fire_department,
+                                      size: 16,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      l10n.streakDays(streakState.current),
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        color: theme.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         Expanded(

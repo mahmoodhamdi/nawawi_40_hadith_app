@@ -58,15 +58,20 @@ void main() {
       expect(AppThemeType.values, contains(AppThemeType.dark));
       expect(AppThemeType.values, contains(AppThemeType.blue));
       expect(AppThemeType.values, contains(AppThemeType.purple));
+      expect(AppThemeType.values, contains(AppThemeType.sepia));
       expect(AppThemeType.values, contains(AppThemeType.system));
     });
 
     test('theme types have correct indices', () {
+      // Order is persisted to SharedPreferences as an integer index, so
+      // we MUST keep the first 5 values stable. Sepia was appended at
+      // index 5 in v1.4.0; future themes must also append, never insert.
       expect(AppThemeType.light.index, 0);
       expect(AppThemeType.dark.index, 1);
       expect(AppThemeType.blue.index, 2);
       expect(AppThemeType.purple.index, 3);
       expect(AppThemeType.system.index, 4);
+      expect(AppThemeType.sepia.index, 5);
     });
   });
 
