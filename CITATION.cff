@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+title: "Forty Hadith Nawawi - الأربعون النووية"
+message: "If you reference this app in academic or da'wah work, please cite it as below."
+type: software
+authors:
+  - family-names: "Hamdi"
+    given-names: "Mahmood"
+    affiliation: "Independent developer"
+    email: "mwm.softwars.solutions@gmail.com"
+identifiers:
+  - type: url
+    value: "https://github.com/mahmoodhamdi/nawawi_40_hadith_app"
+    description: "Project repository"
+repository-code: "https://github.com/mahmoodhamdi/nawawi_40_hadith_app"
+url: "https://github.com/mahmoodhamdi/nawawi_40_hadith_app"
+abstract: >-
+  An open-source Islamic mobile and web application presenting the
+  42 Hadiths compiled by Imam an-Nawawi, with audio recitation by
+  Sheikh Ahmad Al-Nafees, simple explanations, and verified citations
+  (narrator + collection + sunnah.com URL). Fully offline,
+  ad-free, and privacy-preserving. Released as ongoing charity
+  (sadaqah jariyah).
+keywords:
+  - hadith
+  - nawawi
+  - islam
+  - sunnah
+  - quran
+  - islamic-app
+  - dawah
+  - sadaqah-jariyah
+  - offline-first
+  - flutter
+license: MIT
+version: "1.4.0"
+date-released: "2026-05-13"

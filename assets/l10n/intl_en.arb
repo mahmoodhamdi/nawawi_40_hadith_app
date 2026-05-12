@@ -1,0 +1,142 @@
+{
+  "@@locale": "en",
+  "appTitle": "Forty Hadith Nawawi",
+  "welcome": "And whatever the Messenger gives you, take it\nAnd whatever he forbids you, abstain from it",
+  "searchHint": "Search for hadith...",
+  "noResults": "No search results found.",
+  "searchHistory": "Search History",
+  "clearHistory": "Clear All",
+  "noSearchHistory": "No search history",
+  "recentSearches": "Recent Searches",
+  "searchByNumber": "Search by hadith number",
+  "hadithNumber": "Hadith No.",
+  "explanation": "Explanation:",
+  "share": "Share",
+  "shareHadithOnly": "Share hadith only",
+  "shareDescriptionOnly": "Share explanation only",
+  "shareBoth": "Share hadith with explanation",
+  "shareAsImage": "Share as image",
+  "selectTheme": "Select theme",
+  "play": "Play audio",
+  "pause": "Pause audio",
+  "replay": "Replay",
+  "skipForward": "Forward 10s",
+  "skipBackward": "Rewind 10s",
+  "playbackSpeed": "Playback speed",
+  "continueReading": "Continue Reading",
+  "lastRead": "Last read",
+  "completed": "Completed",
+  "readingProgress": "Reading Progress",
+  "hadithsRead": "Hadiths read",
+  "remaining": "Remaining",
+  "markAsRead": "Mark as read",
+  "markAsUnread": "Mark as unread",
+  "favorites": "Favorites",
+  "allHadiths": "All Hadiths",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
+  "noFavorites": "No favorite hadiths",
+  "settings": "Settings",
+  "languageLabel": "Language",
+  "arabic": "Arabic",
+  "english": "English",
+  "theme": "Theme",
+  "lightTheme": "Light",
+  "darkTheme": "Dark",
+  "systemTheme": "System",
+  "blueTheme": "Blue",
+  "purpleTheme": "Purple",
+  "dailyReminder": "Daily Reminder",
+  "dailyReminderDescription": "Daily reminder to read a hadith from the Forty Nawawi",
+  "reminderTime": "Reminder time",
+  "reminderEnabled": "Reminder enabled",
+  "reminderDisabled": "Reminder disabled",
+  "permissionRequired": "Please allow notifications",
+  "permissionDenied": "Notification permission denied",
+  "selectTime": "Select time",
+  "allowPermission": "Allow",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "am": "AM",
+  "pm": "PM",
+  "justNow": "Just now",
+  "next": "Next",
+  "previous": "Previous",
+  "nextHadith": "Next hadith",
+  "previousHadith": "Previous hadith",
+  "focusedReading": "Focused Reading",
+  "tapToShowControls": "Tap to show controls",
+  "swipeToNavigate": "Swipe to navigate",
+  "fontSize": "Font size",
+  "hadithFontSize": "Hadith font size",
+  "descriptionFontSize": "Explanation font size",
+  "error": "Error",
+  "loadingError": "An error occurred while loading",
+  "retry": "Retry",
+  "aboutApp": "About App",
+  "version": "Version",
+  "developer": "Developer",
+  "reciter": "Reciter",
+  "sheikhAhmadAlNafees": "Sheikh Ahmad Al-Nafees",
+  "narrator": "Narrator",
+  "source": "Source",
+  "citation": "Citation",
+  "viewOnSunnah": "Reference on sunnah.com",
+  "hadithTitle": "Hadith {number}",
+  "@hadithTitle": {
+    "placeholders": {
+      "numberHadith": {
+        "type": "int"
+      },
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "minutesAgo": "{minutes} minutes ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours} hours ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days} days ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "narratedBy": "Narrated by {name}",
+  "@narratedBy": {
+    "placeholders": {
+      "nameNarrated": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportedIn": "Reported in {collection}",
+  "@reportedIn": {
+    "placeholders": {
+      "collectionReported": {
+        "type": "String"
+      },
+      "collection": {
+        "type": "String"
+      }
+    }
+  }
+}
