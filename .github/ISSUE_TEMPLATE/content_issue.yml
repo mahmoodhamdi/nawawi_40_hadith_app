@@ -1,0 +1,70 @@
+name: 📖 Content correction
+description: Report a mistake in the Arabic hadith text, translation, citation, or narrator
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Content issues are taken very seriously. Please cite a canonical
+        source so the maintainers can verify and fix correctly.
+
+        **Do not propose a fix without citing a source.** Random
+        corrections risk introducing errors into a religious text.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of issue
+      options:
+        - Arabic hadith text — typo / wrong word
+        - English translation — wrong / misleading
+        - Citation — wrong narrator
+        - Citation — wrong source collection
+        - Citation — wrong sunnah.com URL
+        - Topic tag — wrong / missing
+        - Other content issue
+    validations:
+      required: true
+
+  - type: input
+    id: hadith_number
+    attributes:
+      label: Hadith number (1–42)
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: What the app currently shows
+      description: Copy-paste the exact text from the app.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Authoritative source
+      description: |
+        Cite one of:
+          - A published edition of Imam an-Nawawi's collection (e.g. dar al-Salam, dar al-Minhaj)
+          - sunnah.com URL (https://sunnah.com/nawawi40:N)
+          - A peer-reviewed Islamic publisher (IslamHouse, Dorar.net)
+      placeholder: "e.g. https://sunnah.com/nawawi40:4 — confirms أحدكم as one word"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: respect
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand this is a religious text and corrections require scholarly review before merging.
+          required: true
