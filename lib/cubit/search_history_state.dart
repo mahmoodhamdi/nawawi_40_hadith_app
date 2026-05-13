@@ -8,15 +8,9 @@ class SearchHistoryState extends Equatable {
   /// Whether the history is currently being loaded
   final bool isLoading;
 
-  const SearchHistoryState({
-    this.history = const [],
-    this.isLoading = false,
-  });
+  const SearchHistoryState({this.history = const [], this.isLoading = false});
 
-  SearchHistoryState copyWith({
-    List<String>? history,
-    bool? isLoading,
-  }) {
+  SearchHistoryState copyWith({List<String>? history, bool? isLoading}) {
     return SearchHistoryState(
       history: history ?? this.history,
       isLoading: isLoading ?? this.isLoading,

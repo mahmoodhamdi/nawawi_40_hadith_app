@@ -56,10 +56,7 @@ void main() {
     });
 
     test('props contains history and isLoading', () {
-      const state = SearchHistoryState(
-        history: ['query'],
-        isLoading: true,
-      );
+      const state = SearchHistoryState(history: ['query'], isLoading: true);
 
       expect(state.props.length, 2);
       expect(state.props[0], ['query']);
@@ -195,8 +192,10 @@ void main() {
 
       expect(cubit.state.count, SearchConstants.maxHistoryItems);
       // Most recent should be first
-      expect(cubit.state.history.first,
-          'query ${SearchConstants.maxHistoryItems + 4}');
+      expect(
+        cubit.state.history.first,
+        'query ${SearchConstants.maxHistoryItems + 4}',
+      );
 
       await cubit.close();
     });
@@ -214,17 +213,20 @@ void main() {
       await cubit.close();
     });
 
-    test('addSearchQuery ignores queries shorter than minQueryLength', () async {
-      SharedPreferences.setMockInitialValues({});
-      final cubit = SearchHistoryCubit();
+    test(
+      'addSearchQuery ignores queries shorter than minQueryLength',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final cubit = SearchHistoryCubit();
 
-      await Future.delayed(const Duration(milliseconds: 100));
-      await cubit.addSearchQuery('a');
+        await Future.delayed(const Duration(milliseconds: 100));
+        await cubit.addSearchQuery('a');
 
-      expect(cubit.state.count, 0);
+        expect(cubit.state.count, 0);
 
-      await cubit.close();
-    });
+        await cubit.close();
+      },
+    );
 
     test('addSearchQuery trims whitespace', () async {
       SharedPreferences.setMockInitialValues({});

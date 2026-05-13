@@ -41,5 +41,11 @@ class QuizQuestion extends Equatable {
   bool isCorrect(int selectedIndex) => selectedIndex == correctIndex;
 
   @override
-  List<Object?> get props => [kind, prompt, choices, correctIndex, sourceHadithIndex];
+  List<Object?> get props => [
+    kind,
+    prompt,
+    choices,
+    correctIndex,
+    sourceHadithIndex,
+  ];
 }

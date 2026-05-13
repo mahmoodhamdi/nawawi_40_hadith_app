@@ -56,10 +56,12 @@ class FeedbackService {
       appVersion: appVersion,
       locale: locale,
     );
-    await SharePlus.instance.share(ShareParams(
-      text: body,
-      subject: 'Feedback: Forty Hadith Nawawi $appVersion',
-    ));
+    await SharePlus.instance.share(
+      ShareParams(
+        text: body,
+        subject: 'Feedback: Forty Hadith Nawawi $appVersion',
+      ),
+    );
   }
 
   /// Copy the feedback body to the clipboard — useful as a fallback when

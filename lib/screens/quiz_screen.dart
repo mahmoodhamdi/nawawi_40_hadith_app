@@ -20,10 +20,7 @@ class QuizScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.quizTitle),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.quizTitle), centerTitle: true),
       body: SafeArea(
         child: BlocBuilder<QuizCubit, QuizState>(
           builder: (context, state) {
@@ -49,9 +46,9 @@ class QuizScreen extends StatelessWidget {
     if (hadithState is! HadithLoaded) return;
     final arabic = context.read<LanguageCubit>().state.isArabic;
     context.read<QuizCubit>().start(
-          hadiths: hadithState.hadiths,
-          arabic: arabic,
-        );
+      hadiths: hadithState.hadiths,
+      arabic: arabic,
+    );
   }
 }
 
@@ -69,8 +66,11 @@ class _QuizIntro extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.quiz_outlined,
-                size: 96, color: theme.colorScheme.primary),
+            Icon(
+              Icons.quiz_outlined,
+              size: 96,
+              color: theme.colorScheme.primary,
+            ),
             const SizedBox(height: 24),
             Text(
               l10n.quizTitle,
@@ -93,7 +93,9 @@ class _QuizIntro extends StatelessWidget {
               label: Text(l10n.quizStart),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 32, vertical: 14),
+                  horizontal: 32,
+                  vertical: 14,
+                ),
                 textStyle: const TextStyle(fontSize: 18),
               ),
               onPressed: onStart,
@@ -131,17 +133,21 @@ class _QuizQuestionView extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 8,
-                    backgroundColor: theme.colorScheme.primary
-                        .withValues(alpha: 0.15),
+                    backgroundColor: theme.colorScheme.primary.withValues(
+                      alpha: 0.15,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: 12),
               Text(
                 l10n.quizProgress(
-                    state.currentIndex + 1, state.questions.length),
+                  state.currentIndex + 1,
+                  state.questions.length,
+                ),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -156,7 +162,8 @@ class _QuizQuestionView extends StatelessWidget {
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Text(
@@ -215,14 +222,17 @@ class _ChoiceButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.radio_button_unchecked,
-                  color: theme.colorScheme.primary),
+              Icon(
+                Icons.radio_button_unchecked,
+                color: theme.colorScheme.primary,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   label,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w500),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -262,7 +272,8 @@ class _QuizResults extends StatelessWidget {
           Text(
             l10n.quizResultScore(correct, total),
             style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold),
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
@@ -350,14 +361,18 @@ class _ReviewTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(isCorrect ? Icons.check_circle : Icons.cancel,
-                  color: color, size: 18),
+              Icon(
+                isCorrect ? Icons.check_circle : Icons.cancel,
+                color: color,
+                size: 18,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l10n.quizReviewHadithRef(question.sourceHadithIndex),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],

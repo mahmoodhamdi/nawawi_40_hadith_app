@@ -44,13 +44,13 @@ class AudioPlayerState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isPlaying,
-        isLoading,
-        position,
-        duration,
-        playbackSpeed,
-        errorMessage,
-      ];
+    isPlaying,
+    isLoading,
+    position,
+    duration,
+    playbackSpeed,
+    errorMessage,
+  ];
 }
 
 // Audio Player Cubit
@@ -83,18 +83,17 @@ class AudioPlayerCubit extends Cubit<AudioPlayerState> {
 
       await _player.setAsset(path);
       final duration = _player.duration ?? Duration.zero;
-      emit(state.copyWith(
-        duration: duration,
-        isLoading: false,
-      ));
+      emit(state.copyWith(duration: duration, isLoading: false));
       debugPrint('Audio loaded successfully. Duration: $duration');
     } catch (e, stackTrace) {
       debugPrint('Error loading audio: $e');
       debugPrint('Stack trace: $stackTrace');
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'فشل تحميل الملف الصوتي: ${e.toString()}',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'فشل تحميل الملف الصوتي: ${e.toString()}',
+        ),
+      );
     }
   }
 

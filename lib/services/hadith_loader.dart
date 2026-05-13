@@ -48,10 +48,7 @@ class HadithLoader {
       // Merge Arabic and English hadiths
       return _mergeHadiths(arabicList, englishList);
     } on FormatException catch (e) {
-      throw HadithLoadException(
-        'خطأ في تنسيق ملف JSON / JSON format error',
-        e,
-      );
+      throw HadithLoadException('خطأ في تنسيق ملف JSON / JSON format error', e);
     } catch (e) {
       if (e is HadithLoadException) rethrow;
       final errorMessage = e.toString().contains('Unable to load asset')

@@ -21,8 +21,9 @@ class ShareImageService {
   }) async {
     try {
       // Get the RenderRepaintBoundary
-      final boundary = repaintKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      final boundary =
+          repaintKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
 
       if (boundary == null) {
         throw Exception('Could not find render boundary');
@@ -40,7 +41,8 @@ class ShareImageService {
 
       // Save to temporary file
       final tempDir = await getTemporaryDirectory();
-      final fileName = 'hadith_${hadithIndex}_${DateTime.now().millisecondsSinceEpoch}.png';
+      final fileName =
+          'hadith_${hadithIndex}_${DateTime.now().millisecondsSinceEpoch}.png';
       final file = File('${tempDir.path}/$fileName');
       await file.writeAsBytes(bytes);
 
@@ -62,8 +64,9 @@ class ShareImageService {
     double pixelRatio = 3.0,
   }) async {
     try {
-      final boundary = repaintKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      final boundary =
+          repaintKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
 
       if (boundary == null) return null;
 
@@ -343,9 +346,7 @@ class ShareableHadithCard extends StatelessWidget {
       decoration: const BoxDecoration(color: bg),
       child: Container(
         margin: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: accent, width: 3),
-        ),
+        decoration: BoxDecoration(border: Border.all(color: accent, width: 3)),
         child: Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -359,7 +360,9 @@ class ShareableHadithCard extends StatelessWidget {
               const SizedBox(height: 18),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 18, vertical: 6),
+                  horizontal: 18,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: accent.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
@@ -475,13 +478,7 @@ class _OrnamentBar extends StatelessWidget {
 }
 
 /// Available color themes for sharing
-enum ShareImageTheme {
-  green,
-  blue,
-  purple,
-  gold,
-  dark,
-}
+enum ShareImageTheme { green, blue, purple, gold, dark }
 
 /// Extension to get theme colors
 extension ShareImageThemeColors on ShareImageTheme {

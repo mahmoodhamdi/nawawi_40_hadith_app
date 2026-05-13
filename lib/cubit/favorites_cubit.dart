@@ -26,15 +26,9 @@ class FavoritesCubit extends Cubit<FavoritesState> {
             .cast<int>()
             .toSet();
 
-        emit(state.copyWith(
-          favoriteIndices: favorites,
-          isLoading: false,
-        ));
+        emit(state.copyWith(favoriteIndices: favorites, isLoading: false));
       } else {
-        emit(state.copyWith(
-          favoriteIndices: {},
-          isLoading: false,
-        ));
+        emit(state.copyWith(favoriteIndices: {}, isLoading: false));
       }
     } catch (e) {
       debugPrint('Error loading favorites: $e');

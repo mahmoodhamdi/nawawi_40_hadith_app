@@ -101,7 +101,12 @@ void main() {
 
     test('non-string values inside stored map are filtered out', () async {
       SharedPreferences.setMockInitialValues({
-        'hadith_notes': json.encode({'1': 'valid', '2': 42, '3': '', '4': null}),
+        'hadith_notes': json.encode({
+          '1': 'valid',
+          '2': 42,
+          '3': '',
+          '4': null,
+        }),
       });
       final cubit = NotesCubit();
       await Future<void>.delayed(Duration.zero);

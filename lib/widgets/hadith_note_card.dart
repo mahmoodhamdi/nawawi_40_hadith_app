@@ -34,7 +34,9 @@ class HadithNoteCard extends StatelessWidget {
 
         return Card(
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           color: theme.cardColor,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -43,14 +45,18 @@ class HadithNoteCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.note_alt_outlined,
-                        size: 20, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.note_alt_outlined,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         l10n.yourNotes,
                         style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     if (hasNote) ...[
@@ -74,24 +80,32 @@ class HadithNoteCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 14, horizontal: 12),
+                        vertical: 14,
+                        horizontal: 12,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.3,
+                          ),
                           style: BorderStyle.solid,
                         ),
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.add,
-                              color: theme.colorScheme.primary, size: 18),
+                          Icon(
+                            Icons.add,
+                            color: theme.colorScheme.primary,
+                            size: 18,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             l10n.addNote,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w600),
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),

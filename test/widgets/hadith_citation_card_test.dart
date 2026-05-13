@@ -30,9 +30,9 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('renders narrator + collection + URL row', (tester) async {
-    await tester.pumpWidget(_harness(
-      const HadithCitationCard(citation: _testCitation),
-    ));
+    await tester.pumpWidget(
+      _harness(const HadithCitationCard(citation: _testCitation)),
+    );
     await tester.pump();
 
     // The Arabic narrator + collection appear in default state
@@ -42,9 +42,9 @@ void main() {
   });
 
   testWidgets('shows copy / link icons', (tester) async {
-    await tester.pumpWidget(_harness(
-      const HadithCitationCard(citation: _testCitation),
-    ));
+    await tester.pumpWidget(
+      _harness(const HadithCitationCard(citation: _testCitation)),
+    );
     await tester.pump();
     expect(find.byIcon(Icons.menu_book_rounded), findsOneWidget);
     expect(find.byIcon(Icons.link_rounded), findsOneWidget);
@@ -55,15 +55,15 @@ void main() {
     final clipboard = <String, dynamic>{};
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform, (call) async {
-      if (call.method == 'Clipboard.setData') {
-        clipboard['text'] = call.arguments['text'];
-      }
-      return null;
-    });
+          if (call.method == 'Clipboard.setData') {
+            clipboard['text'] = call.arguments['text'];
+          }
+          return null;
+        });
 
-    await tester.pumpWidget(_harness(
-      const HadithCitationCard(citation: _testCitation),
-    ));
+    await tester.pumpWidget(
+      _harness(const HadithCitationCard(citation: _testCitation)),
+    );
     await tester.pump();
 
     await tester.tap(find.byIcon(Icons.copy_rounded));
@@ -76,10 +76,12 @@ void main() {
     // The LanguageCubit reads its persisted language from the
     // 'app_language' key (not 'language' — that's a different cubit).
     SharedPreferences.setMockInitialValues({'app_language': 'en'});
-    await tester.pumpWidget(_harness(
-      const HadithCitationCard(citation: _testCitation),
-      arabic: false,
-    ));
+    await tester.pumpWidget(
+      _harness(
+        const HadithCitationCard(citation: _testCitation),
+        arabic: false,
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Umar ibn al-Khattab (RA)'), findsOneWidget);

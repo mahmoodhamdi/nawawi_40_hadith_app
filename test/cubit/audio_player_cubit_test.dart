@@ -197,10 +197,7 @@ void main() {
   group('AudioConstants', () {
     test('skip duration is configured correctly', () {
       expect(AudioConstants.skipDurationSeconds, 10);
-      expect(
-        AudioConstants.skipDuration,
-        const Duration(seconds: 10),
-      );
+      expect(AudioConstants.skipDuration, const Duration(seconds: 10));
     });
 
     test('default playback speed is 1.0', () {

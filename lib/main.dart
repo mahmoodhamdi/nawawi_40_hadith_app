@@ -48,11 +48,13 @@ class _NawawiAppState extends State<NawawiApp> {
         BlocProvider(create: (context) => LanguageCubit()),
         BlocProvider(create: (context) => LastReadCubit()),
         BlocProvider(create: (context) => ThemeCubit()),
-        BlocProvider(create: (context) {
-          final cubit = HadithCubit();
-          cubit.fetchHadiths();
-          return cubit;
-        }),
+        BlocProvider(
+          create: (context) {
+            final cubit = HadithCubit();
+            cubit.fetchHadiths();
+            return cubit;
+          },
+        ),
         BlocProvider(create: (context) => FontSizeCubit()),
         BlocProvider(create: (context) => AudioPlayerCubit()),
         BlocProvider(create: (context) => FavoritesCubit()),
@@ -77,10 +79,7 @@ class _NawawiAppState extends State<NawawiApp> {
 
                 // Support both Arabic and English
                 locale: languageState.locale,
-                supportedLocales: const [
-                  Locale('ar'),
-                  Locale('en'),
-                ],
+                supportedLocales: const [Locale('ar'), Locale('en')],
                 localizationsDelegates: const [
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,

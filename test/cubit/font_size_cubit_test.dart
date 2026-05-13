@@ -24,10 +24,7 @@ void main() {
       final newState = state.copyWith(hadithFontSize: 24.0);
 
       expect(newState.hadithFontSize, 24.0);
-      expect(
-        newState.descriptionFontSize,
-        state.descriptionFontSize,
-      );
+      expect(newState.descriptionFontSize, state.descriptionFontSize);
     });
 
     test('copyWith creates new state with updated description font size', () {
@@ -101,7 +98,8 @@ void main() {
       act: (cubit) => cubit.increaseHadithFontSize(),
       expect: () => [
         FontSizeState(
-          hadithFontSize: FontSizeConstants.defaultHadithFontSize +
+          hadithFontSize:
+              FontSizeConstants.defaultHadithFontSize +
               FontSizeConstants.fontSizeStep,
         ),
       ],
@@ -113,7 +111,8 @@ void main() {
       act: (cubit) => cubit.decreaseHadithFontSize(),
       expect: () => [
         FontSizeState(
-          hadithFontSize: FontSizeConstants.defaultHadithFontSize -
+          hadithFontSize:
+              FontSizeConstants.defaultHadithFontSize -
               FontSizeConstants.fontSizeStep,
         ),
       ],
@@ -125,7 +124,8 @@ void main() {
       act: (cubit) => cubit.increaseDescriptionFontSize(),
       expect: () => [
         FontSizeState(
-          descriptionFontSize: FontSizeConstants.defaultDescriptionFontSize +
+          descriptionFontSize:
+              FontSizeConstants.defaultDescriptionFontSize +
               FontSizeConstants.fontSizeStep,
         ),
       ],
@@ -137,7 +137,8 @@ void main() {
       act: (cubit) => cubit.decreaseDescriptionFontSize(),
       expect: () => [
         FontSizeState(
-          descriptionFontSize: FontSizeConstants.defaultDescriptionFontSize -
+          descriptionFontSize:
+              FontSizeConstants.defaultDescriptionFontSize -
               FontSizeConstants.fontSizeStep,
         ),
       ],
@@ -187,15 +188,18 @@ void main() {
       },
       expect: () => [
         FontSizeState(
-          hadithFontSize: FontSizeConstants.defaultHadithFontSize +
+          hadithFontSize:
+              FontSizeConstants.defaultHadithFontSize +
               FontSizeConstants.fontSizeStep,
         ),
         FontSizeState(
-          hadithFontSize: FontSizeConstants.defaultHadithFontSize +
+          hadithFontSize:
+              FontSizeConstants.defaultHadithFontSize +
               (FontSizeConstants.fontSizeStep * 2),
         ),
         FontSizeState(
-          hadithFontSize: FontSizeConstants.defaultHadithFontSize +
+          hadithFontSize:
+              FontSizeConstants.defaultHadithFontSize +
               (FontSizeConstants.fontSizeStep * 3),
         ),
       ],
@@ -217,23 +221,26 @@ void main() {
       cubit.close();
     });
 
-    test('loadFontSizePreferences uses defaults when no saved values', () async {
-      SharedPreferences.setMockInitialValues({});
+    test(
+      'loadFontSizePreferences uses defaults when no saved values',
+      () async {
+        SharedPreferences.setMockInitialValues({});
 
-      final cubit = FontSizeCubit();
-      await cubit.loadFontSizePreferences();
+        final cubit = FontSizeCubit();
+        await cubit.loadFontSizePreferences();
 
-      expect(
-        cubit.state.hadithFontSize,
-        FontSizeConstants.defaultHadithFontSize,
-      );
-      expect(
-        cubit.state.descriptionFontSize,
-        FontSizeConstants.defaultDescriptionFontSize,
-      );
+        expect(
+          cubit.state.hadithFontSize,
+          FontSizeConstants.defaultHadithFontSize,
+        );
+        expect(
+          cubit.state.descriptionFontSize,
+          FontSizeConstants.defaultDescriptionFontSize,
+        );
 
-      cubit.close();
-    });
+        cubit.close();
+      },
+    );
 
     test('saveFontSizePreferences saves current values', () async {
       SharedPreferences.setMockInitialValues({});
@@ -245,7 +252,8 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       expect(
         prefs.getDouble(PreferenceKeys.hadithFontSize),
-        FontSizeConstants.defaultHadithFontSize + FontSizeConstants.fontSizeStep,
+        FontSizeConstants.defaultHadithFontSize +
+            FontSizeConstants.fontSizeStep,
       );
 
       cubit.close();

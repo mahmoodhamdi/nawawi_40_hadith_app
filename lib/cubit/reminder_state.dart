@@ -56,5 +56,11 @@ class ReminderState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isEnabled, reminderTime.hour, reminderTime.minute, isLoading, hasPermission];
+  List<Object?> get props => [
+    isEnabled,
+    reminderTime.hour,
+    reminderTime.minute,
+    isLoading,
+    hasPermission,
+  ];
 }

@@ -51,10 +51,7 @@ void main() {
     });
 
     test('copyWith preserves values when not specified', () {
-      const state = FavoritesState(
-        favoriteIndices: {1, 2, 3},
-        isLoading: true,
-      );
+      const state = FavoritesState(favoriteIndices: {1, 2, 3}, isLoading: true);
       final newState = state.copyWith();
 
       expect(newState.favoriteIndices, {1, 2, 3});
@@ -62,10 +59,7 @@ void main() {
     });
 
     test('props contains favoriteIndices and isLoading', () {
-      const state = FavoritesState(
-        favoriteIndices: {1, 2},
-        isLoading: true,
-      );
+      const state = FavoritesState(favoriteIndices: {1, 2}, isLoading: true);
 
       expect(state.props.length, 2);
       expect(state.props[0], {1, 2});

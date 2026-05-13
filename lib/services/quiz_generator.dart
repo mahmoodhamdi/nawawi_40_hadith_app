@@ -35,8 +35,8 @@ class QuizGenerator {
       // Cycle through kinds so each session has variety. We rotate based
       // on the question's position so a 10-question session naturally
       // covers all three kinds.
-      final kind =
-          QuizQuestionKind.values[questions.length % QuizQuestionKind.values.length];
+      final kind = QuizQuestionKind
+          .values[questions.length % QuizQuestionKind.values.length];
       final question = _buildQuestion(
         kind: kind,
         sourceIndex: idx + 1, // 1-based public index
@@ -83,10 +83,22 @@ class QuizGenerator {
             arabic: arabic,
           );
         }
-        return _collectionQuestion(sourceIndex, hadith, allHadiths, rng, arabic);
+        return _collectionQuestion(
+          sourceIndex,
+          hadith,
+          allHadiths,
+          rng,
+          arabic,
+        );
 
       case QuizQuestionKind.hadithNumber:
-        return _hadithNumberQuestion(sourceIndex, hadith, allHadiths, rng, arabic);
+        return _hadithNumberQuestion(
+          sourceIndex,
+          hadith,
+          allHadiths,
+          rng,
+          arabic,
+        );
     }
   }
 
@@ -102,16 +114,25 @@ class QuizGenerator {
         : hadith.citation!.narratorEn;
 
     // Find distractor narrators from other hadiths, distinct from correct.
-    final pool = allHadiths
-        .where((h) => h.citation != null)
-        .map((h) => arabic ? h.citation!.narratorAr : h.citation!.narratorEn)
-        .toSet()
-      ..remove(correct);
+    final pool =
+        allHadiths
+            .where((h) => h.citation != null)
+            .map(
+              (h) => arabic ? h.citation!.narratorAr : h.citation!.narratorEn,
+            )
+            .toSet()
+          ..remove(correct);
 
     // If we can't produce 3 distractors of this type, fall back to a
     // hadithNumber question — that source has 41 possible distractors.
     if (pool.length < choicesPerQuestion - 1) {
-      return _hadithNumberQuestion(sourceIndex, hadith, allHadiths, rng, arabic);
+      return _hadithNumberQuestion(
+        sourceIndex,
+        hadith,
+        allHadiths,
+        rng,
+        arabic,
+      );
     }
 
     final distractors = (pool.toList()..shuffle(rng))
@@ -145,16 +166,26 @@ class QuizGenerator {
         ? hadith.citation!.collectionAr
         : hadith.citation!.collectionEn;
 
-    final pool = allHadiths
-        .where((h) => h.citation != null)
-        .map((h) => arabic ? h.citation!.collectionAr : h.citation!.collectionEn)
-        .toSet()
-      ..remove(correct);
+    final pool =
+        allHadiths
+            .where((h) => h.citation != null)
+            .map(
+              (h) =>
+                  arabic ? h.citation!.collectionAr : h.citation!.collectionEn,
+            )
+            .toSet()
+          ..remove(correct);
 
     // Same guard as narrator — fall back if we can't produce enough
     // distractor collections (e.g. only 2 collections in the data).
     if (pool.length < choicesPerQuestion - 1) {
-      return _hadithNumberQuestion(sourceIndex, hadith, allHadiths, rng, arabic);
+      return _hadithNumberQuestion(
+        sourceIndex,
+        hadith,
+        allHadiths,
+        rng,
+        arabic,
+      );
     }
 
     final distractors = (pool.toList()..shuffle(rng))
@@ -188,9 +219,10 @@ class QuizGenerator {
     // "الحديث الأول" leader line).
     final body = arabic ? hadith.hadithAr : hadith.hadithEn;
     final lines = body.split('\n');
-    final rest = lines.length > 1 ? lines.skip(1).join(' ').trim() : body.trim();
-    final quoteMatch =
-        RegExp(r'["“«]([^"”»]{20,200})["”»]').firstMatch(rest);
+    final rest = lines.length > 1
+        ? lines.skip(1).join(' ').trim()
+        : body.trim();
+    final quoteMatch = RegExp(r'["“«]([^"”»]{20,200})["”»]').firstMatch(rest);
     final excerpt = quoteMatch != null
         ? quoteMatch.group(1)!.trim()
         : (rest.length > 120 ? '${rest.substring(0, 117)}...' : rest);

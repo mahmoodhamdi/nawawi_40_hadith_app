@@ -28,16 +28,10 @@ class ReadingStatsCubit extends Cubit<ReadingStatsState> {
         }
       }
 
-      emit(state.copyWith(
-        readHadithIndices: validIndices,
-        isLoading: false,
-      ));
+      emit(state.copyWith(readHadithIndices: validIndices, isLoading: false));
     } catch (e) {
       debugPrint('Error loading reading stats: $e');
-      emit(state.copyWith(
-        readHadithIndices: {},
-        isLoading: false,
-      ));
+      emit(state.copyWith(readHadithIndices: {}, isLoading: false));
     }
   }
 

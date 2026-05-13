@@ -30,26 +30,35 @@ class AppLocalizations {
   String get welcome => isArabic
       ? 'وَما آتاكُمُ الرَّسُولُ فَخُذُوهُ\nوَما نَهاكُمْ عَنْهُ فَانْتَهُوا'
       : 'And whatever the Messenger gives you, take it\nAnd whatever he forbids you, abstain from it';
-  String get searchHint => isArabic ? 'ابحث عن حديث...' : 'Search for hadith...';
-  String get noResults => isArabic ? 'لا يوجد نتائج للبحث.' : 'No search results found.';
+  String get searchHint =>
+      isArabic ? 'ابحث عن حديث...' : 'Search for hadith...';
+  String get noResults =>
+      isArabic ? 'لا يوجد نتائج للبحث.' : 'No search results found.';
 
   // Search History
   String get searchHistory => isArabic ? 'سجل البحث' : 'Search History';
   String get clearHistory => isArabic ? 'مسح الكل' : 'Clear All';
-  String get noSearchHistory => isArabic ? 'لا يوجد سجل بحث' : 'No search history';
-  String get recentSearches => isArabic ? 'عمليات البحث الأخيرة' : 'Recent Searches';
-  String get searchByNumber => isArabic ? 'بحث برقم الحديث' : 'Search by hadith number';
+  String get noSearchHistory =>
+      isArabic ? 'لا يوجد سجل بحث' : 'No search history';
+  String get recentSearches =>
+      isArabic ? 'عمليات البحث الأخيرة' : 'Recent Searches';
+  String get searchByNumber =>
+      isArabic ? 'بحث برقم الحديث' : 'Search by hadith number';
 
   // Hadith
   String get hadithNumber => isArabic ? 'الحديث رقم' : 'Hadith No.';
   String get explanation => isArabic ? 'الشرح:' : 'Explanation:';
-  String hadithTitle(int number) => isArabic ? 'الحديث $number' : 'Hadith $number';
+  String hadithTitle(int number) =>
+      isArabic ? 'الحديث $number' : 'Hadith $number';
 
   // Sharing
   String get share => isArabic ? 'مشاركة' : 'Share';
-  String get shareHadithOnly => isArabic ? 'مشاركة الحديث فقط' : 'Share hadith only';
-  String get shareDescriptionOnly => isArabic ? 'مشاركة الشرح فقط' : 'Share explanation only';
-  String get shareBoth => isArabic ? 'مشاركة الحديث مع الشرح' : 'Share hadith with explanation';
+  String get shareHadithOnly =>
+      isArabic ? 'مشاركة الحديث فقط' : 'Share hadith only';
+  String get shareDescriptionOnly =>
+      isArabic ? 'مشاركة الشرح فقط' : 'Share explanation only';
+  String get shareBoth =>
+      isArabic ? 'مشاركة الحديث مع الشرح' : 'Share hadith with explanation';
   String get shareAsImage => isArabic ? 'مشاركة كصورة' : 'Share as image';
   String get selectTheme => isArabic ? 'اختر الثيم' : 'Select theme';
 
@@ -62,7 +71,8 @@ class AppLocalizations {
   String get playbackSpeed => isArabic ? 'سرعة التشغيل' : 'Playback speed';
 
   // Reading Progress
-  String get continueReading => isArabic ? 'متابعة القراءة' : 'Continue Reading';
+  String get continueReading =>
+      isArabic ? 'متابعة القراءة' : 'Continue Reading';
   String get lastRead => isArabic ? 'آخر قراءة' : 'Last read';
   String get completed => isArabic ? 'مكتمل' : 'Completed';
   String get readingProgress => isArabic ? 'تقدم القراءة' : 'Reading Progress';
@@ -75,8 +85,10 @@ class AppLocalizations {
   String get favorites => isArabic ? 'المفضلة' : 'Favorites';
   String get allHadiths => isArabic ? 'كل الأحاديث' : 'All Hadiths';
   String get addToFavorites => isArabic ? 'إضافة للمفضلة' : 'Add to favorites';
-  String get removeFromFavorites => isArabic ? 'إزالة من المفضلة' : 'Remove from favorites';
-  String get noFavorites => isArabic ? 'لا توجد أحاديث مفضلة' : 'No favorite hadiths';
+  String get removeFromFavorites =>
+      isArabic ? 'إزالة من المفضلة' : 'Remove from favorites';
+  String get noFavorites =>
+      isArabic ? 'لا توجد أحاديث مفضلة' : 'No favorite hadiths';
 
   // Settings
   String get settings => isArabic ? 'الإعدادات' : 'Settings';
@@ -113,9 +125,12 @@ class AppLocalizations {
       : 'Daily reminder to read a hadith from the Forty Nawawi';
   String get reminderTime => isArabic ? 'وقت التذكير' : 'Reminder time';
   String get reminderEnabled => isArabic ? 'التذكير مفعّل' : 'Reminder enabled';
-  String get reminderDisabled => isArabic ? 'التذكير معطّل' : 'Reminder disabled';
-  String get permissionRequired => isArabic ? 'يرجى السماح بالإشعارات' : 'Please allow notifications';
-  String get permissionDenied => isArabic ? 'تم رفض صلاحية الإشعارات' : 'Notification permission denied';
+  String get reminderDisabled =>
+      isArabic ? 'التذكير معطّل' : 'Reminder disabled';
+  String get permissionRequired =>
+      isArabic ? 'يرجى السماح بالإشعارات' : 'Please allow notifications';
+  String get permissionDenied =>
+      isArabic ? 'تم رفض صلاحية الإشعارات' : 'Notification permission denied';
   String get selectTime => isArabic ? 'اختر الوقت' : 'Select time';
   String get allowPermission => isArabic ? 'السماح' : 'Allow';
 
@@ -124,8 +139,10 @@ class AppLocalizations {
   String get confirm => isArabic ? 'تأكيد' : 'Confirm';
   String get am => isArabic ? 'صباحاً' : 'AM';
   String get pm => isArabic ? 'مساءً' : 'PM';
-  String minutesAgo(int minutes) => isArabic ? 'منذ $minutes دقيقة' : '$minutes minutes ago';
-  String hoursAgo(int hours) => isArabic ? 'منذ $hours ساعة' : '$hours hours ago';
+  String minutesAgo(int minutes) =>
+      isArabic ? 'منذ $minutes دقيقة' : '$minutes minutes ago';
+  String hoursAgo(int hours) =>
+      isArabic ? 'منذ $hours ساعة' : '$hours hours ago';
   String daysAgo(int days) => isArabic ? 'منذ $days يوم' : '$days days ago';
   String get justNow => isArabic ? 'الآن' : 'Just now';
 
@@ -136,18 +153,22 @@ class AppLocalizations {
   String get previousHadith => isArabic ? 'الحديث السابق' : 'Previous hadith';
 
   // Focused Reading
-  String get focusedReading => isArabic ? 'وضع القراءة المركز' : 'Focused Reading';
-  String get tapToShowControls => isArabic ? 'انقر لإظهار عناصر التحكم' : 'Tap to show controls';
+  String get focusedReading =>
+      isArabic ? 'وضع القراءة المركز' : 'Focused Reading';
+  String get tapToShowControls =>
+      isArabic ? 'انقر لإظهار عناصر التحكم' : 'Tap to show controls';
   String get swipeToNavigate => isArabic ? 'اسحب للتنقل' : 'Swipe to navigate';
 
   // Font Size
   String get fontSize => isArabic ? 'حجم الخط' : 'Font size';
   String get hadithFontSize => isArabic ? 'حجم خط الحديث' : 'Hadith font size';
-  String get descriptionFontSize => isArabic ? 'حجم خط الشرح' : 'Explanation font size';
+  String get descriptionFontSize =>
+      isArabic ? 'حجم خط الشرح' : 'Explanation font size';
 
   // Errors
   String get error => isArabic ? 'خطأ' : 'Error';
-  String get loadingError => isArabic ? 'حدث خطأ أثناء التحميل' : 'An error occurred while loading';
+  String get loadingError =>
+      isArabic ? 'حدث خطأ أثناء التحميل' : 'An error occurred while loading';
   String get retry => isArabic ? 'إعادة المحاولة' : 'Retry';
 
   // About
@@ -155,11 +176,11 @@ class AppLocalizations {
   String get version => isArabic ? 'الإصدار' : 'Version';
   String get developer => isArabic ? 'المطور' : 'Developer';
   String get reciter => isArabic ? 'القارئ' : 'Reciter';
-  String get sheikhAhmadAlNafees => isArabic ? 'الشيخ أحمد النفيس' : 'Sheikh Ahmad Al-Nafees';
+  String get sheikhAhmadAlNafees =>
+      isArabic ? 'الشيخ أحمد النفيس' : 'Sheikh Ahmad Al-Nafees';
 
   // Related hadiths
-  String get relatedHadiths =>
-      isArabic ? 'أحاديث ذات صلة' : 'Related hadiths';
+  String get relatedHadiths => isArabic ? 'أحاديث ذات صلة' : 'Related hadiths';
   String get topics => isArabic ? 'المواضيع' : 'Topics';
   String get browseByTopic => isArabic ? 'تصفح حسب الموضوع' : 'Browse by topic';
 
@@ -167,12 +188,16 @@ class AppLocalizations {
   String get narrator => isArabic ? 'الراوي' : 'Narrator';
   String get source => isArabic ? 'المصدر' : 'Source';
   String get citation => isArabic ? 'المرجع' : 'Citation';
-  String get viewOnSunnah => isArabic ? 'الرجوع إلى sunnah.com' : 'Reference on sunnah.com';
-  String narratedBy(String name) => isArabic ? 'رواه $name' : 'Narrated by $name';
-  String reportedIn(String collection) => isArabic ? 'أخرجه $collection' : 'Reported in $collection';
+  String get viewOnSunnah =>
+      isArabic ? 'الرجوع إلى sunnah.com' : 'Reference on sunnah.com';
+  String narratedBy(String name) =>
+      isArabic ? 'رواه $name' : 'Narrated by $name';
+  String reportedIn(String collection) =>
+      isArabic ? 'أخرجه $collection' : 'Reported in $collection';
 
   // Reading streaks — phrased gently around istiqamah, not gamification.
-  String get streakCurrentLabel => isArabic ? 'تواصلك الحالي' : 'Current streak';
+  String get streakCurrentLabel =>
+      isArabic ? 'تواصلك الحالي' : 'Current streak';
   String get streakLongestLabel => isArabic ? 'أطول تواصل' : 'Longest streak';
   String streakDays(int count) {
     if (isArabic) {
@@ -184,6 +209,7 @@ class AppLocalizations {
     }
     return count == 1 ? '$count day' : '$count days';
   }
+
   String get streakEncouragement => isArabic
       ? 'اقرأ حديثاً اليوم لاستمرار التواصل'
       : 'Read one hadith today to keep your streak';
@@ -204,19 +230,18 @@ class AppLocalizations {
   // Backup
   String get backup => isArabic ? 'النسخ الاحتياطي' : 'Backup';
   String get exportBackup => isArabic ? 'تصدير نسخة احتياطية' : 'Export backup';
-  String get importBackup => isArabic ? 'استيراد نسخة احتياطية' : 'Import backup';
+  String get importBackup =>
+      isArabic ? 'استيراد نسخة احتياطية' : 'Import backup';
   String get backupHint => isArabic
       ? 'يمكنك تصدير إعداداتك ومفضلتك كملف JSON محفوظ على جهازك. لا يتم رفع أي شيء على الإنترنت.'
       : 'Export your settings and favorites to a local JSON file. Nothing is uploaded.';
   String get pasteBackupJson => isArabic
       ? 'الصق محتوى ملف النسخة الاحتياطية هنا'
       : 'Paste the backup JSON content here';
-  String backupRestored(int count) => isArabic
-      ? 'تم استرجاع $count عنصراً'
-      : 'Restored $count items';
-  String get backupFailed => isArabic
-      ? 'فشل استيراد النسخة الاحتياطية'
-      : 'Failed to import backup';
+  String backupRestored(int count) =>
+      isArabic ? 'تم استرجاع $count عنصراً' : 'Restored $count items';
+  String get backupFailed =>
+      isArabic ? 'فشل استيراد النسخة الاحتياطية' : 'Failed to import backup';
   String get backupSubject => isArabic
       ? 'الأربعون النووية — نسخة احتياطية'
       : 'Forty Hadith Nawawi — backup';
@@ -236,14 +261,14 @@ class AppLocalizations {
   // Memorization mode
   String get memorize => isArabic ? 'وضع الحفظ' : 'Memorize';
   String get exitMemorize => isArabic ? 'خروج من الحفظ' : 'Exit memorize';
-  String get tapToReveal => isArabic
-      ? 'انقر لكشف الحديث'
-      : 'Tap to reveal the hadith';
+  String get tapToReveal =>
+      isArabic ? 'انقر لكشف الحديث' : 'Tap to reveal the hadith';
   String get tapToHide => isArabic ? 'انقر لإخفاء الحديث' : 'Tap to hide';
 
   // Sepia / themes
   String get sepiaTheme => isArabic ? 'سيبيا (راحة للعين)' : 'Sepia (eye-care)';
-  String get autoTheme => isArabic ? 'تبديل تلقائي عند الغروب' : 'Auto dark after sunset';
+  String get autoTheme =>
+      isArabic ? 'تبديل تلقائي عند الغروب' : 'Auto dark after sunset';
 
   // Misc dialog
   String get confirmAction => isArabic ? 'تأكيد الإجراء' : 'Confirm action';
@@ -261,19 +286,17 @@ class AppLocalizations {
   String get quizRetry => isArabic ? 'إعادة' : 'Try again';
   String quizProgress(int current, int total) =>
       isArabic ? '$current من $total' : '$current of $total';
-  String quizResultScore(int correct, int total) => isArabic
-      ? 'النتيجة: $correct من $total'
-      : 'Score: $correct of $total';
-  String get quizVerdictExcellent => isArabic
-      ? 'ما شاء الله، إجابات ممتازة!'
-      : 'Mashallah, excellent work!';
-  String get quizVerdictGood => isArabic
-      ? 'جيد، استمر في المراجعة'
-      : 'Good — keep reviewing!';
+  String quizResultScore(int correct, int total) =>
+      isArabic ? 'النتيجة: $correct من $total' : 'Score: $correct of $total';
+  String get quizVerdictExcellent =>
+      isArabic ? 'ما شاء الله، إجابات ممتازة!' : 'Mashallah, excellent work!';
+  String get quizVerdictGood =>
+      isArabic ? 'جيد، استمر في المراجعة' : 'Good — keep reviewing!';
   String get quizVerdictKeepLearning => isArabic
       ? 'الاستمرارية أهم من النتيجة. أعد المحاولة.'
       : 'Consistency matters more than score. Try again.';
-  String get quizReviewCorrect => isArabic ? 'الإجابة الصحيحة' : 'Correct answer';
+  String get quizReviewCorrect =>
+      isArabic ? 'الإجابة الصحيحة' : 'Correct answer';
   String quizReviewHadithRef(int index) =>
       isArabic ? 'الحديث رقم $index' : 'Hadith #$index';
 }

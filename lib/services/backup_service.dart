@@ -66,7 +66,9 @@ class BackupService {
       } else if (value is List<String>) {
         entries[key] = {'t': 'stringList', 'v': value};
       } else {
-        debugPrint('BackupService: skipping unsupported type for $key: ${value.runtimeType}');
+        debugPrint(
+          'BackupService: skipping unsupported type for $key: ${value.runtimeType}',
+        );
       }
     }
 
@@ -97,10 +99,12 @@ class BackupService {
     final file = File(path);
     await file.writeAsString(json, flush: true);
 
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile(path, mimeType: 'application/json')],
-      subject: 'Forty Hadith Nawawi — backup',
-    ));
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(path, mimeType: 'application/json')],
+        subject: 'Forty Hadith Nawawi — backup',
+      ),
+    );
 
     return path;
   }
@@ -134,7 +138,9 @@ class BackupService {
 
     final schema = parsed['schema'];
     if (schema is! int) {
-      throw const BackupRestoreException('Backup schema field missing or invalid');
+      throw const BackupRestoreException(
+        'Backup schema field missing or invalid',
+      );
     }
     if (schema > schemaVersion) {
       throw BackupRestoreException(
@@ -145,7 +151,9 @@ class BackupService {
 
     final entries = parsed['entries'];
     if (entries is! Map<String, dynamic>) {
-      throw const BackupRestoreException('Backup is missing the entries object');
+      throw const BackupRestoreException(
+        'Backup is missing the entries object',
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();

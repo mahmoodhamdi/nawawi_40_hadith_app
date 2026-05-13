@@ -45,7 +45,9 @@ class LanguageCubit extends Cubit<LanguageState> {
 
   /// Toggle between Arabic and English
   Future<void> toggleLanguage() async {
-    final newLanguage = state.isArabic ? AppLanguage.english : AppLanguage.arabic;
+    final newLanguage = state.isArabic
+        ? AppLanguage.english
+        : AppLanguage.arabic;
     await changeLanguage(newLanguage);
   }
 }

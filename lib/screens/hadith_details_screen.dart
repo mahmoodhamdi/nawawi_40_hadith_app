@@ -56,25 +56,23 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize Cubits
     _initializeCubits();
-    
+
     // Update last read information when screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _saveLastReadHadith();
     });
   }
-  
+
   void _initializeCubits() {
     // Initialize FontSizeCubit by loading saved preferences
     context.read<FontSizeCubit>().loadFontSizePreferences();
-    
+
     // Initialize AudioPlayerCubit by loading the current hadith's audio
     context.read<AudioPlayerCubit>().loadAudio(widget.index);
   }
-
-
 
   @override
   void dispose() {
@@ -82,27 +80,31 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     super.dispose();
   }
 
-
-
   String _getCurrentLanguageCode() {
     return context.read<LanguageCubit>().state.language.code;
   }
 
   void _shareHadithOnly() {
     final languageCode = _getCurrentLanguageCode();
-    SharePlus.instance.share(ShareParams(text: widget.hadith.getHadith(languageCode)));
+    SharePlus.instance.share(
+      ShareParams(text: widget.hadith.getHadith(languageCode)),
+    );
   }
 
   void _shareDescriptionOnly() {
     final languageCode = _getCurrentLanguageCode();
-    SharePlus.instance.share(ShareParams(text: widget.hadith.getDescription(languageCode)));
+    SharePlus.instance.share(
+      ShareParams(text: widget.hadith.getDescription(languageCode)),
+    );
   }
 
   void _shareBoth() {
     final languageCode = _getCurrentLanguageCode();
     final hadithText = widget.hadith.getHadith(languageCode);
     final descriptionText = widget.hadith.getDescription(languageCode);
-    SharePlus.instance.share(ShareParams(text: '$hadithText\n\n$descriptionText'));
+    SharePlus.instance.share(
+      ShareParams(text: '$hadithText\n\n$descriptionText'),
+    );
   }
 
   // Font size adjustment methods - now uses FontSizeCubit
@@ -173,7 +175,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             ListTile(
               leading: const Icon(Icons.image),
               title: Text(l10n.shareAsImage),
-              subtitle: Text(l10n.isArabic ? 'صورة جميلة للحديث' : 'Beautiful hadith image'),
+              subtitle: Text(
+                l10n.isArabic ? 'صورة جميلة للحديث' : 'Beautiful hadith image',
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _showShareAsImageDialog();
@@ -263,7 +267,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             segments: [
                               ButtonSegment(
                                 value: ShareCardTemplate.classic,
-                                label: Text(l10n.isArabic ? 'كلاسيكي' : 'Classic'),
+                                label: Text(
+                                  l10n.isArabic ? 'كلاسيكي' : 'Classic',
+                                ),
                               ),
                               ButtonSegment(
                                 value: ShareCardTemplate.minimalist,
@@ -326,8 +332,16 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
                           // Include description toggle
                           SwitchListTile(
-                            title: Text(l10n.isArabic ? 'تضمين الشرح' : 'Include explanation'),
-                            subtitle: Text(l10n.isArabic ? 'إضافة شرح الحديث للصورة' : 'Add hadith explanation to image'),
+                            title: Text(
+                              l10n.isArabic
+                                  ? 'تضمين الشرح'
+                                  : 'Include explanation',
+                            ),
+                            subtitle: Text(
+                              l10n.isArabic
+                                  ? 'إضافة شرح الحديث للصورة'
+                                  : 'Add hadith explanation to image',
+                            ),
                             value: includeDescription,
                             onChanged: (value) {
                               setDialogState(() {
@@ -382,9 +396,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(l10n.isArabic
-                                      ? 'حدث خطأ أثناء إنشاء الصورة'
-                                      : 'Error creating image'),
+                                  content: Text(
+                                    l10n.isArabic
+                                        ? 'حدث خطأ أثناء إنشاء الصورة'
+                                        : 'Error creating image',
+                                  ),
                                 ),
                               );
                             }
@@ -440,7 +456,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
             builder: (context, favoritesState) {
               final isFavorite = favoritesState.isFavorite(widget.index);
               return Semantics(
-                label: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+                label: isFavorite
+                    ? l10n.removeFromFavorites
+                    : l10n.addToFavorites,
                 button: true,
                 child: IconButton(
                   icon: Icon(
@@ -450,7 +468,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                   onPressed: () {
                     context.read<FavoritesCubit>().toggleFavorite(widget.index);
                   },
-                  tooltip: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+                  tooltip: isFavorite
+                      ? l10n.removeFromFavorites
+                      : l10n.addToFavorites,
                 ),
               );
             },
@@ -463,9 +483,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
           BlocBuilder<MemorizeCubit, bool>(
             builder: (context, isMemorizing) {
               return IconButton(
-                icon: Icon(isMemorizing
-                    ? Icons.visibility_off
-                    : Icons.school_outlined),
+                icon: Icon(
+                  isMemorizing ? Icons.visibility_off : Icons.school_outlined,
+                ),
                 tooltip: isMemorizing ? l10n.exitMemorize : l10n.memorize,
                 onPressed: () {
                   context.read<MemorizeCubit>().toggle();
@@ -541,7 +561,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
 
                                   final hadithWidget = SelectableText(
                                     displayText,
-                                    style: Theme.of(context).textTheme.titleLarge
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           fontSize: fontState.hadithFontSize,
@@ -549,11 +571,11 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                     textAlign: TextAlign.start,
                                     contextMenuBuilder:
                                         (context, editableTextState) {
-                                      return AdaptiveTextSelectionToolbar
-                                          .editableText(
-                                        editableTextState: editableTextState,
-                                      );
-                                    },
+                                          return AdaptiveTextSelectionToolbar.editableText(
+                                            editableTextState:
+                                                editableTextState,
+                                          );
+                                        },
                                   );
 
                                   if (!isMemorizing) return hadithWidget;
@@ -563,8 +585,10 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                                     hint: _memorizeRevealed
                                         ? l10n.tapToHide
                                         : l10n.tapToReveal,
-                                    onTap: () => setState(() =>
-                                        _memorizeRevealed = !_memorizeRevealed),
+                                    onTap: () => setState(
+                                      () => _memorizeRevealed =
+                                          !_memorizeRevealed,
+                                    ),
                                     child: hadithWidget,
                                   );
                                 },
@@ -576,22 +600,36 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           BlocBuilder<AudioPlayerCubit, AudioPlayerState>(
                             builder: (context, audioState) {
                               return audioState.isLoading
-                                ? const Center(child: CircularProgressIndicator())
-                                : AudioPlayerWidget(
-                                    // We don't pass the player directly anymore
-                                    player: null, // Not used with Cubit
-                                    isPlaying: audioState.isPlaying,
-                                    duration: audioState.duration,
-                                    position: audioState.position,
-                                    isLoading: audioState.isLoading,
-                                    onPlayPause: () => context.read<AudioPlayerCubit>().togglePlayPause(),
-                                    onReplay: () => context.read<AudioPlayerCubit>().replay(),
-                                    onSkipForward: () => context.read<AudioPlayerCubit>().skipForward(),
-                                    onSkipBackward: () => context.read<AudioPlayerCubit>().skipBackward(),
-                                    onSeek: (pos) => context.read<AudioPlayerCubit>().seekTo(pos),
-                                    onSpeedChanged: (speed) => context.read<AudioPlayerCubit>().changePlaybackSpeed(speed),
-                                    playbackSpeed: audioState.playbackSpeed,
-                                  );
+                                  ? const Center(
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : AudioPlayerWidget(
+                                      // We don't pass the player directly anymore
+                                      player: null, // Not used with Cubit
+                                      isPlaying: audioState.isPlaying,
+                                      duration: audioState.duration,
+                                      position: audioState.position,
+                                      isLoading: audioState.isLoading,
+                                      onPlayPause: () => context
+                                          .read<AudioPlayerCubit>()
+                                          .togglePlayPause(),
+                                      onReplay: () => context
+                                          .read<AudioPlayerCubit>()
+                                          .replay(),
+                                      onSkipForward: () => context
+                                          .read<AudioPlayerCubit>()
+                                          .skipForward(),
+                                      onSkipBackward: () => context
+                                          .read<AudioPlayerCubit>()
+                                          .skipBackward(),
+                                      onSeek: (pos) => context
+                                          .read<AudioPlayerCubit>()
+                                          .seekTo(pos),
+                                      onSpeedChanged: (speed) => context
+                                          .read<AudioPlayerCubit>()
+                                          .changePlaybackSpeed(speed),
+                                      playbackSpeed: audioState.playbackSpeed,
+                                    );
                             },
                           ),
                         ],
@@ -602,7 +640,9 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                 if (widget.hadith.citation != null) ...[
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   SliverToBoxAdapter(
-                    child: HadithCitationCard(citation: widget.hadith.citation!),
+                    child: HadithCitationCard(
+                      citation: widget.hadith.citation!,
+                    ),
                   ),
                 ],
                 const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -654,11 +694,13 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                               final markdownStyle = isArabic
                                   ? getArabicMarkdownStyle(
                                       context,
-                                      baseFontSize: fontState.descriptionFontSize,
+                                      baseFontSize:
+                                          fontState.descriptionFontSize,
                                     )
                                   : getHadithMarkdownStyle(
                                       context,
-                                      baseFontSize: fontState.descriptionFontSize,
+                                      baseFontSize:
+                                          fontState.descriptionFontSize,
                                     );
 
                               return MarkdownBody(
@@ -692,7 +734,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                           : 0;
 
                       // Check if RTL for proper button order
-                      final isRtl = Directionality.of(context) == TextDirection.rtl;
+                      final isRtl =
+                          Directionality.of(context) == TextDirection.rtl;
 
                       final previousButton = _buildNavigationButton(
                         context: context,
@@ -713,12 +756,22 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
                       );
 
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 30.0, left: 16.0, right: 16.0),
+                        padding: const EdgeInsets.only(
+                          bottom: 30.0,
+                          left: 16.0,
+                          right: 16.0,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: isRtl
-                              ? [nextButton, previousButton]  // RTL: Next on left, Previous on right
-                              : [previousButton, nextButton], // LTR: Previous on left, Next on right
+                              ? [
+                                  nextButton,
+                                  previousButton,
+                                ] // RTL: Next on left, Previous on right
+                              : [
+                                  previousButton,
+                                  nextButton,
+                                ], // LTR: Previous on left, Next on right
                         ),
                       );
                     },
@@ -805,7 +858,8 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
       }
     }
   }
-   /// Build a navigation button with icon and label
+
+  /// Build a navigation button with icon and label
   Widget _buildNavigationButton({
     required BuildContext context,
     required IconData icon,
@@ -820,10 +874,7 @@ class _HadithDetailsScreenState extends State<HadithDetailsScreen> {
     // Mirror the icon in RTL mode
     Widget iconWidget = Icon(icon, size: 18);
     if (isRtl) {
-      iconWidget = Transform.scale(
-        scaleX: -1,
-        child: iconWidget,
-      );
+      iconWidget = Transform.scale(scaleX: -1, child: iconWidget);
     }
 
     return Expanded(
@@ -908,7 +959,10 @@ class _MemorizeRevealSurface extends StatelessWidget {
               )
             : Container(
                 key: const ValueKey('hidden'),
-                padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 48,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(12),
@@ -921,8 +975,11 @@ class _MemorizeRevealSurface extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.visibility_outlined,
-                        color: theme.colorScheme.primary, size: 40),
+                    Icon(
+                      Icons.visibility_outlined,
+                      color: theme.colorScheme.primary,
+                      size: 40,
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       hint,

@@ -64,20 +64,19 @@ void main() {
     final testHadith = Hadith(
       titleAr: 'الأعمال بالنيات',
       titleEn: 'Actions Are By Intentions',
-      hadithAr: 'الحديث الأول\nعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه',
+      hadithAr:
+          'الحديث الأول\nعن أمير المؤمنين أبي حفص عمر بن الخطاب رضي الله عنه',
       hadithEn: 'First Hadith\nOn the authority of Umar ibn al-Khattab',
       descriptionAr: 'شرح الحديث: هذا الحديث يتحدث عن النية وأهميتها في العمل.',
-      descriptionEn: 'Explanation: This hadith discusses the importance of intention in actions.',
+      descriptionEn:
+          'Explanation: This hadith discusses the importance of intention in actions.',
     );
 
     testWidgets('renders hadith card with default theme', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: testHadith,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: testHadith),
           ),
         ),
       );
@@ -106,7 +105,9 @@ void main() {
       expect(find.text('الشرح'), findsNothing);
     });
 
-    testWidgets('renders with description when includeDescription is true', (tester) async {
+    testWidgets('renders with description when includeDescription is true', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -141,9 +142,7 @@ void main() {
       );
 
       // Find the container with the gradient
-      final container = tester.widget<Container>(
-        find.byType(Container).first,
-      );
+      final container = tester.widget<Container>(find.byType(Container).first);
 
       expect(container.decoration, isNotNull);
     });
@@ -152,10 +151,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 42,
-              hadith: testHadith,
-            ),
+            body: ShareableHadithCard(index: 42, hadith: testHadith),
           ),
         ),
       );
@@ -176,10 +172,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: hadithWithTitle,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: hadithWithTitle),
           ),
         ),
       );
@@ -201,10 +194,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: singleLineHadith,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: singleLineHadith),
           ),
         ),
       );
@@ -216,10 +206,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: testHadith,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: testHadith),
           ),
         ),
       );
@@ -254,18 +241,13 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: Center(
-              child: ShareableHadithCard(
-                index: 1,
-                hadith: testHadith,
-              ),
+              child: ShareableHadithCard(index: 1, hadith: testHadith),
             ),
           ),
         ),
       );
 
-      final container = tester.widget<Container>(
-        find.byType(Container).first,
-      );
+      final container = tester.widget<Container>(find.byType(Container).first);
 
       expect(container.constraints?.maxWidth, 600);
     });
@@ -274,10 +256,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: testHadith,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: testHadith),
           ),
         ),
       );
@@ -299,10 +278,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: ShareableHadithCard(
-              index: 1,
-              hadith: testHadith,
-            ),
+            body: ShareableHadithCard(index: 1, hadith: testHadith),
           ),
         ),
       );

@@ -57,7 +57,8 @@ class AudioPlayerWidget extends StatelessWidget {
                     label:
                         'شريط التقدم. الموقع الحالي ${_formatDuration(position)} من ${_formatDuration(duration)}',
                     slider: true,
-                    value: '${(position.inSeconds / duration.inSeconds * 100).round()}%',
+                    value:
+                        '${(position.inSeconds / duration.inSeconds * 100).round()}%',
                     child: Slider(
                       value: position.inSeconds.toDouble().clamp(
                         0,
@@ -68,8 +69,9 @@ class AudioPlayerWidget extends StatelessWidget {
                       onChanged: (value) =>
                           onSeek(Duration(seconds: value.toInt())),
                       activeColor: theme.colorScheme.primary,
-                      inactiveColor:
-                          theme.colorScheme.primary.withValues(alpha: 0.3),
+                      inactiveColor: theme.colorScheme.primary.withValues(
+                        alpha: 0.3,
+                      ),
                     ),
                   ),
                   Row(

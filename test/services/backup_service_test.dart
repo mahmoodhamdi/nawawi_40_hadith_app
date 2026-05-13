@@ -34,7 +34,7 @@ void main() {
       expect(entries['reminder_enabled'], {'t': 'bool', 'v': true});
       expect(entries['favorite_hadiths'], {
         't': 'stringList',
-        'v': ['1', '5', '10']
+        'v': ['1', '5', '10'],
       });
       expect(entries.containsKey('some_random_other_app_key'), isFalse);
     });
@@ -71,7 +71,7 @@ void main() {
         'reminder_enabled': {'t': 'bool', 'v': true},
         'favorite_hadiths': {
           't': 'stringList',
-          'v': ['7', '14']
+          'v': ['7', '14'],
         },
       });
 
@@ -129,7 +129,11 @@ void main() {
         json.encode(backup),
         overwrite: false,
       );
-      expect(count, 1, reason: 'Only the missing key (reminder_enabled) restored');
+      expect(
+        count,
+        1,
+        reason: 'Only the missing key (reminder_enabled) restored',
+      );
 
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.getInt('app_theme'), 0, reason: 'Existing value preserved');

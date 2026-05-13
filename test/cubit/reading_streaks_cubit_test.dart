@@ -60,23 +60,26 @@ void main() {
       expect(cubit.state.longest, 2);
     });
 
-    test('reading after a 2+ day gap resets streak to 1, keeps longest', () async {
-      final cubit = _FakeClockCubit(_d(2026, 5, 12));
-      await Future<void>.delayed(Duration.zero);
-      await cubit.recordRead();
-      cubit.fakeNow = _d(2026, 5, 13);
-      await cubit.recordRead();
-      cubit.fakeNow = _d(2026, 5, 14);
-      await cubit.recordRead();
-      expect(cubit.state.current, 3);
-      expect(cubit.state.longest, 3);
+    test(
+      'reading after a 2+ day gap resets streak to 1, keeps longest',
+      () async {
+        final cubit = _FakeClockCubit(_d(2026, 5, 12));
+        await Future<void>.delayed(Duration.zero);
+        await cubit.recordRead();
+        cubit.fakeNow = _d(2026, 5, 13);
+        await cubit.recordRead();
+        cubit.fakeNow = _d(2026, 5, 14);
+        await cubit.recordRead();
+        expect(cubit.state.current, 3);
+        expect(cubit.state.longest, 3);
 
-      // Skip 5/15 entirely, jump to 5/16
-      cubit.fakeNow = _d(2026, 5, 16);
-      await cubit.recordRead();
-      expect(cubit.state.current, 1);
-      expect(cubit.state.longest, 3, reason: 'Longest streak is preserved');
-    });
+        // Skip 5/15 entirely, jump to 5/16
+        cubit.fakeNow = _d(2026, 5, 16);
+        await cubit.recordRead();
+        expect(cubit.state.current, 1);
+        expect(cubit.state.longest, 3, reason: 'Longest streak is preserved');
+      },
+    );
 
     test('streak data persists via SharedPreferences', () async {
       final cubit1 = _FakeClockCubit(_d(2026, 5, 12));
@@ -96,24 +99,32 @@ void main() {
       expect(cubit2.state.lastDate, isNotNull);
     });
 
-    test('on load, multi-day gap zeroes current but preserves longest',
-        () async {
-      // Seed prefs to look like the user had a 5-day streak that ended
-      // on 2026-05-12.
-      SharedPreferences.setMockInitialValues({
-        'streak_current': 5,
-        'streak_longest': 10,
-        'streak_last_date': _d(2026, 5, 12).toIso8601String(),
-      });
+    test(
+      'on load, multi-day gap zeroes current but preserves longest',
+      () async {
+        // Seed prefs to look like the user had a 5-day streak that ended
+        // on 2026-05-12.
+        SharedPreferences.setMockInitialValues({
+          'streak_current': 5,
+          'streak_longest': 10,
+          'streak_last_date': _d(2026, 5, 12).toIso8601String(),
+        });
 
-      // Today is 5 days later.
-      final cubit = _FakeClockCubit(_d(2026, 5, 17));
-      await Future<void>.delayed(Duration.zero);
-      expect(cubit.state.current, 0,
-          reason: 'Multi-day gap should display as broken on load');
-      expect(cubit.state.longest, 10,
-          reason: 'Longest is the hall-of-fame stat and must persist');
-    });
+        // Today is 5 days later.
+        final cubit = _FakeClockCubit(_d(2026, 5, 17));
+        await Future<void>.delayed(Duration.zero);
+        expect(
+          cubit.state.current,
+          0,
+          reason: 'Multi-day gap should display as broken on load',
+        );
+        expect(
+          cubit.state.longest,
+          10,
+          reason: 'Longest is the hall-of-fame stat and must persist',
+        );
+      },
+    );
 
     test('reset clears everything', () async {
       final cubit = _FakeClockCubit(_d(2026, 5, 12));

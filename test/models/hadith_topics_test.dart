@@ -41,11 +41,7 @@ void main() {
     });
 
     test('hadith without topics defaults to empty lists', () {
-      final jsonAr = {
-        'title': 'a',
-        'hadith': 'b',
-        'description': 'c',
-      };
+      final jsonAr = {'title': 'a', 'hadith': 'b', 'description': 'c'};
       final h = Hadith.fromJson(jsonAr);
       expect(h.topicIds, isEmpty);
       expect(h.topicLabelsAr, isEmpty);

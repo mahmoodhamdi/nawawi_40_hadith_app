@@ -78,12 +78,7 @@ MarkdownStyleSheet getHadithMarkdownStyle(
 
     // Horizontal Rule
     horizontalRuleDecoration: BoxDecoration(
-      border: Border(
-        top: BorderSide(
-          color: theme.dividerColor,
-          width: 1,
-        ),
-      ),
+      border: Border(top: BorderSide(color: theme.dividerColor, width: 1)),
     ),
 
     // Code
@@ -124,13 +119,8 @@ MarkdownStyleSheet getArabicMarkdownStyle(
 
   return baseStyle.copyWith(
     // Slightly larger text for Arabic readability
-    p: baseStyle.p?.copyWith(
-      fontSize: baseFontSize,
-      height: 2.0,
-    ),
-    h2: baseStyle.h2?.copyWith(
-      fontSize: baseFontSize + 6,
-    ),
+    p: baseStyle.p?.copyWith(fontSize: baseFontSize, height: 2.0),
+    h2: baseStyle.h2?.copyWith(fontSize: baseFontSize + 6),
     blockquote: baseStyle.blockquote?.copyWith(
       fontSize: baseFontSize,
       height: 1.8,

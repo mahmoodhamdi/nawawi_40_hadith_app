@@ -19,10 +19,7 @@ class FavoritesState extends Equatable {
   /// Get the count of favorites
   int get count => favoriteIndices.length;
 
-  FavoritesState copyWith({
-    Set<int>? favoriteIndices,
-    bool? isLoading,
-  }) {
+  FavoritesState copyWith({Set<int>? favoriteIndices, bool? isLoading}) {
     return FavoritesState(
       favoriteIndices: favoriteIndices ?? this.favoriteIndices,
       isLoading: isLoading ?? this.isLoading,

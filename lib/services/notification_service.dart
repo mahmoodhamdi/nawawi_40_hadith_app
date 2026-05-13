@@ -11,7 +11,8 @@ class NotificationService {
 
   static const String _channelId = 'hadith_reminder_channel';
   static const String _channelName = 'تذكير الحديث اليومي';
-  static const String _channelDescription = 'تذكيرات يومية لقراءة الأحاديث النووية';
+  static const String _channelDescription =
+      'تذكيرات يومية لقراءة الأحاديث النووية';
   static const int _dailyNotificationId = 1;
   // Distinct notification IDs so the standard daily reminder and the
   // Friday special can coexist without overwriting each other.
@@ -25,7 +26,9 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(timeZoneName));
 
     // Android initialization settings
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
 
     // iOS/macOS initialization settings
     const darwinSettings = DarwinInitializationSettings(
@@ -57,9 +60,10 @@ class NotificationService {
   /// Request notification permissions
   static Future<bool> requestPermissions() async {
     // Android 13+ permissions
-    final androidPlugin =
-        _notifications.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     if (androidPlugin != null) {
       final granted = await androidPlugin.requestNotificationsPermission();
@@ -67,8 +71,10 @@ class NotificationService {
     }
 
     // iOS permissions
-    final iosPlugin = _notifications.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+    final iosPlugin = _notifications
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
 
     if (iosPlugin != null) {
       final granted = await iosPlugin.requestPermissions(
@@ -84,9 +90,10 @@ class NotificationService {
 
   /// Check if notifications are permitted
   static Future<bool> hasPermissions() async {
-    final androidPlugin =
-        _notifications.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     if (androidPlugin != null) {
       final areEnabled = await androidPlugin.areNotificationsEnabled();
@@ -210,7 +217,9 @@ class NotificationService {
           UILocalNotificationDateInterpretation.absoluteTime,
     );
 
-    debugPrint('Jumu\'ah reminder scheduled for Friday ${time.hour}:${time.minute}');
+    debugPrint(
+      'Jumu\'ah reminder scheduled for Friday ${time.hour}:${time.minute}',
+    );
   }
 
   /// Cancel the Friday reminder without touching the daily one.
@@ -292,11 +301,6 @@ class NotificationService {
       iOS: darwinDetails,
     );
 
-    await _notifications.show(
-      0,
-      title,
-      body,
-      notificationDetails,
-    );
+    await _notifications.show(0, title, body, notificationDetails);
   }
 }

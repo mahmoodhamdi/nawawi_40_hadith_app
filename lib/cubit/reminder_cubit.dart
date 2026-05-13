@@ -29,12 +29,14 @@ class ReminderCubit extends Cubit<ReminderState> {
       final reminderTime = await PreferencesService.getReminderTime();
       final hasPermission = await NotificationService.hasPermissions();
 
-      emit(state.copyWith(
-        isEnabled: isEnabled,
-        reminderTime: reminderTime,
-        hasPermission: hasPermission,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          isEnabled: isEnabled,
+          reminderTime: reminderTime,
+          hasPermission: hasPermission,
+          isLoading: false,
+        ),
+      );
     } catch (e) {
       debugPrint('Error loading reminder settings: $e');
       emit(state.copyWith(isLoading: false));
@@ -77,10 +79,7 @@ class ReminderCubit extends Cubit<ReminderState> {
       // Save the preference
       await PreferencesService.saveReminderEnabled(newEnabled);
 
-      emit(state.copyWith(
-        isEnabled: newEnabled,
-        isLoading: false,
-      ));
+      emit(state.copyWith(isEnabled: newEnabled, isLoading: false));
     } catch (e) {
       debugPrint('Error toggling reminder: $e');
       emit(state.copyWith(isLoading: false));
@@ -109,10 +108,7 @@ class ReminderCubit extends Cubit<ReminderState> {
         );
       }
 
-      emit(state.copyWith(
-        reminderTime: time,
-        isLoading: false,
-      ));
+      emit(state.copyWith(reminderTime: time, isLoading: false));
     } catch (e) {
       debugPrint('Error setting reminder time: $e');
       emit(state.copyWith(isLoading: false));

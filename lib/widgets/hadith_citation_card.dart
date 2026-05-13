@@ -22,9 +22,7 @@ class HadithCitationCard extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 2),
-          content: Text(
-            l10n.isArabic ? 'تم نسخ الرابط' : 'Link copied',
-          ),
+          content: Text(l10n.isArabic ? 'تم نسخ الرابط' : 'Link copied'),
         ),
       );
     }
@@ -42,9 +40,7 @@ class HadithCitationCard extends StatelessWidget {
       label: l10n.citation,
       child: Card(
         elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         color: theme.cardColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -80,7 +76,10 @@ class HadithCitationCard extends StatelessWidget {
                 onTap: () => _copyUrl(context),
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 4,
+                  ),
                   child: Row(
                     children: [
                       Icon(Icons.link_rounded, size: 16, color: accent),
