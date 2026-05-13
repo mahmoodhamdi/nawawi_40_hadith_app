@@ -109,7 +109,6 @@ flutter build appbundle --release
 
 - [x] تحديث رقم الإصدار في pubspec.yaml
 - [x] تحديث README.md
-- [x] تحديث CLAUDE.md
 - [x] اجتياز جميع الاختبارات (270 اختبار)
 - [x] عدم وجود تحذيرات في التحليل
 - [x] إنشاء ملاحظات الإصدار
@@ -137,7 +136,6 @@ assets/json/
 
 docs/
 ├── README.md                          (تحديث)
-├── CLAUDE.md                          (تحديث)
 ├── IMPROVEMENT_PLAN.md                (تحديث)
 └── RELEASE_1.3.0.md                   (جديد)
 ```
