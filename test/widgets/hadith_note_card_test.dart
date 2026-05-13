@@ -22,8 +22,9 @@ Widget _harness(Widget child) {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('shows "Add note" affordance when no note exists',
-      (tester) async {
+  testWidgets('shows "Add note" affordance when no note exists', (
+    tester,
+  ) async {
     await tester.pumpWidget(_harness(const HadithNoteCard(hadithIndex: 1)));
     await tester.pumpAndSettle();
     expect(find.byIcon(Icons.add), findsOneWidget);
@@ -50,8 +51,9 @@ void main() {
     expect(find.textContaining('Reflect on niyyah daily'), findsOneWidget);
   });
 
-  testWidgets('renders existing note text with edit + delete icons',
-      (tester) async {
+  testWidgets('renders existing note text with edit + delete icons', (
+    tester,
+  ) async {
     SharedPreferences.setMockInitialValues({
       'hadith_notes': '{"3":"My personal reflection"}',
     });

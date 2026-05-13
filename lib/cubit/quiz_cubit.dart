@@ -14,9 +14,7 @@ class QuizCubit extends Cubit<QuizState> {
   /// question generation; production uses time-based default.
   final Random _rng;
 
-  QuizCubit({Random? rng})
-      : _rng = rng ?? Random(),
-        super(const QuizState());
+  QuizCubit({Random? rng}) : _rng = rng ?? Random(), super(const QuizState());
 
   /// Start a new session with [count] questions built from [hadiths].
   void start({
@@ -30,12 +28,14 @@ class QuizCubit extends Cubit<QuizState> {
       rng: _rng,
       arabic: arabic,
     );
-    emit(QuizState(
-      phase: questions.isEmpty ? QuizPhase.idle : QuizPhase.inProgress,
-      questions: questions,
-      answers: const [],
-      currentIndex: 0,
-    ));
+    emit(
+      QuizState(
+        phase: questions.isEmpty ? QuizPhase.idle : QuizPhase.inProgress,
+        questions: questions,
+        answers: const [],
+        currentIndex: 0,
+      ),
+    );
   }
 
   /// Submit the user's selection for the current question and advance.
@@ -45,11 +45,13 @@ class QuizCubit extends Cubit<QuizState> {
     final updatedAnswers = [...state.answers, choiceIndex];
     final nextIndex = state.currentIndex + 1;
     final isLast = nextIndex >= state.questions.length;
-    emit(state.copyWith(
-      answers: updatedAnswers,
-      currentIndex: nextIndex,
-      phase: isLast ? QuizPhase.finished : QuizPhase.inProgress,
-    ));
+    emit(
+      state.copyWith(
+        answers: updatedAnswers,
+        currentIndex: nextIndex,
+        phase: isLast ? QuizPhase.finished : QuizPhase.inProgress,
+      ),
+    );
   }
 
   /// Reset to idle without preserving any state. Useful for "Try again".

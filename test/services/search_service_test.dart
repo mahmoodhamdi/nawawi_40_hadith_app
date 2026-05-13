@@ -26,8 +26,10 @@ Hadith _h({
 void main() {
   group('SearchService.normalize', () {
     test('strips diacritics', () {
-      expect(SearchService.normalize('إنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ'),
-          'انما الاعمال بالنيات');
+      expect(
+        SearchService.normalize('إنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ'),
+        'انما الاعمال بالنيات',
+      );
     });
 
     test('folds alef variants and ya variants', () {
@@ -64,8 +66,7 @@ void main() {
     });
 
     test('handles unknown terms by passing them through', () {
-      expect(SearchService.transliterateQuery('gobbledygook'),
-          'gobbledygook');
+      expect(SearchService.transliterateQuery('gobbledygook'), 'gobbledygook');
     });
 
     test('handles empty input', () {

@@ -27,8 +27,9 @@ class PdfExportService {
   /// every export. Called transparently by the export methods.
   static Future<void> _loadFonts() async {
     if (_cairoRegular != null && _cairoBold != null) return;
-    final regular = await rootBundle
-        .load('assets/fonts/static/Cairo-Regular.ttf');
+    final regular = await rootBundle.load(
+      'assets/fonts/static/Cairo-Regular.ttf',
+    );
     final bold = await rootBundle.load('assets/fonts/static/Cairo-Bold.ttf');
     _cairoRegular = pw.Font.ttf(regular);
     _cairoBold = pw.Font.ttf(bold);
@@ -51,10 +52,7 @@ class PdfExportService {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.fromLTRB(50, 60, 50, 50),
         textDirection: arabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
-        theme: pw.ThemeData.withFont(
-          base: _cairoRegular!,
-          bold: _cairoBold!,
-        ),
+        theme: pw.ThemeData.withFont(base: _cairoRegular!, bold: _cairoBold!),
         build: (context) => [
           _buildHeader(index, arabic),
           pw.SizedBox(height: 24),
@@ -92,31 +90,35 @@ class PdfExportService {
       pw.Page(
         pageFormat: PdfPageFormat.a4,
         textDirection: arabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
-        theme: pw.ThemeData.withFont(
-          base: _cairoRegular!,
-          bold: _cairoBold!,
-        ),
+        theme: pw.ThemeData.withFont(base: _cairoRegular!, bold: _cairoBold!),
         build: (context) => pw.Center(
           child: pw.Column(
             mainAxisAlignment: pw.MainAxisAlignment.center,
             children: [
               pw.Text(
                 arabic ? 'الأربعون النووية' : 'Forty Hadith Nawawi',
-                style: pw.TextStyle(fontSize: 48, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 48,
+                  fontWeight: pw.FontWeight.bold,
+                ),
               ),
               pw.SizedBox(height: 24),
               pw.Text(
-                arabic
-                    ? 'اثنان وأربعون حديثاً نبوياً'
-                    : '42 Prophetic Hadiths',
-                style: const pw.TextStyle(fontSize: 24, color: PdfColors.grey700),
+                arabic ? 'اثنان وأربعون حديثاً نبوياً' : '42 Prophetic Hadiths',
+                style: const pw.TextStyle(
+                  fontSize: 24,
+                  color: PdfColors.grey700,
+                ),
               ),
               pw.SizedBox(height: 80),
               pw.Text(
                 arabic
                     ? 'صدقة جارية · مفتوح المصدر'
                     : 'Sadaqah Jariyah · Open Source',
-                style: const pw.TextStyle(fontSize: 18, color: PdfColors.grey600),
+                style: const pw.TextStyle(
+                  fontSize: 18,
+                  color: PdfColors.grey600,
+                ),
               ),
             ],
           ),
@@ -133,10 +135,7 @@ class PdfExportService {
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.fromLTRB(50, 60, 50, 50),
           textDirection: arabic ? pw.TextDirection.rtl : pw.TextDirection.ltr,
-          theme: pw.ThemeData.withFont(
-            base: _cairoRegular!,
-            bold: _cairoBold!,
-          ),
+          theme: pw.ThemeData.withFont(base: _cairoRegular!, bold: _cairoBold!),
           build: (context) => [
             _buildHeader(i + 1, arabic),
             pw.SizedBox(height: 16),
@@ -205,7 +204,9 @@ class PdfExportService {
   static pw.Widget _buildHadithBody(Hadith hadith, bool arabic) {
     final body = arabic ? hadith.hadithAr : hadith.hadithEn;
     final lines = body.split('\n');
-    final displayText = lines.length > 1 ? lines.skip(1).join('\n').trim() : body;
+    final displayText = lines.length > 1
+        ? lines.skip(1).join('\n').trim()
+        : body;
     return pw.Text(
       displayText,
       style: pw.TextStyle(

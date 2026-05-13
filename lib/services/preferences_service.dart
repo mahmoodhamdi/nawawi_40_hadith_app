@@ -9,7 +9,6 @@ import '../core/constants.dart';
 /// - Last read hadith index and timestamp
 /// - Theme preferences
 class PreferencesService {
-
   /// Saves the last read hadith index with current timestamp
   ///
   /// [hadithIndex] must be a positive integer (1-based index)

@@ -17,16 +17,10 @@ class SearchHistoryCubit extends Cubit<SearchHistoryState> {
       final prefs = await SharedPreferences.getInstance();
       final history = prefs.getStringList(PreferenceKeys.searchHistory) ?? [];
 
-      emit(state.copyWith(
-        history: history,
-        isLoading: false,
-      ));
+      emit(state.copyWith(history: history, isLoading: false));
     } catch (e) {
       debugPrint('Error loading search history: $e');
-      emit(state.copyWith(
-        history: [],
-        isLoading: false,
-      ));
+      emit(state.copyWith(history: [], isLoading: false));
     }
   }
 

@@ -35,12 +35,12 @@ class FontSizeState extends Equatable {
 
   @override
   List<Object> get props => [
-        hadithFontSize,
-        descriptionFontSize,
-        minFontSize,
-        maxFontSize,
-        fontSizeStep,
-      ];
+    hadithFontSize,
+    descriptionFontSize,
+    minFontSize,
+    maxFontSize,
+    fontSizeStep,
+  ];
 }
 
 /// Cubit for managing font size preferences
@@ -50,19 +50,23 @@ class FontSizeCubit extends Cubit<FontSizeState> {
   /// Load saved font size preferences from storage
   Future<void> loadFontSizePreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    final hadithSize = prefs.getDouble(PreferenceKeys.hadithFontSize) ??
+    final hadithSize =
+        prefs.getDouble(PreferenceKeys.hadithFontSize) ??
         FontSizeConstants.defaultHadithFontSize;
-    final descriptionSize = prefs.getDouble(PreferenceKeys.descriptionFontSize) ??
+    final descriptionSize =
+        prefs.getDouble(PreferenceKeys.descriptionFontSize) ??
         FontSizeConstants.defaultDescriptionFontSize;
 
     // Validate loaded values are within bounds
     final validatedHadithSize = _clampFontSize(hadithSize);
     final validatedDescriptionSize = _clampFontSize(descriptionSize);
 
-    emit(state.copyWith(
-      hadithFontSize: validatedHadithSize,
-      descriptionFontSize: validatedDescriptionSize,
-    ));
+    emit(
+      state.copyWith(
+        hadithFontSize: validatedHadithSize,
+        descriptionFontSize: validatedDescriptionSize,
+      ),
+    );
   }
 
   /// Clamp font size to valid range

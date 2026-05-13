@@ -10,15 +10,14 @@ import '../models/hadith.dart';
 class SearchService {
   // ─── 1. Normalization ────────────────────────────────────────────
 
-  static final RegExp _diacritics =
-      RegExp('[ً-ٰٟۖ-ۭ]');
+  static final RegExp _diacritics = RegExp('[ً-ٰٟۖ-ۭ]');
 
   /// Folds Arabic letter variants, strips diacritics + tatweel so that
   /// users typing "نوي" still find "نوى" / "نوي" / "نوّى" / "نوـى".
   static String normalize(String text) {
     return text
         .replaceAll(_diacritics, '')
-        .replaceAll('ـ', '')           // tatweel (U+0640) — visual only
+        .replaceAll('ـ', '') // tatweel (U+0640) — visual only
         .replaceAll('أ', 'ا')
         .replaceAll('إ', 'ا')
         .replaceAll('آ', 'ا')
@@ -35,14 +34,39 @@ class SearchService {
   /// that we strip when matching short query tokens. Order matters —
   /// longest first so "بال" wins over "ب".
   static const List<String> _prefixes = [
-    'وال', 'فال', 'بال', 'كال', 'لل',
-    'ال', 'و', 'ف', 'ب', 'ك', 'ل', 'س',
+    'وال',
+    'فال',
+    'بال',
+    'كال',
+    'لل',
+    'ال',
+    'و',
+    'ف',
+    'ب',
+    'ك',
+    'ل',
+    'س',
   ];
 
   /// Common Arabic suffixes stripped during stemming.
   static const List<String> _suffixes = [
-    'ون', 'ين', 'ات', 'وا', 'تم', 'تن', 'نا', 'ها', 'هم', 'هن',
-    'كم', 'كن', 'ه', 'ك', 'ي', 'ت', 'ا',
+    'ون',
+    'ين',
+    'ات',
+    'وا',
+    'تم',
+    'تن',
+    'نا',
+    'ها',
+    'هم',
+    'هن',
+    'كم',
+    'كن',
+    'ه',
+    'ك',
+    'ي',
+    'ت',
+    'ا',
   ];
 
   /// Stem a single token: strip one prefix (if any) and one suffix
@@ -75,11 +99,9 @@ class SearchService {
   }
 
   static List<String> _stemTokens(String text) {
-    return normalize(text)
-        .split(RegExp(r'\s+'))
-        .where((t) => t.isNotEmpty)
-        .map(stem)
-        .toList();
+    return normalize(
+      text,
+    ).split(RegExp(r'\s+')).where((t) => t.isNotEmpty).map(stem).toList();
   }
 
   // ─── 2. Latin → Arabic transliteration ──────────────────────────
@@ -218,9 +240,9 @@ class SearchService {
       for (var i = 1; i <= s.length; i++) {
         final cost = s.codeUnitAt(i - 1) == t.codeUnitAt(j - 1) ? 0 : 1;
         curr[i] = [
-          prev[i] + 1,         // deletion
-          curr[i - 1] + 1,     // insertion
-          prev[i - 1] + cost,  // substitution
+          prev[i] + 1, // deletion
+          curr[i - 1] + 1, // insertion
+          prev[i - 1] + cost, // substitution
         ].reduce((a, b) => a < b ? a : b);
       }
       for (var k = 0; k <= s.length; k++) {
@@ -237,8 +259,7 @@ class SearchService {
   ///   2. Light Arabic stem of query matches stem of any target token
   ///   3. Levenshtein distance of normalized query vs target tokens
   /// Short queries (< 4 chars after normalization) skip step 3.
-  static bool fuzzyMatch(String query, String target,
-      {int? maxEditDistance}) {
+  static bool fuzzyMatch(String query, String target, {int? maxEditDistance}) {
     final qn = normalize(query);
     if (qn.isEmpty) return false;
     final tn = normalize(target);
@@ -257,8 +278,8 @@ class SearchService {
         // Also accept the stem appearing as a substring of a target
         // stem — covers cases where stripping was too aggressive on
         // one side.
-        if (tStem.contains(qStem) || qStem.contains(tStem) &&
-            tStem.length >= 3) {
+        if (tStem.contains(qStem) ||
+            qStem.contains(tStem) && tStem.length >= 3) {
           return true;
         }
       }
@@ -283,8 +304,11 @@ class SearchService {
   ///   - transliterated form
   ///   - fuzzy distance on a single token
   /// Searches the hadith body, title, description, and topic labels.
-  static bool matches(String query, Hadith hadith,
-      {bool includeDescription = true}) {
+  static bool matches(
+    String query,
+    Hadith hadith, {
+    bool includeDescription = true,
+  }) {
     if (query.trim().isEmpty) return true;
 
     final candidates = <String>[

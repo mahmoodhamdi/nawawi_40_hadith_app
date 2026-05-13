@@ -174,7 +174,11 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                     children: [
                       // Back button
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                        icon: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 28,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
 
@@ -182,10 +186,18 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                       Builder(
                         builder: (context) {
                           final l10n = AppLocalizations.of(context);
-                          final languageCode = context.watch<LanguageCubit>().state.language.code;
-                          final hadithState = context.watch<HadithCubit>().state;
+                          final languageCode = context
+                              .watch<LanguageCubit>()
+                              .state
+                              .language
+                              .code;
+                          final hadithState = context
+                              .watch<HadithCubit>()
+                              .state;
                           final hadithTitle = hadithState is HadithLoaded
-                              ? hadithState.hadiths[_currentIndex - 1].getTitle(languageCode)
+                              ? hadithState.hadiths[_currentIndex - 1].getTitle(
+                                  languageCode,
+                                )
                               : '';
                           return Container(
                             padding: const EdgeInsets.symmetric(
@@ -227,7 +239,9 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                           final l10n = AppLocalizations.of(context);
                           return IconButton(
                             icon: Icon(
-                              _showDescription ? Icons.article : Icons.article_outlined,
+                              _showDescription
+                                  ? Icons.article
+                                  : Icons.article_outlined,
                               color: Colors.white,
                               size: 28,
                             ),
@@ -237,8 +251,12 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                               });
                             },
                             tooltip: _showDescription
-                                ? (l10n.isArabic ? 'إخفاء الشرح' : 'Hide explanation')
-                                : (l10n.isArabic ? 'عرض الشرح' : 'Show explanation'),
+                                ? (l10n.isArabic
+                                      ? 'إخفاء الشرح'
+                                      : 'Hide explanation')
+                                : (l10n.isArabic
+                                      ? 'عرض الشرح'
+                                      : 'Show explanation'),
                           );
                         },
                       ),
@@ -377,7 +395,9 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                       ),
                       const SizedBox(height: 12),
                       Directionality(
-                        textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                        textDirection: isArabic
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
                         child: MarkdownBody(
                           data: descriptionText,
                           styleSheet: _getFocusedMarkdownStyle(
@@ -429,12 +449,18 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                 SliderTheme(
                   data: SliderThemeData(
                     trackHeight: 4,
-                    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                    overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 6,
+                    ),
+                    overlayShape: const RoundSliderOverlayShape(
+                      overlayRadius: 14,
+                    ),
                     activeTrackColor: const Color(0xFFD4AF37),
                     inactiveTrackColor: Colors.white.withValues(alpha: 0.3),
                     thumbColor: const Color(0xFFD4AF37),
-                    overlayColor: const Color(0xFFD4AF37).withValues(alpha: 0.3),
+                    overlayColor: const Color(
+                      0xFFD4AF37,
+                    ).withValues(alpha: 0.3),
                   ),
                   child: Slider(
                     value: audioState.position.inSeconds.toDouble(),
@@ -456,7 +482,8 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                   // Skip backward
                   IconButton(
                     icon: const Icon(Icons.replay_10, color: Colors.white),
-                    onPressed: () => context.read<AudioPlayerCubit>().skipBackward(),
+                    onPressed: () =>
+                        context.read<AudioPlayerCubit>().skipBackward(),
                   ),
 
                   // Play/Pause
@@ -479,7 +506,8 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
                   // Skip forward
                   IconButton(
                     icon: const Icon(Icons.forward_10, color: Colors.white),
-                    onPressed: () => context.read<AudioPlayerCubit>().skipForward(),
+                    onPressed: () =>
+                        context.read<AudioPlayerCubit>().skipForward(),
                   ),
                 ],
               ),
@@ -584,10 +612,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
       ),
 
       // Strong (bold)
-      strong: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: goldColor,
-      ),
+      strong: const TextStyle(fontWeight: FontWeight.bold, color: goldColor),
 
       // Emphasis (italic)
       em: TextStyle(
@@ -596,10 +621,7 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
       ),
 
       // Lists
-      listBullet: TextStyle(
-        fontSize: baseFontSize,
-        color: goldColor,
-      ),
+      listBullet: TextStyle(fontSize: baseFontSize, color: goldColor),
       listIndent: 20.0,
 
       // Blockquote
@@ -614,15 +636,9 @@ class _FocusedReadingScreenState extends State<FocusedReadingScreen>
         border: Border(
           left: isArabic
               ? BorderSide.none
-              : BorderSide(
-                  color: goldColor.withValues(alpha: 0.5),
-                  width: 3,
-                ),
+              : BorderSide(color: goldColor.withValues(alpha: 0.5), width: 3),
           right: isArabic
-              ? BorderSide(
-                  color: goldColor.withValues(alpha: 0.5),
-                  width: 3,
-                )
+              ? BorderSide(color: goldColor.withValues(alpha: 0.5), width: 3)
               : BorderSide.none,
         ),
         color: whiteText.withValues(alpha: 0.05),

@@ -43,8 +43,10 @@ void main() {
     });
 
     test('issuesUrl points to the canonical repo issues endpoint', () {
-      expect(FeedbackService.issuesUrl,
-          'https://github.com/mahmoodhamdi/nawawi_40_hadith_app/issues/new');
+      expect(
+        FeedbackService.issuesUrl,
+        'https://github.com/mahmoodhamdi/nawawi_40_hadith_app/issues/new',
+      );
     });
   });
 }

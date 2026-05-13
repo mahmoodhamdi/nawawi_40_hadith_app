@@ -26,10 +26,7 @@ class SettingsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -52,7 +49,10 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildQuizSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -63,13 +63,17 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.quiz_outlined,
-                    color: theme.colorScheme.primary, size: 28),
+                Icon(
+                  Icons.quiz_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   l10n.quizTitle,
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -77,15 +81,16 @@ class SettingsScreen extends StatelessWidget {
             Text(
               l10n.quizIntro,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             const Divider(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.play_arrow_rounded),
               label: Text(l10n.quizStart),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const QuizScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const QuizScreen())),
             ),
           ],
         ),
@@ -96,12 +101,17 @@ class SettingsScreen extends StatelessWidget {
   // ─── Reading Streaks ────────────────────────────────────────────────
 
   Widget _buildStreaksSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return BlocBuilder<ReadingStreaksCubit, ReadingStreaksState>(
       builder: (context, state) {
         return Card(
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -109,13 +119,17 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.local_fire_department,
-                        color: theme.colorScheme.primary, size: 28),
+                    Icon(
+                      Icons.local_fire_department,
+                      color: theme.colorScheme.primary,
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       l10n.streakCurrentLabel,
                       style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -124,21 +138,26 @@ class SettingsScreen extends StatelessWidget {
                   const Center(child: CircularProgressIndicator())
                 else ...[
                   _StreakRow(
-                      label: l10n.streakCurrentLabel,
-                      value: l10n.streakDays(state.current),
-                      highlight: state.current > 0),
+                    label: l10n.streakCurrentLabel,
+                    value: l10n.streakDays(state.current),
+                    highlight: state.current > 0,
+                  ),
                   const SizedBox(height: 8),
                   _StreakRow(
-                      label: l10n.streakLongestLabel,
-                      value: l10n.streakDays(state.longest),
-                      highlight: false),
+                    label: l10n.streakLongestLabel,
+                    value: l10n.streakDays(state.longest),
+                    highlight: false,
+                  ),
                   if (state.current == 0) ...[
                     const SizedBox(height: 12),
                     Text(
                       l10n.streakEncouragement,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          fontStyle: FontStyle.italic),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.7,
+                        ),
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ],
                   if (state.longest > 0) ...[
@@ -162,7 +181,9 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _confirmStreakReset(
-      BuildContext context, AppLocalizations l10n) async {
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -170,11 +191,13 @@ class SettingsScreen extends StatelessWidget {
         content: Text(l10n.streakReset),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l10n.no)),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.no),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(l10n.yes)),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.yes),
+          ),
         ],
       ),
     );
@@ -186,13 +209,18 @@ class SettingsScreen extends StatelessWidget {
   // ─── Notes ──────────────────────────────────────────────────────────
 
   Widget _buildNotesSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return BlocBuilder<NotesCubit, NotesState>(
       builder: (context, state) {
         final count = state.notes.length;
         return Card(
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -200,29 +228,38 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.note_alt_outlined,
-                        color: theme.colorScheme.primary, size: 28),
+                    Icon(
+                      Icons.note_alt_outlined,
+                      color: theme.colorScheme.primary,
+                      size: 28,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         l10n.notes,
                         style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     if (count > 0)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           l10n.notesCount(count),
                           style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold),
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                   ],
@@ -247,7 +284,9 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _confirmClearNotes(
-      BuildContext context, AppLocalizations l10n) async {
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -255,11 +294,13 @@ class SettingsScreen extends StatelessWidget {
         content: Text(l10n.clearAllNotes),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l10n.no)),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.no),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(l10n.yes)),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.yes),
+          ),
         ],
       ),
     );
@@ -271,7 +312,10 @@ class SettingsScreen extends StatelessWidget {
   // ─── Backup ─────────────────────────────────────────────────────────
 
   Widget _buildBackupSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -282,13 +326,17 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.cloud_off_outlined,
-                    color: theme.colorScheme.primary, size: 28),
+                Icon(
+                  Icons.cloud_off_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   l10n.backup,
                   style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -296,7 +344,8 @@ class SettingsScreen extends StatelessWidget {
             Text(
               l10n.backupHint,
               style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             const Divider(height: 24),
             Row(
@@ -325,7 +374,9 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _exportBackup(
-      BuildContext context, AppLocalizations l10n) async {
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final messenger = ScaffoldMessenger.of(context);
     try {
       await BackupService.shareBackup();
@@ -335,7 +386,9 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _importBackup(
-      BuildContext context, AppLocalizations l10n) async {
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final controller = TextEditingController();
     final result = await showDialog<String>(
       context: context,
@@ -354,11 +407,13 @@ class SettingsScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(null),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.of(ctx).pop(null),
+            child: Text(l10n.cancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(controller.text),
-              child: Text(l10n.done)),
+            onPressed: () => Navigator.of(ctx).pop(controller.text),
+            child: Text(l10n.done),
+          ),
         ],
       ),
     );
@@ -368,17 +423,22 @@ class SettingsScreen extends StatelessWidget {
     try {
       final count = await BackupService.importFromString(result);
       messenger.showSnackBar(
-          SnackBar(content: Text(l10n.backupRestored(count))));
+        SnackBar(content: Text(l10n.backupRestored(count))),
+      );
     } on BackupRestoreException catch (e) {
       messenger.showSnackBar(
-          SnackBar(content: Text('${l10n.backupFailed}: ${e.message}')));
+        SnackBar(content: Text('${l10n.backupFailed}: ${e.message}')),
+      );
     }
   }
 
   // ─── Feedback ───────────────────────────────────────────────────────
 
   Widget _buildFeedbackSection(
-      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -389,13 +449,17 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.feedback_outlined,
-                    color: theme.colorScheme.primary, size: 28),
+                Icon(
+                  Icons.feedback_outlined,
+                  color: theme.colorScheme.primary,
+                  size: 28,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   l10n.sendFeedback,
                   style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -412,7 +476,9 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _composeFeedback(
-      BuildContext context, AppLocalizations l10n) async {
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final controller = TextEditingController();
     final result = await showDialog<String>(
       context: context,
@@ -431,18 +497,19 @@ class SettingsScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(null),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.of(ctx).pop(null),
+            child: Text(l10n.cancel),
+          ),
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(controller.text),
-              child: Text(l10n.done)),
+            onPressed: () => Navigator.of(ctx).pop(controller.text),
+            child: Text(l10n.done),
+          ),
         ],
       ),
     );
     if (!context.mounted || result == null || result.trim().isEmpty) return;
 
-    final locale =
-        context.read<LanguageCubit>().state.language.code;
+    final locale = context.read<LanguageCubit>().state.language.code;
     await FeedbackService.sendFeedback(
       userMessage: result,
       appVersion: AppInfo.appVersion,
@@ -450,7 +517,11 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLanguageSection(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildLanguageSection(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return BlocBuilder<LanguageCubit, LanguageState>(
       builder: (context, state) {
         return Card(
@@ -550,17 +621,18 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: theme.colorScheme.primary,
-              ),
+              Icon(Icons.check_circle, color: theme.colorScheme.primary),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildReminderSection(BuildContext context, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildReminderSection(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
     return BlocBuilder<ReminderCubit, ReminderState>(
       builder: (context, state) {
         if (state.isLoading) {
@@ -605,7 +677,9 @@ class SettingsScreen extends StatelessWidget {
                           Text(
                             l10n.dailyReminderDescription,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.7,
+                              ),
                             ),
                           ),
                         ],
@@ -618,7 +692,9 @@ class SettingsScreen extends StatelessWidget {
                 // Toggle switch
                 SwitchListTile(
                   title: Text(
-                    state.isEnabled ? l10n.reminderEnabled : l10n.reminderDisabled,
+                    state.isEnabled
+                        ? l10n.reminderEnabled
+                        : l10n.reminderDisabled,
                     style: theme.textTheme.bodyLarge,
                   ),
                   subtitle: state.isEnabled
@@ -633,7 +709,9 @@ class SettingsScreen extends StatelessWidget {
                   onChanged: state.isLoading
                       ? null
                       : (value) => _toggleReminder(context),
-                  activeTrackColor: theme.colorScheme.primary.withValues(alpha: 0.5),
+                  activeTrackColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.5,
+                  ),
                   contentPadding: EdgeInsets.zero,
                 ),
 
@@ -728,7 +806,11 @@ class SettingsScreen extends StatelessWidget {
     reminderCubit.toggleReminder(nextHadithNumber: nextHadith);
   }
 
-  void _selectTime(BuildContext context, TimeOfDay currentTime, AppLocalizations l10n) async {
+  void _selectTime(
+    BuildContext context,
+    TimeOfDay currentTime,
+    AppLocalizations l10n,
+  ) async {
     final theme = Theme.of(context);
     final languageState = context.read<LanguageCubit>().state;
 
@@ -801,8 +883,9 @@ class _StreakRow extends StatelessWidget {
           decoration: BoxDecoration(
             color: highlight
                 ? theme.colorScheme.primary.withValues(alpha: 0.15)
-                : theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.5),
+                : theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.5,
+                  ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(

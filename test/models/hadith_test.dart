@@ -101,10 +101,7 @@ void main() {
     });
 
     test('creates Hadith from JSON with empty strings', () {
-      final json = {
-        'hadith': '',
-        'description': '',
-      };
+      final json = {'hadith': '', 'description': ''};
 
       final hadith = Hadith.fromJson(json);
 
@@ -114,10 +111,7 @@ void main() {
 
     test('creates Hadith from JSON with long text', () {
       final longText = 'أ' * 10000;
-      final json = {
-        'hadith': longText,
-        'description': longText,
-      };
+      final json = {'hadith': longText, 'description': longText};
 
       final hadith = Hadith.fromJson(json);
 
@@ -138,49 +132,27 @@ void main() {
     });
 
     test('throws when JSON missing hadith field', () {
-      final json = {
-        'description': 'شرح الحديث',
-      };
+      final json = {'description': 'شرح الحديث'};
 
-      expect(
-        () => Hadith.fromJson(json),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => Hadith.fromJson(json), throwsA(isA<TypeError>()));
     });
 
     test('throws when JSON missing description field', () {
-      final json = {
-        'hadith': 'الحديث',
-      };
+      final json = {'hadith': 'الحديث'};
 
-      expect(
-        () => Hadith.fromJson(json),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => Hadith.fromJson(json), throwsA(isA<TypeError>()));
     });
 
     test('throws when hadith field is not a string', () {
-      final json = {
-        'hadith': 123,
-        'description': 'شرح',
-      };
+      final json = {'hadith': 123, 'description': 'شرح'};
 
-      expect(
-        () => Hadith.fromJson(json),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => Hadith.fromJson(json), throwsA(isA<TypeError>()));
     });
 
     test('throws when description field is not a string', () {
-      final json = {
-        'hadith': 'الحديث',
-        'description': null,
-      };
+      final json = {'hadith': 'الحديث', 'description': null};
 
-      expect(
-        () => Hadith.fromJson(json),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => Hadith.fromJson(json), throwsA(isA<TypeError>()));
     });
 
     test('creates Hadith using fromBilingual factory', () {
@@ -203,7 +175,10 @@ void main() {
     });
 
     test('citation is null when JSON omits the citation field', () {
-      final hadith = Hadith.fromJson({'hadith': 'الحديث', 'description': 'شرح'});
+      final hadith = Hadith.fromJson({
+        'hadith': 'الحديث',
+        'description': 'شرح',
+      });
       expect(hadith.citation, isNull);
     });
 
@@ -254,10 +229,7 @@ void main() {
           'sunnah_url': 'https://sunnah.com/nawawi40:2',
         },
       };
-      final jsonEn = {
-        'hadith': 'Hadith',
-        'description': 'Explanation',
-      };
+      final jsonEn = {'hadith': 'Hadith', 'description': 'Explanation'};
       final hadith = Hadith.fromJson(jsonAr, jsonEn);
 
       expect(hadith.citation, isNotNull);

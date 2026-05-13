@@ -359,8 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onSearchFocusChanged() {
     setState(() {
-      _showSearchHistory =
-          _searchFocusNode.hasFocus && _searchQuery.isEmpty;
+      _showSearchHistory = _searchFocusNode.hasFocus && _searchQuery.isEmpty;
     });
   }
 
@@ -478,9 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// [SearchService.matches] for the actual hit test.
   // ignore: unused_element
   String _normalizeArabicText(String text) {
-    final diacritics = RegExp(
-      '[\u064B-\u065F\u0670\u06D6-\u06ED]',
-    );
+    final diacritics = RegExp('[\u064B-\u065F\u0670\u06D6-\u06ED]');
 
     String normalized = text
         .replaceAll(diacritics, '')
@@ -573,29 +570,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const Divider(height: 1),
-              ...state.history.map((query) => ListTile(
-                    dense: true,
-                    leading: Icon(
-                      Icons.search,
-                      size: 20,
+              ...state.history.map(
+                (query) => ListTile(
+                  dense: true,
+                  leading: Icon(
+                    Icons.search,
+                    size: 20,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                  title: Text(query, style: theme.textTheme.bodyMedium),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      size: 18,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
-                    title: Text(
-                      query,
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        size: 18,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                      ),
-                      onPressed: () {
-                        context.read<SearchHistoryCubit>().removeQuery(query);
-                      },
-                    ),
-                    onTap: () => _selectHistoryItem(query),
-                  )),
+                    onPressed: () {
+                      context.read<SearchHistoryCubit>().removeQuery(query);
+                    },
+                  ),
+                  onTap: () => _selectHistoryItem(query),
+                ),
+              ),
             ],
           ),
         );
@@ -705,10 +701,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       value: AppThemeType.system,
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.brightness_auto,
-                            color: Colors.grey,
-                          ),
+                          const Icon(Icons.brightness_auto, color: Colors.grey),
                           const SizedBox(width: 8),
                           Text(l10n.systemTheme),
                         ],
@@ -756,14 +749,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: theme.colorScheme.primary
-                                      .withValues(alpha: 0.12),
+                                  color: theme.colorScheme.primary.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   border: Border.all(
-                                    color: theme.colorScheme.primary
-                                        .withValues(alpha: 0.3),
+                                    color: theme.colorScheme.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
                                 child: Row(
@@ -779,9 +776,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       l10n.streakDays(streakState.current),
                                       style: theme.textTheme.bodyMedium
                                           ?.copyWith(
-                                        color: theme.colorScheme.primary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -845,7 +842,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             _searchController.clear();
                                             _searchQuery = '';
                                             _searchedHadithNumber = null;
-                                            _showSearchHistory = _searchFocusNode.hasFocus;
+                                            _showSearchHistory =
+                                                _searchFocusNode.hasFocus;
                                           });
                                         },
                                       )
@@ -915,7 +913,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Search history dropdown
-                    if (_showSearchHistory) _buildSearchHistoryDropdown(context),
+                    if (_showSearchHistory)
+                      _buildSearchHistoryDropdown(context),
                     if (!_showSearchHistory) ...[
                       BlocBuilder<LastReadCubit, LastReadState>(
                         builder: (context, lastReadState) {
@@ -951,7 +950,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           ? hadithState.hadiths
                           : hadithState.hadiths.where((h) {
                               final index = hadithState.hadiths.indexOf(h) + 1;
-                              return _hadithMatchesQuery(h, _searchQuery, index);
+                              return _hadithMatchesQuery(
+                                h,
+                                _searchQuery,
+                                index,
+                              );
                             }).toList();
 
                       // Apply favorites filter if enabled
@@ -974,8 +977,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? Icons.favorite_border
                                       : Icons.search_off,
                                   size: 64,
-                                  color: theme.colorScheme.primary
-                                      .withValues(alpha: 0.5),
+                                  color: theme.colorScheme.primary.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
@@ -1020,7 +1024,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else if (hadithState is HadithError) {
                   return SliverFillRemaining(
                     child: Center(
-                      child: Text(hadithState.message, textAlign: TextAlign.center),
+                      child: Text(
+                        hadithState.message,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   );
                 }

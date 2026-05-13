@@ -28,9 +28,13 @@ class HadithCitation {
     return HadithCitation(
       number: citationAr['number'] as int,
       narratorAr: citationAr['narrator'] as String,
-      narratorEn: (citationEn?['narrator'] as String?) ?? citationAr['narrator'] as String,
+      narratorEn:
+          (citationEn?['narrator'] as String?) ??
+          citationAr['narrator'] as String,
       collectionAr: citationAr['collection'] as String,
-      collectionEn: (citationEn?['collection'] as String?) ?? citationAr['collection'] as String,
+      collectionEn:
+          (citationEn?['collection'] as String?) ??
+          citationAr['collection'] as String,
       sunnahUrl: citationAr['sunnah_url'] as String,
     );
   }
@@ -96,16 +100,21 @@ class Hadith {
   /// Legacy getter for Arabic description (backward compatibility)
   String get description => descriptionAr;
 
-  factory Hadith.fromJson(Map<String, dynamic> jsonAr, [Map<String, dynamic>? jsonEn]) {
+  factory Hadith.fromJson(
+    Map<String, dynamic> jsonAr, [
+    Map<String, dynamic>? jsonEn,
+  ]) {
     final citationAr = jsonAr['citation'] as Map<String, dynamic>?;
     final citationEn = jsonEn?['citation'] as Map<String, dynamic>?;
 
     // Topic IDs are stable across locales — read from Arabic JSON (the
     // English file mirrors them).
-    final topicIds = (jsonAr['topic_ids'] as List?)?.whereType<String>().toList() ??
+    final topicIds =
+        (jsonAr['topic_ids'] as List?)?.whereType<String>().toList() ??
         const <String>[];
     final labelsAr =
-        (jsonAr['topics'] as List?)?.whereType<String>().toList() ?? const <String>[];
+        (jsonAr['topics'] as List?)?.whereType<String>().toList() ??
+        const <String>[];
     final labelsEn =
         (jsonEn?['topics'] as List?)?.whereType<String>().toList() ?? labelsAr;
 
@@ -115,7 +124,8 @@ class Hadith {
       hadithAr: jsonAr['hadith'] as String,
       hadithEn: jsonEn?['hadith'] as String? ?? jsonAr['hadith'] as String,
       descriptionAr: jsonAr['description'] as String,
-      descriptionEn: jsonEn?['description'] as String? ?? jsonAr['description'] as String,
+      descriptionEn:
+          jsonEn?['description'] as String? ?? jsonAr['description'] as String,
       citation: citationAr != null
           ? HadithCitation.fromJson(citationAr, citationEn)
           : null,

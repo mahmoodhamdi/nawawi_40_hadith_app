@@ -149,9 +149,7 @@ void main() {
     });
 
     test('getLastReadTime handles empty string', () async {
-      SharedPreferences.setMockInitialValues({
-        PreferenceKeys.lastReadTime: '',
-      });
+      SharedPreferences.setMockInitialValues({PreferenceKeys.lastReadTime: ''});
 
       final result = await PreferencesService.getLastReadTime();
       expect(result, isNull);
@@ -262,18 +260,14 @@ void main() {
     });
 
     test('getSavedTheme returns saved theme', () async {
-      SharedPreferences.setMockInitialValues({
-        PreferenceKeys.theme: 3,
-      });
+      SharedPreferences.setMockInitialValues({PreferenceKeys.theme: 3});
 
       final result = await PreferencesService.getSavedTheme();
       expect(result, 3);
     });
 
     test('getSavedTheme clears invalid stored value', () async {
-      SharedPreferences.setMockInitialValues({
-        PreferenceKeys.theme: 999,
-      });
+      SharedPreferences.setMockInitialValues({PreferenceKeys.theme: 999});
 
       final result = await PreferencesService.getSavedTheme();
       expect(result, isNull);
@@ -284,9 +278,7 @@ void main() {
     });
 
     test('getSavedTheme clears negative stored value', () async {
-      SharedPreferences.setMockInitialValues({
-        PreferenceKeys.theme: -5,
-      });
+      SharedPreferences.setMockInitialValues({PreferenceKeys.theme: -5});
 
       final result = await PreferencesService.getSavedTheme();
       expect(result, isNull);

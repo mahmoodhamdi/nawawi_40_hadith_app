@@ -41,7 +41,9 @@ class RelatedHadithsCard extends StatelessWidget {
           if (i + 1 == currentIndex) continue; // skip self
           final overlap = h.topicIds.toSet().intersection(currentTopics);
           if (overlap.isEmpty) continue;
-          related.add(_RelatedEntry(index: i + 1, hadith: h, overlap: overlap.length));
+          related.add(
+            _RelatedEntry(index: i + 1, hadith: h, overlap: overlap.length),
+          );
         }
 
         // Sort by overlap count desc, then ascending index for stability.
@@ -54,7 +56,9 @@ class RelatedHadithsCard extends StatelessWidget {
 
         return Card(
           elevation: 1,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             child: Column(
@@ -62,13 +66,17 @@ class RelatedHadithsCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(Icons.link_rounded,
-                        size: 20, color: theme.colorScheme.primary),
+                    Icon(
+                      Icons.link_rounded,
+                      size: 20,
+                      color: theme.colorScheme.primary,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.relatedHadiths,
-                      style: theme.textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -79,15 +87,22 @@ class RelatedHadithsCard extends StatelessWidget {
                   runSpacing: 4,
                   children: [
                     for (final label in current.topicLabelsFor(
-                        l10n.isArabic ? 'ar' : 'en'))
+                      l10n.isArabic ? 'ar' : 'en',
+                    ))
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.08,
+                          ),
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.2,
+                            ),
                           ),
                         ),
                         child: Text(
@@ -115,7 +130,9 @@ class RelatedHadithsCard extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 4),
+                        vertical: 8,
+                        horizontal: 4,
+                      ),
                       child: Row(
                         children: [
                           Container(
@@ -123,8 +140,9 @@ class RelatedHadithsCard extends StatelessWidget {
                             height: 32,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.1),
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.1,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -138,17 +156,21 @@ class RelatedHadithsCard extends StatelessWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              entry.hadith.getTitle(l10n.isArabic ? 'ar' : 'en'),
+                              entry.hadith.getTitle(
+                                l10n.isArabic ? 'ar' : 'en',
+                              ),
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w500),
+                                fontWeight: FontWeight.w500,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Icon(
                             Icons.chevron_right,
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.5),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                         ],
                       ),

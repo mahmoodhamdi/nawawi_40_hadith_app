@@ -61,12 +61,14 @@ class ReadingStreaksCubit extends Cubit<ReadingStreaksState> {
         }
       }
 
-      emit(state.copyWith(
-        current: effectiveCurrent,
-        longest: longest,
-        lastDate: lastDate,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          current: effectiveCurrent,
+          longest: longest,
+          lastDate: lastDate,
+          isLoading: false,
+        ),
+      );
     } catch (e) {
       debugPrint('Error loading reading streaks: $e');
       emit(const ReadingStreaksState(isLoading: false));
@@ -100,14 +102,11 @@ class ReadingStreaksCubit extends Cubit<ReadingStreaksState> {
       }
     }
 
-    final newLongest =
-        newCurrent > state.longest ? newCurrent : state.longest;
+    final newLongest = newCurrent > state.longest ? newCurrent : state.longest;
 
-    emit(state.copyWith(
-      current: newCurrent,
-      longest: newLongest,
-      lastDate: today,
-    ));
+    emit(
+      state.copyWith(current: newCurrent, longest: newLongest, lastDate: today),
+    );
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(PreferenceKeys.streakCurrent, newCurrent);

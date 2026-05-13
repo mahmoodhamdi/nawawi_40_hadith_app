@@ -25,7 +25,8 @@ class AppStrings {
   // Settings Screen
   static const settings = 'الإعدادات';
   static const dailyReminder = 'التذكير اليومي';
-  static const dailyReminderDescription = 'تذكير يومي لقراءة حديث من الأربعين النووية';
+  static const dailyReminderDescription =
+      'تذكير يومي لقراءة حديث من الأربعين النووية';
   static const reminderTime = 'وقت التذكير';
   static const reminderEnabled = 'التذكير مفعّل';
   static const reminderDisabled = 'التذكير معطّل';

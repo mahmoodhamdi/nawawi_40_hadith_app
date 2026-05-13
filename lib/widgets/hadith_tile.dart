@@ -85,10 +85,7 @@ class HadithTile extends StatelessWidget {
       color: theme.colorScheme.primary,
     );
     if (isRtl) {
-      arrowIcon = Transform.scale(
-        scaleX: -1,
-        child: arrowIcon,
-      );
+      arrowIcon = Transform.scale(scaleX: -1, child: arrowIcon);
     }
 
     return Semantics(
@@ -148,7 +145,8 @@ class HadithTile extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => HadithDetailsScreen(index: index, hadith: hadith),
+                builder: (_) =>
+                    HadithDetailsScreen(index: index, hadith: hadith),
               ),
             );
           },

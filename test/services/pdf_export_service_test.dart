@@ -16,8 +16,8 @@ void main() {
     const channel = MethodChannel('flutter/assets');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler(channel.name, (msg) async {
-      return ByteData(0); // Empty bytes; load will fail gracefully if used
-    });
+          return ByteData(0); // Empty bytes; load will fail gracefully if used
+        });
   });
 
   test('shareOrPrint signature accepts bytes + filename without throwing'
