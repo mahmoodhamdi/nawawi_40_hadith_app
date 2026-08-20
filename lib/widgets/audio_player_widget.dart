@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../core/constants.dart';
+
 class AudioPlayerWidget extends StatelessWidget {
   // Made AudioPlayer optional to support both direct AudioPlayer and Cubit approaches
   final AudioPlayer? player;
@@ -57,17 +59,23 @@ class AudioPlayerWidget extends StatelessWidget {
                     label:
                         'شريط التقدم. الموقع الحالي ${_formatDuration(position)} من ${_formatDuration(duration)}',
                     slider: true,
-                    value:
-                        '${(position.inSeconds / duration.inSeconds * 100).round()}%',
+                    // Guarded: before a clip reports its duration this was
+                    // 0 / 0 → NaN, and NaN.round() throws.
+                    value: duration.inSeconds > 0
+                        ? '${(position.inSeconds / duration.inSeconds * 100).round()}%'
+                        : '0%',
                     child: Slider(
                       value: position.inSeconds.toDouble().clamp(
                         0,
                         duration.inSeconds.toDouble(),
                       ),
                       min: 0,
-                      max: duration.inSeconds.toDouble(),
-                      onChanged: (value) =>
-                          onSeek(Duration(seconds: value.toInt())),
+                      max: duration.inSeconds > 0
+                          ? duration.inSeconds.toDouble()
+                          : 1,
+                      onChanged: duration.inSeconds > 0
+                          ? (value) => onSeek(Duration(seconds: value.toInt()))
+                          : null,
                       activeColor: theme.colorScheme.primary,
                       inactiveColor: theme.colorScheme.primary.withValues(
                         alpha: 0.3,
@@ -151,16 +159,16 @@ class AudioPlayerWidget extends StatelessWidget {
                             child: IconButton(
                               icon: const Icon(Icons.speed),
                               onPressed: () {
-                                // Cycle through speeds: 1.0 -> 1.5 -> 2.0 -> 1.0
-                                double nextSpeed;
-                                if (playbackSpeed == 1.0) {
-                                  nextSpeed = 1.5;
-                                } else if (playbackSpeed == 1.5) {
-                                  nextSpeed = 2.0;
-                                } else {
-                                  nextSpeed = 1.0;
-                                }
-                                onSpeedChanged?.call(nextSpeed);
+                                // Cycle through AudioConstants.playbackSpeedOptions.
+                                // This used to hop 1.0 → 1.5 → 2.0 only, so the
+                                // 0.5x / 0.75x / 1.25x options the app declares
+                                // were unreachable.
+                                const speeds =
+                                    AudioConstants.playbackSpeedOptions;
+                                final current = speeds.indexOf(playbackSpeed);
+                                final next =
+                                    speeds[(current + 1) % speeds.length];
+                                onSpeedChanged?.call(next);
                               },
                               tooltip: 'تغيير سرعة التشغيل',
                               color: theme.colorScheme.primary,

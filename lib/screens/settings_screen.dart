@@ -27,22 +27,30 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
+      // Grouped into four labelled sections. Seven equally-weighted cards in
+      // a flat list gave the eye nothing to anchor on.
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
+          _SectionHeader(l10n.sectionPreferences),
           _buildLanguageSection(context, theme, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildReminderSection(context, theme, l10n),
-          const SizedBox(height: 16),
+
+          _SectionHeader(l10n.sectionJourney),
           _buildStreaksSection(context, theme, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildNotesSection(context, theme, l10n),
-          const SizedBox(height: 16),
-          _buildBackupSection(context, theme, l10n),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _buildQuizSection(context, theme, l10n),
-          const SizedBox(height: 16),
+
+          _SectionHeader(l10n.sectionData),
+          _buildBackupSection(context, theme, l10n),
+
+          _SectionHeader(l10n.aboutApp),
           _buildFeedbackSection(context, theme, l10n),
+          const SizedBox(height: 12),
+          _buildAboutSection(context, theme, l10n),
         ],
       ),
     );
@@ -85,12 +93,15 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const Divider(height: 24),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.play_arrow_rounded),
-              label: Text(l10n.quizStart),
-              onPressed: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const QuizScreen())),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: Text(l10n.quizStart),
+                onPressed: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const QuizScreen())),
+              ),
             ),
           ],
         ),
@@ -264,8 +275,17 @@ class SettingsScreen extends StatelessWidget {
                       ),
                   ],
                 ),
-                if (count > 0) ...[
-                  const Divider(height: 24),
+                const Divider(height: 24),
+                if (count == 0)
+                  // Without this the card was a bare title with no content and
+                  // nothing to tap — it read as broken rather than empty.
+                  Text(
+                    l10n.notesEmptyHint,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  )
+                else
                   Align(
                     alignment: AlignmentDirectional.centerEnd,
                     child: TextButton.icon(
@@ -274,7 +294,6 @@ class SettingsScreen extends StatelessWidget {
                       onPressed: () => _confirmClearNotes(context, l10n),
                     ),
                   ),
-                ],
               ],
             ),
           ),
@@ -348,24 +367,24 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
             const Divider(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.upload_file_outlined),
-                    label: Text(l10n.exportBackup),
-                    onPressed: () => _exportBackup(context, l10n),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    icon: const Icon(Icons.download_outlined),
-                    label: Text(l10n.importBackup),
-                    onPressed: () => _importBackup(context, l10n),
-                  ),
-                ),
-              ],
+            // Stacked, not side by side: "تصدير نسخة احتياطية" wrapped onto
+            // two lines inside a half-width pill and looked broken.
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.upload_file_outlined),
+                label: Text(l10n.exportBackup),
+                onPressed: () => _exportBackup(context, l10n),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.download_outlined),
+                label: Text(l10n.importBackup),
+                onPressed: () => _importBackup(context, l10n),
+              ),
             ),
           ],
         ),
@@ -463,11 +482,21 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.feedbackIntro,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
+            ),
             const Divider(height: 24),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.send_outlined),
-              label: Text(l10n.sendFeedback),
-              onPressed: () => _composeFeedback(context, l10n),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.send_outlined),
+                label: Text(l10n.sendFeedback),
+                onPressed: () => _composeFeedback(context, l10n),
+              ),
             ),
           ],
         ),
@@ -514,6 +543,51 @@ class SettingsScreen extends StatelessWidget {
       userMessage: result,
       appVersion: AppInfo.appVersion,
       locale: locale,
+    );
+  }
+
+  // ─── About ──────────────────────────────────────────────────────────
+
+  Widget _buildAboutSection(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: theme.colorScheme.primary,
+                  size: 28,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l10n.aboutApp,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            // Bug reports ask for the app version, and it was previously
+            // buried in the feedback payload with no way to read it.
+            _AboutRow(label: l10n.version, value: AppInfo.appVersion),
+            const SizedBox(height: 8),
+            _AboutRow(label: l10n.reciter, value: l10n.sheikhAhmadAlNafees),
+            const SizedBox(height: 8),
+            _AboutRow(label: l10n.openSource, value: 'MIT'),
+          ],
+        ),
+      ),
     );
   }
 
@@ -620,8 +694,6 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (isSelected)
-              Icon(Icons.check_circle, color: theme.colorScheme.primary),
           ],
         ),
       ),
@@ -827,7 +899,20 @@ class SettingsScreen extends StatelessWidget {
             data: theme.copyWith(
               timePickerTheme: TimePickerThemeData(
                 backgroundColor: theme.scaffoldBackgroundColor,
-                hourMinuteTextColor: theme.colorScheme.primary,
+                // The selected hour/minute field is *filled* with the
+                // primary colour, so its digits have to be onPrimary.
+                // Setting only the text colour left primary-on-primary —
+                // the selected field rendered as a blank coloured block.
+                hourMinuteColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primary.withValues(alpha: 0.08),
+                ),
+                hourMinuteTextColor: WidgetStateColor.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.primary,
+                ),
                 dayPeriodTextColor: theme.colorScheme.primary,
               ),
             ),
@@ -896,6 +981,60 @@ class _StreakRow extends StatelessWidget {
                   : theme.colorScheme.onSurface,
               fontWeight: FontWeight.bold,
             ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Label that introduces a group of settings cards.
+class _SectionHeader extends StatelessWidget {
+  final String title;
+
+  const _SectionHeader(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 4, top: 24, bottom: 10),
+      child: Text(
+        title,
+        style: theme.textTheme.titleSmall?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.3,
+        ),
+      ),
+    );
+  }
+}
+
+/// One `label — value` line inside the About card.
+class _AboutRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _AboutRow({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

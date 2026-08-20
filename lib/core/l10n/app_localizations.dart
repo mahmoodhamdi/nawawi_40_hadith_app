@@ -227,6 +227,18 @@ class AppLocalizations {
   String get clearAllNotes => isArabic ? 'حذف كل الملاحظات' : 'Clear all notes';
   String notesCount(int n) => isArabic ? '$n ملاحظة' : '$n notes';
 
+  // Settings sections
+  String get sectionPreferences => isArabic ? 'التفضيلات' : 'Preferences';
+  String get sectionJourney => isArabic ? 'رحلتك' : 'Your journey';
+  String get sectionData => isArabic ? 'بياناتك' : 'Your data';
+  String get notesEmptyHint => isArabic
+      ? 'لم تُدوّن أي ملاحظة بعد. افتح أي حديث واضغط «ملاحظاتك» لتكتب ما استفدته.'
+      : 'No notes yet. Open any hadith and tap "Your notes" to write down what you learned.';
+  String get feedbackIntro => isArabic
+      ? 'عندك اقتراح أو لاحظت خطأ؟ تُرسل ملاحظتك عبر التطبيق الذي تختاره — بلا خادم ولا تتبّع.'
+      : 'Have a suggestion or spotted a mistake? Your note is sent through the app you pick — no server, no tracking.';
+  String get openSource => isArabic ? 'مفتوح المصدر' : 'Open source';
+
   // Backup
   String get backup => isArabic ? 'النسخ الاحتياطي' : 'Backup';
   String get exportBackup => isArabic ? 'تصدير نسخة احتياطية' : 'Export backup';
