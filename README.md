@@ -92,8 +92,7 @@ An **Islamic Flutter app** that displays the **Forty Hadith Nawawi** with audio 
 | ملاحظاتك | ملاحظات شخصية لكل حديث (Markdown، محلية) | Personal Notes | Per-hadith Markdown notes (local) |
 | وضع الحفظ | إخفاء النص + كشف باللمس | Memorize Mode | Hide-and-reveal for memorization |
 | اختبار المعرفة | 10 أسئلة على الأحاديث (الراوي/المصدر/الرقم) | Quiz Mode | 10-question MCQ session |
-| نسخ احتياطي محلي | تصدير/استيراد JSON بدون cloud | Local Backup | Local export/import — no cloud |
-| ملاحظات | إرسال ملاحظات عبر share sheet إلى GitHub | Feedback | Share-sheet feedback to GitHub |
+| ملاحظات | إرسال ملاحظة للمطوّر عبر واتساب | Feedback | Send the developer a note on WhatsApp |
 | تصدير PDF | حفظ حديث واحد أو الكل كـ PDF | PDF Export | Single or full collection as PDF |
 | ثيم سيبيا | ثيم خامس للراحة البصرية | Sepia Theme | 5th theme for eye-care reading |
 

@@ -230,13 +230,19 @@ class AppLocalizations {
   // Settings sections
   String get sectionPreferences => isArabic ? 'التفضيلات' : 'Preferences';
   String get sectionJourney => isArabic ? 'رحلتك' : 'Your journey';
-  String get sectionData => isArabic ? 'بياناتك' : 'Your data';
+  String get sectionContact => isArabic ? 'تواصل معنا' : 'Get in touch';
   String get notesEmptyHint => isArabic
       ? 'لم تُدوّن أي ملاحظة بعد. افتح أي حديث واضغط «ملاحظاتك» لتكتب ما استفدته.'
       : 'No notes yet. Open any hadith and tap "Your notes" to write down what you learned.';
   String get feedbackIntro => isArabic
-      ? 'عندك اقتراح أو لاحظت خطأ؟ تُرسل ملاحظتك عبر التطبيق الذي تختاره — بلا خادم ولا تتبّع.'
-      : 'Have a suggestion or spotted a mistake? Your note is sent through the app you pick — no server, no tracking.';
+      ? 'عندك اقتراح أو لاحظت خطأ؟ تُفتح رسالتك جاهزة في واتساب لترسلها للمطوّر — لا يُرسل شيء إلا بضغطك أنت.'
+      : 'Have a suggestion or spotted a mistake? Your note opens ready in WhatsApp to send to the developer — nothing leaves until you press send.';
+  String get feedbackNoteLabel => isArabic ? 'ملاحظتي:' : 'My note:';
+  String get feedbackOpeningWhatsapp =>
+      isArabic ? 'جارٍ فتح واتساب...' : 'Opening WhatsApp…';
+  String get feedbackWhatsappUnavailable => isArabic
+      ? 'تعذّر فتح واتساب، اختر طريقة أخرى للإرسال'
+      : 'Could not open WhatsApp — pick another way to send it';
   String get openSource => isArabic ? 'مفتوح المصدر' : 'Open source';
 
   // Backup

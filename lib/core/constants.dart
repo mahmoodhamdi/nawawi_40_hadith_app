@@ -179,6 +179,20 @@ class AppInfo {
   static const String appVersion = '1.5.0+11';
 }
 
+/// How users reach the maintainer.
+class ContactInfo {
+  ContactInfo._();
+
+  /// Maintainer's WhatsApp number in international format, no `+` or spaces —
+  /// this is what wa.me expects in its path.
+  static const String whatsappNumber = '201131527477';
+
+  /// wa.me link for [whatsappNumber] carrying a pre-filled message.
+  static Uri whatsappUri(String message) => Uri.parse(
+    'https://wa.me/$whatsappNumber?text=${Uri.encodeComponent(message)}',
+  );
+}
+
 /// Constants related to assets
 class AssetPaths {
   AssetPaths._();

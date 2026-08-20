@@ -66,6 +66,8 @@ The only external library categories used are:
 - Audio playback (`just_audio` — local files only)
 - Local notifications (`flutter_local_notifications` — local only)
 - System share dialog (`share_plus` — invokes OS share sheet)
+- Opening an external app for feedback (`url_launcher` — hands a prefilled
+  WhatsApp message to the OS; the app itself sends nothing)
 - Timezone handling (`timezone`, `flutter_timezone` — local computation)
 
 ### Audio files
@@ -73,6 +75,18 @@ The only external library categories used are:
 Audio recitation by Sheikh Ahmad Al-Nafees is **bundled in the app**.
 Audio is played from the local app bundle. **No streaming, no audio
 analytics, no usage of any media network service.**
+
+### Feedback
+
+The "send feedback" button opens **WhatsApp** with a message already written
+for you, addressed to the maintainer. The message contains what you typed plus
+the app version, your chosen language, and your platform and OS version — no
+device identifiers, no account data, nothing that identifies you personally.
+
+**The app does not send it.** It only opens WhatsApp with the text prepared;
+nothing leaves your device unless you press send yourself. If WhatsApp cannot
+be opened, the system share sheet opens instead so you can choose another way.
+Once you send it, WhatsApp's own privacy policy applies to that message.
 
 ### Sharing
 

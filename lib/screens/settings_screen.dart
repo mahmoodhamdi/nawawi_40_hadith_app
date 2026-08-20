@@ -12,7 +12,6 @@ import '../cubit/reading_streaks_cubit.dart';
 import '../cubit/reading_streaks_state.dart';
 import '../cubit/reminder_cubit.dart';
 import '../cubit/reminder_state.dart';
-import '../services/backup_service.dart';
 import '../services/feedback_service.dart';
 import 'quiz_screen.dart';
 
@@ -27,8 +26,8 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
-      // Grouped into four labelled sections. Seven equally-weighted cards in
-      // a flat list gave the eye nothing to anchor on.
+      // Grouped under labelled headings; a flat list of equally-weighted
+      // cards gave the eye nothing to anchor on.
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
@@ -44,13 +43,8 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 12),
           _buildQuizSection(context, theme, l10n),
 
-          _SectionHeader(l10n.sectionData),
-          _buildBackupSection(context, theme, l10n),
-
-          _SectionHeader(l10n.aboutApp),
+          _SectionHeader(l10n.sectionContact),
           _buildFeedbackSection(context, theme, l10n),
-          const SizedBox(height: 12),
-          _buildAboutSection(context, theme, l10n),
         ],
       ),
     );
@@ -328,129 +322,6 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  // ─── Backup ─────────────────────────────────────────────────────────
-
-  Widget _buildBackupSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.cloud_off_outlined,
-                  color: theme.colorScheme.primary,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  l10n.backup,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.backupHint,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            const Divider(height: 24),
-            // Stacked, not side by side: "تصدير نسخة احتياطية" wrapped onto
-            // two lines inside a half-width pill and looked broken.
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                icon: const Icon(Icons.upload_file_outlined),
-                label: Text(l10n.exportBackup),
-                onPressed: () => _exportBackup(context, l10n),
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                icon: const Icon(Icons.download_outlined),
-                label: Text(l10n.importBackup),
-                onPressed: () => _importBackup(context, l10n),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _exportBackup(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await BackupService.shareBackup();
-    } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(l10n.backupFailed)));
-    }
-  }
-
-  Future<void> _importBackup(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
-    final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.importBackup),
-        content: SizedBox(
-          width: 480,
-          child: TextField(
-            controller: controller,
-            maxLines: 8,
-            decoration: InputDecoration(
-              hintText: l10n.pasteBackupJson,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(null),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(controller.text),
-            child: Text(l10n.done),
-          ),
-        ],
-      ),
-    );
-    if (!context.mounted || result == null || result.trim().isEmpty) return;
-
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      final count = await BackupService.importFromString(result);
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.backupRestored(count))),
-      );
-    } on BackupRestoreException catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('${l10n.backupFailed}: ${e.message}')),
-      );
-    }
-  }
-
   // ─── Feedback ───────────────────────────────────────────────────────
 
   Widget _buildFeedbackSection(
@@ -504,88 +375,31 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  /// Opens WhatsApp addressed to the maintainer, with a short header already
+  /// written. There is no in-app compose dialog on purpose: the user writes
+  /// the note where they are going to send it from.
   Future<void> _composeFeedback(
     BuildContext context,
     AppLocalizations l10n,
   ) async {
-    final controller = TextEditingController();
-    final result = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.sendFeedback),
-        content: SizedBox(
-          width: 480,
-          child: TextField(
-            controller: controller,
-            maxLines: 6,
-            decoration: InputDecoration(
-              hintText: l10n.feedbackHint,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(null),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(controller.text),
-            child: Text(l10n.done),
-          ),
-        ],
-      ),
-    );
-    if (!context.mounted || result == null || result.trim().isEmpty) return;
-
     final locale = context.read<LanguageCubit>().state.language.code;
-    await FeedbackService.sendFeedback(
-      userMessage: result,
+    final messenger = ScaffoldMessenger.of(context);
+
+    final channel = await FeedbackService.sendFeedback(
+      message: FeedbackService.buildWhatsappPrefill(
+        appVersion: AppInfo.appVersion,
+        locale: locale,
+        noteLabel: l10n.feedbackNoteLabel,
+      ),
       appVersion: AppInfo.appVersion,
-      locale: locale,
     );
-  }
 
-  // ─── About ──────────────────────────────────────────────────────────
-
-  Widget _buildAboutSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  color: theme.colorScheme.primary,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  l10n.aboutApp,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
-            // Bug reports ask for the app version, and it was previously
-            // buried in the feedback payload with no way to read it.
-            _AboutRow(label: l10n.version, value: AppInfo.appVersion),
-            const SizedBox(height: 8),
-            _AboutRow(label: l10n.reciter, value: l10n.sheikhAhmadAlNafees),
-            const SizedBox(height: 8),
-            _AboutRow(label: l10n.openSource, value: 'MIT'),
-          ],
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          channel == FeedbackChannel.whatsapp
+              ? l10n.feedbackOpeningWhatsapp
+              : l10n.feedbackWhatsappUnavailable,
         ),
       ),
     );
@@ -1012,32 +826,3 @@ class _SectionHeader extends StatelessWidget {
 }
 
 /// One `label — value` line inside the About card.
-class _AboutRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _AboutRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-        ),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-}

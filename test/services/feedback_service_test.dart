@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hadith_nawawi_audio/core/constants.dart';
 import 'package:hadith_nawawi_audio/services/feedback_service.dart';
 
 void main() {
@@ -40,6 +41,25 @@ void main() {
         locale: 'en',
       );
       expect(body, contains('App: Forty Hadith Nawawi 1.0.0'));
+    });
+
+    test('whatsappUri targets the maintainer and carries the message', () {
+      final uri = ContactInfo.whatsappUri('salam wa rahma');
+
+      expect(uri.scheme, 'https');
+      expect(uri.host, 'wa.me');
+      expect(uri.path, '/${ContactInfo.whatsappNumber}');
+      expect(uri.queryParameters['text'], 'salam wa rahma');
+    });
+
+    test('whatsappUri escapes characters that would break the query', () {
+      // The diagnostics block contains & and #; unescaped they would
+      // truncate the prefilled message.
+      final uri = ContactInfo.whatsappUri('a&b#c');
+
+      expect(uri.queryParameters['text'], 'a&b#c');
+      expect(uri.toString(), contains('%26'));
+      expect(uri.toString(), contains('%23'));
     });
 
     test('issuesUrl points to the canonical repo issues endpoint', () {

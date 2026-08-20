@@ -20,6 +20,11 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   share_plus:
+  # Opens WhatsApp for the feedback flow. Its platform packages were already
+  # pulled in transitively by `printing`, so declaring it directly costs
+  # nothing in size. The app still makes no network requests of its own —
+  # this hands off to another app, exactly like the share sheet does.
+  url_launcher:
   just_audio:
   shared_preferences:
   flutter_markdown: ^0.7.4+3

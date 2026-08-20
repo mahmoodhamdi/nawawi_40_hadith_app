@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Feedback now opens WhatsApp directly, addressed to the maintainer with a
+  short header prefilled, instead of an in-app compose dialog feeding a
+  generic share sheet where nothing obvious happened. The user writes the note
+  where they are going to send it from. The share sheet remains the fallback
+  when WhatsApp cannot be opened, and the app still sends nothing itself — the
+  message only leaves the device when the user presses send.
+
+### Removed
+- Settings no longer carries the backup/restore card or the About card. The
+  app is small enough that neither earned its space; `BackupService` is left
+  in place but is no longer reachable from the UI.
+
 ## [1.5.0] - 2026-08-20 — "Android 16 Compliance"
 
 ### Added
