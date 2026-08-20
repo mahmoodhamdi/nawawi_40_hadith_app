@@ -1,15 +1,25 @@
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  # The App Store rejects icons with an alpha channel, even a fully opaque one.
+  remove_alpha_ios: true
   image_path: "assets/images/logo.png"
-  min_sdk_android: 21
+  min_sdk_android: 24
+  # Android 8+ adaptive icon: the launcher masks the foreground to whatever
+  # shape the device uses, so the mark is supplied separately from the ground
+  # instead of being baked into one square that gets cropped.
+  adaptive_icon_background: "#184E37"
+  adaptive_icon_foreground: "assets/images/logo_foreground.png"
+  adaptive_icon_monochrome: "assets/images/logo_foreground.png"
   web:
     generate: true
     image_path: "assets/images/logo.png"
+    background_color: "#184E37"
+    theme_color: "#184E37"
   windows:
     generate: true
     image_path: "assets/images/logo.png"
-    icon_size: 48
+    icon_size: 256
   macos:
     generate: true
-    image_path: "assets/images/logo.png" 
+    image_path: "assets/images/logo.png"

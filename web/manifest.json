@@ -3,14 +3,17 @@
     "short_name": "Hadith Nawawi",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FAFAF5",
-    "theme_color": "#1F6E3A",
+    "background_color": "#184E37",
+    "theme_color": "#184E37",
     "description": "Open-source Islamic app: 42 Hadiths of Imam an-Nawawi with audio recitation by Sheikh Ahmad Al-Nafees. Fully offline, no ads, no tracking. صدقة جارية.",
     "orientation": "any",
     "lang": "ar",
     "dir": "rtl",
     "prefer_related_applications": false,
-    "categories": ["education", "books"],
+    "categories": [
+        "education",
+        "books"
+    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",
