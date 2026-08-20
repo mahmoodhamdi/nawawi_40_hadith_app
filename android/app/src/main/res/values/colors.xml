@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#184E37</color>
+    <!-- Deep green ground shared by the launch screen and the adaptive icon,
+         so the splash reads as a continuation of the icon rather than a flash
+         of white. -->
+    <color name="splash_background">#184E37</color>
+</resources>

@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Notification permissions -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -9,12 +8,17 @@
         android:label="الأربعون النووية بصوت الشيخ أحمد النفيس"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <!-- LaunchTheme paints the launch screen; Flutter swaps to NormalTheme
+             (see the meta-data below) once the engine has a frame ready. The
+             activity used to point straight at NormalTheme, so there was no
+             launch screen at all and the resource shrinker stripped the splash
+             drawables as unreferenced. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
-            android:theme="@style/NormalTheme"
+            android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
