@@ -22,12 +22,14 @@ class NotificationService {
   static Future<void> initialize() async {
     // Initialize timezone
     tz.initializeTimeZones();
-    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    // flutter_timezone 5 returns a TimezoneInfo object instead of the bare
+    // IANA string it used to hand back.
+    final timeZone = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZone.identifier));
 
     // Android initialization settings
     const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      '@mipmap/launcher_icon',
     );
 
     // iOS/macOS initialization settings
@@ -45,16 +47,40 @@ class NotificationService {
     );
 
     await _notifications.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
   }
 
+  /// Called when the user taps a notification, with the reminder's payload
+  /// (the 1-based hadith number, or null).
+  ///
+  /// The service deliberately knows nothing about screens or cubits — the UI
+  /// layer installs this handler at startup. Without it a tapped reminder
+  /// just reopened whatever screen the user was last on, which made the
+  /// notification's "الحديث رقم N" text a dead end.
+  static void Function(String? payload)? onNotificationTap;
+
   /// Handle notification tap
   static void _onNotificationTapped(NotificationResponse response) {
-    // The app will open to the home screen by default
-    // Payload can be used to navigate to specific hadith
     debugPrint('Notification tapped: ${response.payload}');
+    onNotificationTap?.call(response.payload);
+  }
+
+  /// The payload of the notification that cold-started the app, if the app
+  /// was launched by tapping one. Returns null for a normal launch.
+  static Future<String?> launchPayload() async {
+    // Never allowed to throw: this runs on the first frame, and an
+    // uninitialised plugin (widget tests, or a platform where notification
+    // support is missing) would otherwise take the whole app down.
+    try {
+      final details = await _notifications.getNotificationAppLaunchDetails();
+      if (details?.didNotificationLaunchApp != true) return null;
+      return details?.notificationResponse?.payload;
+    } catch (e) {
+      debugPrint('Could not read notification launch details: $e');
+      return null;
+    }
   }
 
   /// Request notification permissions
@@ -123,7 +149,7 @@ class NotificationService {
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
-      icon: '@mipmap/ic_launcher',
+      icon: '@mipmap/launcher_icon',
     );
 
     const darwinDetails = DarwinNotificationDetails(
@@ -143,16 +169,20 @@ class NotificationService {
 
     // Schedule the notification
     await _notifications.zonedSchedule(
-      _dailyNotificationId,
-      title,
-      body,
-      scheduledDate,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      id: _dailyNotificationId,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: notificationDetails,
+      // Inexact on purpose. `exactAllowWhileIdle` needs SCHEDULE_EXACT_ALARM,
+      // which Android 13+ does not grant on install and Play restricts to
+      // alarm-clock/calendar apps — the result was that every reminder
+      // silently failed with `exact_alarms_not_permitted`. A daily reading
+      // reminder does not need to-the-second precision; Android may batch it
+      // with other wakeups, which is the intended trade.
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
       payload: payload,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
     );
 
     debugPrint('Daily reminder scheduled for ${time.hour}:${time.minute}');
@@ -160,7 +190,7 @@ class NotificationService {
 
   /// Cancel the daily reminder
   static Future<void> cancelReminder() async {
-    await _notifications.cancel(_dailyNotificationId);
+    await _notifications.cancel(id: _dailyNotificationId);
     debugPrint('Daily reminder cancelled');
   }
 
@@ -186,7 +216,7 @@ class NotificationService {
       priority: Priority.high,
       playSound: true,
       enableVibration: true,
-      icon: '@mipmap/ic_launcher',
+      icon: '@mipmap/launcher_icon',
     );
 
     const darwinDetails = DarwinNotificationDetails(
@@ -204,17 +234,21 @@ class NotificationService {
     final scheduledDate = _nextFridayAtTime(time);
 
     await _notifications.zonedSchedule(
-      _jumuahNotificationId,
-      title,
-      body,
-      scheduledDate,
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      id: _jumuahNotificationId,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: notificationDetails,
+      // Inexact on purpose. `exactAllowWhileIdle` needs SCHEDULE_EXACT_ALARM,
+      // which Android 13+ does not grant on install and Play restricts to
+      // alarm-clock/calendar apps — the result was that every reminder
+      // silently failed with `exact_alarms_not_permitted`. A daily reading
+      // reminder does not need to-the-second precision; Android may batch it
+      // with other wakeups, which is the intended trade.
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       // dayOfWeekAndTime so it repeats every Friday at the same time.
       matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
       payload: payload,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
     );
 
     debugPrint(
@@ -224,7 +258,7 @@ class NotificationService {
 
   /// Cancel the Friday reminder without touching the daily one.
   static Future<void> cancelJumuahReminder() async {
-    await _notifications.cancel(_jumuahNotificationId);
+    await _notifications.cancel(id: _jumuahNotificationId);
     debugPrint('Jumu\'ah reminder cancelled');
   }
 
@@ -301,6 +335,11 @@ class NotificationService {
       iOS: darwinDetails,
     );
 
-    await _notifications.show(0, title, body, notificationDetails);
+    await _notifications.show(
+      id: 0,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
   }
 }

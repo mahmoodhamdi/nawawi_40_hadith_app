@@ -21,14 +21,29 @@ import 'cubit/reminder_cubit.dart';
 import 'cubit/search_history_cubit.dart';
 import 'cubit/theme_cubit.dart';
 import 'cubit/theme_state.dart';
+import 'cubit/hadith_state.dart';
+import 'screens/hadith_details_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize notification service
-  await NotificationService.initialize();
+  // Initialize notification service.
+  //
+  // Deliberately non-fatal: reminders are a secondary feature, and the
+  // plugin can throw for reasons outside our control (a missing drawable
+  // after resource shrinking, an unresolvable timezone on a device with a
+  // broken clock config). Letting that propagate would mean `runApp` is
+  // never reached and the user stares at the splash screen forever — which
+  // is exactly what happened once. Reading hadiths must never depend on
+  // notifications working.
+  try {
+    await NotificationService.initialize();
+  } catch (e, stackTrace) {
+    debugPrint('Notification init failed (reminders disabled): $e');
+    debugPrint('$stackTrace');
+  }
 
   runApp(const NawawiApp());
 }
@@ -41,6 +56,45 @@ class NawawiApp extends StatefulWidget {
 }
 
 class _NawawiAppState extends State<NawawiApp> {
+  /// Lets the notification handler push a route from outside the widget tree.
+  static final GlobalKey<NavigatorState> _navigatorKey =
+      GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    NotificationService.onNotificationTap = _openHadith;
+    // A notification that cold-starts the app is not delivered through the
+    // tap callback, so ask for it once the first frame is on screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _openHadith(await NotificationService.launchPayload());
+    });
+  }
+
+  /// Opens the hadith a reminder points at. Silently does nothing when the
+  /// payload is absent or unparseable, or when the collection has not loaded
+  /// — the user then simply stays on the home screen.
+  void _openHadith(String? payload) {
+    final number = int.tryParse(payload ?? '');
+    if (number == null) return;
+
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null) return;
+
+    final hadithState = navigator.context.read<HadithCubit>().state;
+    if (hadithState is! HadithLoaded) return;
+    if (number < 1 || number > hadithState.hadiths.length) return;
+
+    navigator.push(
+      MaterialPageRoute(
+        builder: (_) => HadithDetailsScreen(
+          index: number,
+          hadith: hadithState.hadiths[number - 1],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -76,6 +130,7 @@ class _NawawiAppState extends State<NawawiApp> {
               return MaterialApp(
                 title: l10n.appTitle,
                 debugShowCheckedModeBanner: false,
+                navigatorKey: _navigatorKey,
 
                 // Support both Arabic and English
                 locale: languageState.locale,
