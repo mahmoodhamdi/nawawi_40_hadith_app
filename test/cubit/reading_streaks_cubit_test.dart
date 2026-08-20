@@ -18,6 +18,40 @@ class _FakeClockCubit extends ReadingStreaksCubit {
 DateTime _d(int year, int month, int day) => DateTime(year, month, day, 12, 0);
 
 void main() {
+  group('ReadingStreaksState.wasReadOn', () {
+    final lastRead = DateTime(2026, 8, 20);
+
+    test('covers exactly the days the streak spans', () {
+      final state = ReadingStreaksState(current: 3, lastDate: lastRead);
+
+      expect(state.wasReadOn(DateTime(2026, 8, 20)), isTrue);
+      expect(state.wasReadOn(DateTime(2026, 8, 19)), isTrue);
+      expect(state.wasReadOn(DateTime(2026, 8, 18)), isTrue);
+      // One day before the streak started.
+      expect(state.wasReadOn(DateTime(2026, 8, 17)), isFalse);
+      // After the last recorded read.
+      expect(state.wasReadOn(DateTime(2026, 8, 21)), isFalse);
+    });
+
+    test('ignores the time of day', () {
+      final state = ReadingStreaksState(current: 1, lastDate: lastRead);
+
+      expect(state.wasReadOn(DateTime(2026, 8, 20, 23, 59)), isTrue);
+      expect(state.wasReadOn(DateTime(2026, 8, 20, 0, 1)), isTrue);
+    });
+
+    test('is false when nothing has been read', () {
+      expect(
+        const ReadingStreaksState().wasReadOn(DateTime(2026, 8, 20)),
+        isFalse,
+      );
+      expect(
+        ReadingStreaksState(current: 0, lastDate: lastRead).wasReadOn(lastRead),
+        isFalse,
+      );
+    });
+  });
+
   group('ReadingStreaksCubit', () {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});

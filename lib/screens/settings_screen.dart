@@ -142,21 +142,14 @@ class SettingsScreen extends StatelessWidget {
                 if (state.isLoading)
                   const Center(child: CircularProgressIndicator())
                 else ...[
-                  _StreakRow(
-                    label: l10n.streakCurrentLabel,
-                    value: l10n.streakDays(state.current),
-                    highlight: state.current > 0,
-                  ),
-                  const SizedBox(height: 8),
-                  _StreakRow(
-                    label: l10n.streakLongestLabel,
-                    value: l10n.streakDays(state.longest),
-                    highlight: false,
-                  ),
+                  Center(child: _StreakHero(count: state.current)),
+                  const SizedBox(height: 20),
+                  _StreakWeekStrip(state: state),
                   if (state.current == 0) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Text(
                       l10n.streakEncouragement,
+                      textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(
                           alpha: 0.7,
@@ -166,7 +159,36 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
                   if (state.longest > 0) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.emoji_events_outlined,
+                          size: 18,
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.55,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            l10n.streakLongestLabel,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.7,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          l10n.streakDays(state.longest),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
                     Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: TextButton.icon(
@@ -759,43 +781,151 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-class _StreakRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool highlight;
+/// The streak count as the centrepiece of the card: a soft ring with the
+/// number inside and a flame resting on its edge. Two plain label/value rows
+/// carried the same information but gave the eye nothing to land on.
+class _StreakHero extends StatelessWidget {
+  final int count;
 
-  const _StreakRow({
-    required this.label,
-    required this.value,
-    required this.highlight,
-  });
+  const _StreakHero({required this.count});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: theme.textTheme.bodyLarge),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: highlight
-                ? theme.colorScheme.primary.withValues(alpha: 0.15)
-                : theme.colorScheme.surfaceContainerHighest.withValues(
-                    alpha: 0.5,
+    final l10n = AppLocalizations.of(context);
+    final scheme = theme.colorScheme;
+    final active = count > 0;
+    final ring = active
+        ? scheme.primary
+        : scheme.onSurface.withValues(alpha: 0.25);
+
+    return SizedBox(
+      width: 148,
+      height: 148,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            width: 132,
+            height: 132,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  scheme.primary.withValues(alpha: active ? 0.14 : 0.05),
+                  scheme.primary.withValues(alpha: 0.02),
+                ],
+              ),
+              border: Border.all(color: ring, width: active ? 3 : 1.5),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '$count',
+                  style: theme.textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: active ? scheme.primary : scheme.onSurface,
+                    height: 1.1,
                   ),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            value,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: highlight
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
+                ),
+                Text(
+                  count == 1 ? l10n.streakDayUnit : l10n.streakDaysUnit,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+              ],
             ),
           ),
+          if (active)
+            PositionedDirectional(
+              top: 0,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: scheme.surface,
+                  border: Border.all(color: scheme.primary, width: 2),
+                ),
+                child: Icon(
+                  Icons.local_fire_department,
+                  size: 20,
+                  color: scheme.secondary,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The last seven calendar days, filled where a hadith was read.
+///
+/// Derived rather than stored: a streak of [current] days ending on
+/// [lastDate] covers exactly the days in
+/// `[lastDate - (current - 1), lastDate]`, so no extra persistence is needed
+/// to draw this honestly.
+class _StreakWeekStrip extends StatelessWidget {
+  final ReadingStreaksState state;
+
+  const _StreakWeekStrip({required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final scheme = theme.colorScheme;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final days = List.generate(7, (i) => today.subtract(Duration(days: 6 - i)));
+
+    return Column(
+      children: [
+        Text(
+          l10n.streakLastWeek,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: scheme.onSurface.withValues(alpha: 0.55),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: days.map((day) {
+            final read = state.wasReadOn(day);
+            final isToday = day == today;
+            return Column(
+              children: [
+                Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: read
+                        ? scheme.primary
+                        : scheme.onSurface.withValues(alpha: 0.06),
+                    border: isToday
+                        ? Border.all(color: scheme.secondary, width: 2)
+                        : null,
+                  ),
+                  child: read
+                      ? Icon(Icons.check, size: 17, color: scheme.onPrimary)
+                      : null,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.weekdayInitial(day.weekday),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurface.withValues(
+                      alpha: isToday ? 0.9 : 0.5,
+                    ),
+                    fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
         ),
       ],
     );

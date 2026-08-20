@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when WhatsApp cannot be opened, and the app still sends nothing itself — the
   message only leaves the device when the user presses send.
 
+- The reading-streak card is no longer two plain label/value rows. The count
+  is now the centrepiece — a ring with the number inside and a flame on its
+  edge — above a seven-day strip showing which of the last week's days were
+  read, with today marked. The strip is derived from the existing streak data
+  rather than requiring a new per-day log, and the wording keeps the same
+  gentle istiqamah framing.
+
 ### Removed
 - Settings no longer carries the backup/restore card or the About card. The
   app is small enough that neither earned its space; `BackupService` is left

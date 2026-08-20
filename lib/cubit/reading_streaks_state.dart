@@ -43,6 +43,20 @@ class ReadingStreaksState extends Equatable {
     );
   }
 
+  /// Whether a hadith was read on [day] (time-of-day ignored).
+  ///
+  /// Derived rather than stored: a streak of [current] days ending on
+  /// [lastDate] covers exactly `[lastDate - (current - 1), lastDate]`, which
+  /// is enough to draw a recent-days view without persisting a per-day log.
+  bool wasReadOn(DateTime day) {
+    final last = lastDate;
+    if (last == null || current <= 0) return false;
+    final target = DateTime(day.year, day.month, day.day);
+    final lastDay = DateTime(last.year, last.month, last.day);
+    final firstDay = lastDay.subtract(Duration(days: current - 1));
+    return !target.isBefore(firstDay) && !target.isAfter(lastDay);
+  }
+
   @override
   List<Object?> get props => [current, longest, lastDate, isLoading];
 }

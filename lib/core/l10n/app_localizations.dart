@@ -214,6 +214,18 @@ class AppLocalizations {
       ? 'اقرأ حديثاً اليوم لاستمرار التواصل'
       : 'Read one hadith today to keep your streak';
   String get streakReset => isArabic ? 'إعادة تصفير' : 'Reset streak';
+  String get streakLastWeek => isArabic ? 'آخر ٧ أيام' : 'Last 7 days';
+  String get streakDayUnit => isArabic ? 'يوم' : 'day';
+  String get streakDaysUnit => isArabic ? 'أيام' : 'days';
+
+  /// Single-letter column head for a weekday, `weekday` being
+  /// [DateTime.weekday] (1 = Monday … 7 = Sunday).
+  String weekdayInitial(int weekday) {
+    const ar = ['ن', 'ث', 'ر', 'خ', 'ج', 'س', 'ح'];
+    const en = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final index = (weekday - 1).clamp(0, 6);
+    return isArabic ? ar[index] : en[index];
+  }
 
   // Notes
   String get notes => isArabic ? 'الملاحظات' : 'Notes';
