@@ -214,6 +214,9 @@ class AppLocalizations {
       ? 'اقرأ حديثاً اليوم لاستمرار التواصل'
       : 'Read one hadith today to keep your streak';
   String get streakReset => isArabic ? 'إعادة تصفير' : 'Reset streak';
+  String get streakResetBody => isArabic
+      ? 'سيبدأ عدّ أيام التواصل من الصفر، ولن يتأثر ما قرأته.'
+      : 'The day count starts over. What you have read is not affected.';
   String get streakLastWeek => isArabic ? 'آخر ٧ أيام' : 'Last 7 days';
   String get streakDayUnit => isArabic ? 'يوم' : 'day';
   String get streakDaysUnit => isArabic ? 'أيام' : 'days';
@@ -233,6 +236,9 @@ class AppLocalizations {
   String get addNote => isArabic ? 'إضافة ملاحظة' : 'Add note';
   String get editNote => isArabic ? 'تعديل الملاحظة' : 'Edit note';
   String get deleteNote => isArabic ? 'حذف الملاحظة' : 'Delete note';
+  String get deleteNoteBody => isArabic
+      ? 'ستُحذف ملاحظتك على هذا الحديث نهائياً.'
+      : 'Your note on this hadith will be deleted for good.';
   String get noteHint => isArabic
       ? 'اكتب ملاحظتك على الحديث هنا (Markdown مدعوم)...'
       : 'Write your note here (Markdown supported)...';

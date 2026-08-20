@@ -69,125 +69,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Build the continue reading card
-  Widget _buildContinueReadingCard(
-    BuildContext context,
-    int? lastReadIndex,
-    DateTime? lastReadTime,
-  ) {
+  /// Progress and "carry on where you left off" in one card.
+  ///
+  /// These were two separate cards stacked on top of each other — a gradient
+  /// block for the last-read hadith and a second block for the counters —
+  /// which between them filled most of the first screen before a single
+  /// hadith was visible. They describe the same thing, so they share a card.
+  Widget _buildProgressCard(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final l10n = AppLocalizations.of(context);
-
-    // Format the last read time
-    String timeAgo = '';
-    if (lastReadTime != null) {
-      final difference = DateTime.now().difference(lastReadTime);
-      if (difference.inMinutes < 1) {
-        timeAgo = l10n.justNow;
-      } else if (difference.inMinutes < 60) {
-        timeAgo = l10n.minutesAgo(difference.inMinutes);
-      } else if (difference.inHours < 24) {
-        timeAgo = l10n.hoursAgo(difference.inHours);
-      } else {
-        timeAgo = l10n.daysAgo(difference.inDays);
-      }
-    }
-
-    return BlocBuilder<HadithCubit, HadithState>(
-      builder: (context, state) {
-        if (state is HadithLoaded && lastReadIndex != null) {
-          return Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [
-                          theme.colorScheme.primary.withValues(alpha: 0.7),
-                          theme.colorScheme.primary.withValues(alpha: 0.3),
-                        ]
-                      : [
-                          theme.colorScheme.primary,
-                          theme.colorScheme.primary.withValues(alpha: 0.7),
-                        ],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                ),
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () => _navigateToLastReadHadith(
-                      context,
-                      state.hadiths,
-                      lastReadIndex,
-                    ),
-                    icon: const Icon(Icons.play_arrow),
-                    label: Text(l10n.continueReading),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark
-                          ? theme.colorScheme.surface
-                          : Colors.white,
-                      foregroundColor: theme.colorScheme.primary,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        l10n.lastRead,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '${l10n.hadithNumber} $lastReadIndex',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: isDark ? Colors.white70 : Colors.white,
-                        ),
-                      ),
-                      if (lastReadTime != null)
-                        Text(
-                          timeAgo,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isDark ? Colors.white60 : Colors.white70,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
-    );
-  }
-
-  // Build the reading stats card
-  Widget _buildReadingStatsCard(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<ReadingStatsCubit, ReadingStatsState>(
       builder: (context, statsState) {
-        if (statsState.isLoading) {
-          return const SizedBox.shrink();
-        }
+        if (statsState.isLoading) return const SizedBox.shrink();
 
         return BlocBuilder<HadithCubit, HadithState>(
           builder: (context, hadithState) {
@@ -199,108 +93,73 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }
 
+            final done = statsState.isComplete;
+            final accent = done ? Colors.green : theme.colorScheme.primary;
+
             return Card(
               elevation: 2,
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: theme.cardColor,
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Icon(
-                          statsState.isComplete
-                              ? Icons.emoji_events
-                              : Icons.menu_book,
-                          color: statsState.isComplete
-                              ? Colors.amber
-                              : theme.colorScheme.primary,
-                          size: 28,
+                        Row(
+                          children: [
+                            Icon(
+                              done ? Icons.emoji_events : Icons.menu_book,
+                              size: 20,
+                              color: done ? Colors.amber : accent,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l10n.readingProgress,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '${statsState.readCount} / ${statsState.totalHadiths}',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: accent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${statsState.progressPercent}%',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.55,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          l10n.readingProgress,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height: 10),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(6),
+                          child: LinearProgressIndicator(
+                            value: statsState.progressPercentage,
+                            backgroundColor: accent.withValues(alpha: 0.15),
+                            valueColor: AlwaysStoppedAnimation<Color>(accent),
+                            minHeight: 6,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStatItem(
-                          context,
-                          '${statsState.readCount}',
-                          l10n.hadithsRead,
-                          Icons.check_circle,
-                          Colors.green,
-                        ),
-                        Container(
-                          height: 40,
-                          width: 1,
-                          color: theme.dividerColor,
-                        ),
-                        _buildStatItem(
-                          context,
-                          '${statsState.remainingCount}',
-                          l10n.remaining,
-                          Icons.schedule,
-                          Colors.orange,
-                        ),
-                        Container(
-                          height: 40,
-                          width: 1,
-                          color: theme.dividerColor,
-                        ),
-                        _buildStatItem(
-                          context,
-                          '${statsState.progressPercent}%',
-                          l10n.completed,
-                          Icons.pie_chart,
-                          theme.colorScheme.primary,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: statsState.progressPercentage,
-                        backgroundColor: isDark
-                            ? theme.colorScheme.primary.withValues(alpha: 0.2)
-                            : theme.colorScheme.primary.withValues(alpha: 0.15),
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          statsState.isComplete
-                              ? Colors.green
-                              : theme.colorScheme.primary,
-                        ),
-                        minHeight: 10,
-                      ),
-                    ),
-                    if (statsState.isComplete) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        l10n.isArabic
-                            ? 'مبارك! لقد أتممت قراءة جميع الأحاديث'
-                            : 'Congratulations! You have read all hadiths',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+                  _buildContinueRow(context, hadithState),
+                ],
               ),
             );
           },
@@ -309,52 +168,97 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Helper widget for stat items
-  Widget _buildStatItem(
-    BuildContext context,
-    String value,
-    String label,
-    IconData icon,
-    Color color,
-  ) {
+  /// The "carry on" row, shown only once something has been read.
+  Widget _buildContinueRow(BuildContext context, HadithState hadithState) {
     final theme = Theme.of(context);
-    return Column(
-      children: [
-        Row(
+    final l10n = AppLocalizations.of(context);
+
+    return BlocBuilder<LastReadCubit, LastReadState>(
+      builder: (context, lastReadState) {
+        final index = lastReadState.hadithIndex;
+        if (index == null || hadithState is! HadithLoaded) {
+          return const SizedBox.shrink();
+        }
+
+        final lastReadTime = lastReadState.lastReadTime;
+        String timeAgo = '';
+        if (lastReadTime != null) {
+          final difference = DateTime.now().difference(lastReadTime);
+          if (difference.inMinutes < 1) {
+            timeAgo = l10n.justNow;
+          } else if (difference.inMinutes < 60) {
+            timeAgo = l10n.minutesAgo(difference.inMinutes);
+          } else if (difference.inHours < 24) {
+            timeAgo = l10n.hoursAgo(difference.inHours);
+          } else {
+            timeAgo = l10n.daysAgo(difference.inDays);
+          }
+        }
+
+        return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: color),
-            const SizedBox(width: 4),
-            Text(
-              value,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+            ),
+            InkWell(
+              onTap: () => _navigateToLastReadHadith(
+                context,
+                hadithState.hadiths,
+                index,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.play_circle_fill,
+                      size: 22,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.continueReading,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            timeAgo.isEmpty
+                                ? '${l10n.hadithNumber} $index'
+                                : '${l10n.hadithNumber} $index · $timeAgo',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.6,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_left,
+                      size: 20,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-          ),
-        ),
-      ],
+        );
+      },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Ensure LastReadCubit is loaded when screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<LastReadCubit>().loadLastReadInfo();
-    });
-
-    // Listen to search focus changes
-    _searchFocusNode.addListener(_onSearchFocusChanged);
   }
 
   void _onSearchFocusChanged() {
@@ -720,16 +624,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 6),
+                    // The verse is the app's opening line, but at titleLarge
+                    // with 28px of padding around it, it and the progress
+                    // card filled the screen before any hadith showed.
                     Text(
                       l10n.welcome,
-                      style: theme.textTheme.titleLarge?.copyWith(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         color: welcomeColor,
                         fontWeight: FontWeight.bold,
+                        height: 1.7,
                       ),
                       textAlign: TextAlign.start,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     BlocBuilder<ReadingStreaksCubit, ReadingStreaksState>(
                       builder: (context, streakState) {
                         if (streakState.isLoading || streakState.current == 0) {
@@ -916,21 +824,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (_showSearchHistory)
                       _buildSearchHistoryDropdown(context),
                     if (!_showSearchHistory) ...[
-                      BlocBuilder<LastReadCubit, LastReadState>(
-                        builder: (context, lastReadState) {
-                          if (lastReadState.hadithIndex != null) {
-                            return _buildContinueReadingCard(
-                              context,
-                              lastReadState.hadithIndex,
-                              lastReadState.lastReadTime,
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      _buildReadingStatsCard(context),
-                      const SizedBox(height: 16),
+                      _buildProgressCard(context),
+                      const SizedBox(height: 14),
                     ],
                   ],
                 ),

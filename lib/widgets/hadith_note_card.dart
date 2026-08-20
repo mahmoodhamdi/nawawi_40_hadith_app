@@ -7,6 +7,7 @@ import '../core/theme/markdown_style.dart';
 import '../cubit/language_cubit.dart';
 import '../cubit/notes_cubit.dart';
 import '../cubit/notes_state.dart';
+import 'app_dialog.dart';
 
 /// Inline notes editor for a single hadith. Sits between the citation
 /// card and the explanation card on the details screen.
@@ -148,10 +149,7 @@ class HadithNoteCard extends StatelessWidget {
               maxLines: 10,
               minLines: 4,
               autofocus: true,
-              decoration: InputDecoration(
-                hintText: l10n.noteHint,
-                border: const OutlineInputBorder(),
-              ),
+              decoration: AppDialog.inputDecoration(ctx, hint: l10n.noteHint),
             ),
           ),
           actions: [
@@ -174,24 +172,15 @@ class HadithNoteCard extends StatelessWidget {
 
   Future<void> _confirmDelete(BuildContext context) async {
     final l10n = AppLocalizations.read(context);
-    final confirmed = await showDialog<bool>(
+    final confirmed = await AppDialog.confirm(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.confirmAction),
-        content: Text(l10n.deleteNote),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.no),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.yes),
-          ),
-        ],
-      ),
+      icon: Icons.delete_outline,
+      title: l10n.deleteNote,
+      message: l10n.deleteNoteBody,
+      confirmLabel: l10n.yes,
+      destructive: true,
     );
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       await context.read<NotesCubit>().removeNote(hadithIndex);
     }
   }

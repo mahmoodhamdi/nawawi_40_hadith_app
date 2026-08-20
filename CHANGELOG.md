@@ -22,10 +22,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rather than requiring a new per-day log, and the wording keeps the same
   gentle istiqamah framing.
 
+- **Settings rebuilt as a dense list.** Every setting used to get its own tall
+  card — a 250px block just to pick between two languages, a reminder section
+  that spent most of its height on a heading and a description. They are now
+  rows: icon, title, the control on the row itself, grouped into cards with
+  hairlines between them.
+- **The streak card fits in a glance.** The count sits beside the title
+  instead of inside a 148px ring, above the seven-day strip, with the longest
+  streak on one muted line underneath.
+- **Home screen: progress and "continue reading" merged into one card.** They
+  were two stacked cards — a gradient block for the last-read hadith and a
+  three-column stats block — which together filled most of the first screen
+  before a single hadith appeared. One card now carries a progress row, a slim
+  bar, and a "carry on" row that only exists once something has been read. The
+  opening verse was tightened to match.
+- **Dialogs share one identity.** Confirmations were bare `AlertDialog`s with
+  a body that repeated the button label and two identical text buttons.
+  They now have an icon badge, a real sentence explaining what will happen,
+  and a destructive action that is visibly destructive. The note editor's text
+  field is filled and rounded so it reads as somewhere you can type.
+
 ### Removed
-- Settings no longer carries the backup/restore card or the About card. The
-  app is small enough that neither earned its space; `BackupService` is left
-  in place but is no longer reachable from the UI.
+- Settings no longer carries the backup/restore card, the About card, or the
+  notes summary row. The app is small enough that none of them earned their
+  space. Per-hadith notes are unchanged on the details screen; `BackupService`
+  is left in the tree but is no longer reachable from the UI.
 
 ## [1.5.0] - 2026-08-20 — "Android 16 Compliance"
 

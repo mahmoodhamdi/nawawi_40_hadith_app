@@ -5,17 +5,20 @@ import '../core/constants.dart';
 import '../core/l10n/app_localizations.dart';
 import '../cubit/language_cubit.dart';
 import '../cubit/language_state.dart';
-import '../cubit/notes_cubit.dart';
-import '../cubit/notes_state.dart';
 import '../cubit/reading_stats_cubit.dart';
 import '../cubit/reading_streaks_cubit.dart';
 import '../cubit/reading_streaks_state.dart';
 import '../cubit/reminder_cubit.dart';
 import '../cubit/reminder_state.dart';
 import '../services/feedback_service.dart';
+import '../widgets/app_dialog.dart';
 import 'quiz_screen.dart';
 
-/// Settings screen for managing app preferences
+/// Settings screen for managing app preferences.
+///
+/// Laid out as a dense list of rows rather than one tall card per setting:
+/// the card-per-feature version pushed a five-item screen past two full
+/// scrolls, with a 250px block just to choose between two languages.
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -26,675 +29,154 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
-      // Grouped under labelled headings; a flat list of equally-weighted
-      // cards gave the eye nothing to anchor on.
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
           _SectionHeader(l10n.sectionPreferences),
-          _buildLanguageSection(context, theme, l10n),
-          const SizedBox(height: 12),
-          _buildReminderSection(context, theme, l10n),
+          _Group(
+            children: [
+              _buildLanguageTile(context, theme, l10n),
+              ..._buildReminderTiles(context, theme, l10n),
+            ],
+          ),
 
           _SectionHeader(l10n.sectionJourney),
-          _buildStreaksSection(context, theme, l10n),
-          const SizedBox(height: 12),
-          _buildNotesSection(context, theme, l10n),
-          const SizedBox(height: 12),
-          _buildQuizSection(context, theme, l10n),
+          _Group(
+            children: [
+              _buildStreakTile(context, theme, l10n),
+              _buildQuizTile(context, theme, l10n),
+            ],
+          ),
 
           _SectionHeader(l10n.sectionContact),
-          _buildFeedbackSection(context, theme, l10n),
+          _Group(children: [_buildFeedbackTile(context, theme, l10n)]),
         ],
       ),
     );
   }
 
-  Widget _buildQuizSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.quiz_outlined,
-                  color: theme.colorScheme.primary,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  l10n.quizTitle,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.quizIntro,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            const Divider(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: Text(l10n.quizStart),
-                onPressed: () => Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => const QuizScreen())),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // ─── Language ───────────────────────────────────────────────────────
 
-  // ─── Reading Streaks ────────────────────────────────────────────────
-
-  Widget _buildStreaksSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return BlocBuilder<ReadingStreaksCubit, ReadingStreaksState>(
-      builder: (context, state) {
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.local_fire_department,
-                      color: theme.colorScheme.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      l10n.streakCurrentLabel,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 24),
-                if (state.isLoading)
-                  const Center(child: CircularProgressIndicator())
-                else ...[
-                  Center(child: _StreakHero(count: state.current)),
-                  const SizedBox(height: 20),
-                  _StreakWeekStrip(state: state),
-                  if (state.current == 0) ...[
-                    const SizedBox(height: 16),
-                    Text(
-                      l10n.streakEncouragement,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.7,
-                        ),
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ],
-                  if (state.longest > 0) ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.emoji_events_outlined,
-                          size: 18,
-                          color: theme.colorScheme.onSurface.withValues(
-                            alpha: 0.55,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            l10n.streakLongestLabel,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.7,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          l10n.streakDays(state.longest),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: TextButton.icon(
-                        icon: const Icon(Icons.refresh, size: 18),
-                        label: Text(l10n.streakReset),
-                        onPressed: () => _confirmStreakReset(context, l10n),
-                      ),
-                    ),
-                  ],
-                ],
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _confirmStreakReset(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.confirmAction),
-        content: Text(l10n.streakReset),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.no),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.yes),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true && context.mounted) {
-      await context.read<ReadingStreaksCubit>().reset();
-    }
-  }
-
-  // ─── Notes ──────────────────────────────────────────────────────────
-
-  Widget _buildNotesSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return BlocBuilder<NotesCubit, NotesState>(
-      builder: (context, state) {
-        final count = state.notes.length;
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.note_alt_outlined,
-                      color: theme.colorScheme.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.notes,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    if (count > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(
-                            alpha: 0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          l10n.notesCount(count),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const Divider(height: 24),
-                if (count == 0)
-                  // Without this the card was a bare title with no content and
-                  // nothing to tap — it read as broken rather than empty.
-                  Text(
-                    l10n.notesEmptyHint,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  )
-                else
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: TextButton.icon(
-                      icon: const Icon(Icons.delete_outline, size: 18),
-                      label: Text(l10n.clearAllNotes),
-                      onPressed: () => _confirmClearNotes(context, l10n),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _confirmClearNotes(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.confirmAction),
-        content: Text(l10n.clearAllNotes),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.no),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(l10n.yes),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true && context.mounted) {
-      await context.read<NotesCubit>().clearAll();
-    }
-  }
-
-  // ─── Feedback ───────────────────────────────────────────────────────
-
-  Widget _buildFeedbackSection(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-  ) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.feedback_outlined,
-                  color: theme.colorScheme.primary,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  l10n.sendFeedback,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.feedbackIntro,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            const Divider(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.send_outlined),
-                label: Text(l10n.sendFeedback),
-                onPressed: () => _composeFeedback(context, l10n),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Opens WhatsApp addressed to the maintainer, with a short header already
-  /// written. There is no in-app compose dialog on purpose: the user writes
-  /// the note where they are going to send it from.
-  Future<void> _composeFeedback(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
-    final locale = context.read<LanguageCubit>().state.language.code;
-    final messenger = ScaffoldMessenger.of(context);
-
-    final channel = await FeedbackService.sendFeedback(
-      message: FeedbackService.buildWhatsappPrefill(
-        appVersion: AppInfo.appVersion,
-        locale: locale,
-        noteLabel: l10n.feedbackNoteLabel,
-      ),
-      appVersion: AppInfo.appVersion,
-    );
-
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          channel == FeedbackChannel.whatsapp
-              ? l10n.feedbackOpeningWhatsapp
-              : l10n.feedbackWhatsappUnavailable,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLanguageSection(
+  Widget _buildLanguageTile(
     BuildContext context,
     ThemeData theme,
     AppLocalizations l10n,
   ) {
     return BlocBuilder<LanguageCubit, LanguageState>(
       builder: (context, state) {
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Section header
-                Row(
-                  children: [
-                    Icon(
-                      Icons.language,
-                      color: theme.colorScheme.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        l10n.languageLabel,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
+        return _Tile(
+          icon: Icons.language,
+          title: l10n.languageLabel,
+          // The two choices sit on the row itself instead of as two large
+          // bordered blocks stacked underneath it.
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _LanguageChip(
+                label: l10n.arabic,
+                selected: state.isArabic,
+                onTap: () => context.read<LanguageCubit>().changeLanguage(
+                  AppLanguage.arabic,
                 ),
-                const Divider(height: 24),
-
-                // Language options
-                _buildLanguageOption(
-                  context: context,
-                  theme: theme,
-                  language: AppLanguage.arabic,
-                  isSelected: state.isArabic,
+              ),
+              const SizedBox(width: 6),
+              _LanguageChip(
+                label: 'English',
+                selected: state.isEnglish,
+                onTap: () => context.read<LanguageCubit>().changeLanguage(
+                  AppLanguage.english,
                 ),
-                const SizedBox(height: 8),
-                _buildLanguageOption(
-                  context: context,
-                  theme: theme,
-                  language: AppLanguage.english,
-                  isSelected: state.isEnglish,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildLanguageOption({
-    required BuildContext context,
-    required ThemeData theme,
-    required AppLanguage language,
-    required bool isSelected,
-  }) {
-    return InkWell(
-      onTap: () => context.read<LanguageCubit>().changeLanguage(language),
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.outline,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                language.displayName,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // ─── Daily reminder ─────────────────────────────────────────────────
 
-  Widget _buildReminderSection(
+  List<Widget> _buildReminderTiles(
     BuildContext context,
     ThemeData theme,
     AppLocalizations l10n,
   ) {
-    return BlocBuilder<ReminderCubit, ReminderState>(
-      builder: (context, state) {
-        if (state.isLoading) {
-          return const Card(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          );
-        }
+    return [
+      BlocBuilder<ReminderCubit, ReminderState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const _Tile(
+              icon: Icons.notifications_active,
+              title: '',
+              trailing: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
 
-        return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Section header
-                Row(
-                  children: [
-                    Icon(
-                      Icons.notifications_active,
-                      color: theme.colorScheme.primary,
-                      size: 28,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            l10n.dailyReminder,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            l10n.dailyReminderDescription,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.7,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 24),
-
-                // Toggle switch
-                SwitchListTile(
-                  title: Text(
-                    state.isEnabled
-                        ? l10n.reminderEnabled
-                        : l10n.reminderDisabled,
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  subtitle: state.isEnabled
-                      ? Text(
-                          '${l10n.reminderTime}: ${state.formattedTimeArabic}',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary,
-                          ),
-                        )
-                      : null,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _Tile(
+                icon: Icons.notifications_active,
+                title: l10n.dailyReminder,
+                subtitle: l10n.dailyReminderDescription,
+                trailing: Switch(
                   value: state.isEnabled,
-                  onChanged: state.isLoading
-                      ? null
-                      : (value) => _toggleReminder(context),
-                  activeTrackColor: theme.colorScheme.primary.withValues(
-                    alpha: 0.5,
-                  ),
-                  contentPadding: EdgeInsets.zero,
+                  onChanged: (_) => _toggleReminder(context),
                 ),
-
-                // Time picker (only shown when enabled)
-                if (state.isEnabled) ...[
-                  const SizedBox(height: 8),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      Icons.access_time,
-                      color: theme.colorScheme.primary,
-                    ),
-                    title: Text(l10n.selectTime),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
+                onTap: () => _toggleReminder(context),
+              ),
+              // Time and the permission warning only exist while the reminder
+              // is on, so they cost nothing when it is off.
+              if (state.isEnabled) ...[
+                const _TileDivider(),
+                _Tile(
+                  icon: Icons.access_time,
+                  title: l10n.reminderTime,
+                  onTap: () => _selectTime(context, state.reminderTime, l10n),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
                         state.formattedTimeArabic,
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    onTap: () => _selectTime(context, state.reminderTime, l10n),
-                  ),
-                ],
-
-                // Permission warning
-                if (!state.hasPermission && state.isEnabled) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.orange.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.orange.withValues(alpha: 0.3),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.chevron_left,
+                        size: 20,
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.4,
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.warning_amber_rounded,
-                          color: Colors.orange,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            l10n.permissionRequired,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: Colors.orange[800],
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => _requestPermissions(context),
-                          child: Text(l10n.allowPermission),
-                        ),
-                      ],
+                    ],
+                  ),
+                ),
+                if (!state.hasPermission) ...[
+                  const _TileDivider(),
+                  _Tile(
+                    icon: Icons.warning_amber_rounded,
+                    iconColor: Colors.orange,
+                    title: l10n.permissionRequired,
+                    onTap: () => _requestPermissions(context),
+                    trailing: TextButton(
+                      onPressed: () => _requestPermissions(context),
+                      child: Text(l10n.allowPermission),
                     ),
                   ),
                 ],
               ],
-            ),
-          ),
-        );
-      },
-    );
+            ],
+          );
+        },
+      ),
+    ];
   }
 
   void _toggleReminder(BuildContext context) {
@@ -779,94 +261,334 @@ class SettingsScreen extends StatelessWidget {
   void _requestPermissions(BuildContext context) {
     context.read<ReminderCubit>().requestPermissions();
   }
+
+  // ─── Reading streak ─────────────────────────────────────────────────
+
+  Widget _buildStreakTile(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
+    return BlocBuilder<ReadingStreaksCubit, ReadingStreaksState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const _Tile(
+            icon: Icons.local_fire_department,
+            title: '',
+            trailing: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
+
+        final scheme = theme.colorScheme;
+        final active = state.current > 0;
+
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // The count reads inline beside the title rather than inside a
+              // 148px ring that pushed everything else off the screen.
+              Row(
+                children: [
+                  Icon(
+                    Icons.local_fire_department,
+                    size: 22,
+                    color: active
+                        ? scheme.secondary
+                        : scheme.onSurface.withValues(alpha: 0.35),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.streakCurrentLabel,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    l10n.streakDays(state.current),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: active
+                          ? scheme.primary
+                          : scheme.onSurface.withValues(alpha: 0.5),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (state.longest > 0)
+                    IconButton(
+                      icon: const Icon(Icons.refresh, size: 18),
+                      visualDensity: VisualDensity.compact,
+                      tooltip: l10n.streakReset,
+                      color: scheme.onSurface.withValues(alpha: 0.5),
+                      onPressed: () => _confirmStreakReset(context, l10n),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _StreakWeekStrip(state: state),
+              const SizedBox(height: 10),
+              Text(
+                active
+                    ? '${l10n.streakLongestLabel}: ${l10n.streakDays(state.longest)}'
+                    : l10n.streakEncouragement,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmStreakReset(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final confirmed = await AppDialog.confirm(
+      context: context,
+      icon: Icons.refresh,
+      title: l10n.streakReset,
+      message: l10n.streakResetBody,
+      confirmLabel: l10n.yes,
+      destructive: true,
+    );
+    if (confirmed && context.mounted) {
+      await context.read<ReadingStreaksCubit>().reset();
+    }
+  }
+
+  // ─── Quiz ───────────────────────────────────────────────────────────
+
+  Widget _buildQuizTile(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
+    return _Tile(
+      icon: Icons.quiz_outlined,
+      title: l10n.quizTitle,
+      subtitle: l10n.quizIntro,
+      trailing: const _Chevron(),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const QuizScreen())),
+    );
+  }
+
+  // ─── Feedback ───────────────────────────────────────────────────────
+
+  Widget _buildFeedbackTile(
+    BuildContext context,
+    ThemeData theme,
+    AppLocalizations l10n,
+  ) {
+    return _Tile(
+      icon: Icons.chat_outlined,
+      title: l10n.sendFeedback,
+      subtitle: l10n.feedbackIntro,
+      trailing: const _Chevron(),
+      onTap: () => _composeFeedback(context, l10n),
+    );
+  }
+
+  /// Opens WhatsApp addressed to the maintainer, with a short header already
+  /// written. There is no in-app compose dialog on purpose: the user writes
+  /// the note where they are going to send it from.
+  Future<void> _composeFeedback(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
+    final locale = context.read<LanguageCubit>().state.language.code;
+    final messenger = ScaffoldMessenger.of(context);
+
+    final channel = await FeedbackService.sendFeedback(
+      message: FeedbackService.buildWhatsappPrefill(
+        appVersion: AppInfo.appVersion,
+        locale: locale,
+        noteLabel: l10n.feedbackNoteLabel,
+      ),
+      appVersion: AppInfo.appVersion,
+    );
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          channel == FeedbackChannel.whatsapp
+              ? l10n.feedbackOpeningWhatsapp
+              : l10n.feedbackWhatsappUnavailable,
+        ),
+      ),
+    );
+  }
 }
 
-/// The streak count as the centrepiece of the card: a soft ring with the
-/// number inside and a flame resting on its edge. Two plain label/value rows
-/// carried the same information but gave the eye nothing to land on.
-class _StreakHero extends StatelessWidget {
-  final int count;
+/// A card that holds a run of [_Tile]s, drawing the hairlines between them.
+class _Group extends StatelessWidget {
+  final List<Widget> children;
 
-  const _StreakHero({required this.count});
+  const _Group({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      if (i > 0) rows.add(const _TileDivider());
+      rows.add(children[i]);
+    }
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
+}
+
+/// One settings row: icon, title, optional subtitle, optional trailing
+/// control. Deliberately tighter than [ListTile], which reserves more
+/// vertical space than these rows need.
+class _Tile extends StatelessWidget {
+  final IconData icon;
+  final Color? iconColor;
+  final String title;
+  final String? subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  const _Tile({
+    required this.icon,
+    required this.title,
+    this.iconColor,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
     final scheme = theme.colorScheme;
-    final active = count > 0;
-    final ring = active
-        ? scheme.primary
-        : scheme.onSurface.withValues(alpha: 0.25);
 
-    return SizedBox(
-      width: 148,
-      height: 148,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 132,
-            height: 132,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                colors: [
-                  scheme.primary.withValues(alpha: active ? 0.14 : 0.05),
-                  scheme.primary.withValues(alpha: 0.02),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, size: 22, color: iconColor ?? scheme.primary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.6),
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
                 ],
               ),
-              border: Border.all(color: ring, width: active ? 3 : 1.5),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$count',
-                  style: theme.textTheme.displaySmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: active ? scheme.primary : scheme.onSurface,
-                    height: 1.1,
-                  ),
-                ),
-                Text(
-                  count == 1 ? l10n.streakDayUnit : l10n.streakDaysUnit,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
-            ),
+            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TileDivider extends StatelessWidget {
+  const _TileDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      indent: 50,
+      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+    );
+  }
+}
+
+class _Chevron extends StatelessWidget {
+  const _Chevron();
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      Icons.chevron_left,
+      size: 20,
+      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+    );
+  }
+}
+
+/// One of the two language options, sized to sit on the row itself.
+class _LanguageChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _LanguageChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+        decoration: BoxDecoration(
+          color: selected ? scheme.primary : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected
+                ? scheme.primary
+                : scheme.onSurface.withValues(alpha: 0.25),
           ),
-          if (active)
-            PositionedDirectional(
-              top: 0,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: scheme.surface,
-                  border: Border.all(color: scheme.primary, width: 2),
-                ),
-                child: Icon(
-                  Icons.local_fire_department,
-                  size: 20,
-                  color: scheme.secondary,
-                ),
-              ),
-            ),
-        ],
+        ),
+        child: Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: selected ? scheme.onPrimary : scheme.onSurface,
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }
 }
 
 /// The last seven calendar days, filled where a hadith was read.
-///
-/// Derived rather than stored: a streak of [current] days ending on
-/// [lastDate] covers exactly the days in
-/// `[lastDate - (current - 1), lastDate]`, so no extra persistence is needed
-/// to draw this honestly.
 class _StreakWeekStrip extends StatelessWidget {
   final ReadingStreaksState state;
 
@@ -881,58 +603,46 @@ class _StreakWeekStrip extends StatelessWidget {
     final today = DateTime(now.year, now.month, now.day);
     final days = List.generate(7, (i) => today.subtract(Duration(days: 6 - i)));
 
-    return Column(
-      children: [
-        Text(
-          l10n.streakLastWeek,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: scheme.onSurface.withValues(alpha: 0.55),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: days.map((day) {
-            final read = state.wasReadOn(day);
-            final isToday = day == today;
-            return Column(
-              children: [
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: read
-                        ? scheme.primary
-                        : scheme.onSurface.withValues(alpha: 0.06),
-                    border: isToday
-                        ? Border.all(color: scheme.secondary, width: 2)
-                        : null,
-                  ),
-                  child: read
-                      ? Icon(Icons.check, size: 17, color: scheme.onPrimary)
-                      : null,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  l10n.weekdayInitial(day.weekday),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurface.withValues(
-                      alpha: isToday ? 0.9 : 0.5,
-                    ),
-                    fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
-            );
-          }).toList(),
-        ),
-      ],
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: days.map((day) {
+        final read = state.wasReadOn(day);
+        final isToday = day == today;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: read
+                    ? scheme.primary
+                    : scheme.onSurface.withValues(alpha: 0.06),
+                border: isToday
+                    ? Border.all(color: scheme.secondary, width: 2)
+                    : null,
+              ),
+              child: read
+                  ? Icon(Icons.check, size: 16, color: scheme.onPrimary)
+                  : null,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              l10n.weekdayInitial(day.weekday),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: scheme.onSurface.withValues(alpha: isToday ? 0.9 : 0.45),
+                fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        );
+      }).toList(),
     );
   }
 }
 
-/// Label that introduces a group of settings cards.
+/// Label that introduces a group of settings rows.
 class _SectionHeader extends StatelessWidget {
   final String title;
 
@@ -942,7 +652,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 4, top: 24, bottom: 10),
+      padding: const EdgeInsetsDirectional.only(start: 4, top: 22, bottom: 8),
       child: Text(
         title,
         style: theme.textTheme.titleSmall?.copyWith(
@@ -954,5 +664,3 @@ class _SectionHeader extends StatelessWidget {
     );
   }
 }
-
-/// One `label — value` line inside the About card.
