@@ -263,25 +263,6 @@ class AppLocalizations {
       : 'Could not open WhatsApp — pick another way to send it';
   String get openSource => isArabic ? 'مفتوح المصدر' : 'Open source';
 
-  // Backup
-  String get backup => isArabic ? 'النسخ الاحتياطي' : 'Backup';
-  String get exportBackup => isArabic ? 'تصدير نسخة احتياطية' : 'Export backup';
-  String get importBackup =>
-      isArabic ? 'استيراد نسخة احتياطية' : 'Import backup';
-  String get backupHint => isArabic
-      ? 'يمكنك تصدير إعداداتك ومفضلتك كملف JSON محفوظ على جهازك. لا يتم رفع أي شيء على الإنترنت.'
-      : 'Export your settings and favorites to a local JSON file. Nothing is uploaded.';
-  String get pasteBackupJson => isArabic
-      ? 'الصق محتوى ملف النسخة الاحتياطية هنا'
-      : 'Paste the backup JSON content here';
-  String backupRestored(int count) =>
-      isArabic ? 'تم استرجاع $count عنصراً' : 'Restored $count items';
-  String get backupFailed =>
-      isArabic ? 'فشل استيراد النسخة الاحتياطية' : 'Failed to import backup';
-  String get backupSubject => isArabic
-      ? 'الأربعون النووية — نسخة احتياطية'
-      : 'Forty Hadith Nawawi — backup';
-
   // Feedback
   String get sendFeedback => isArabic ? 'إرسال ملاحظة' : 'Send feedback';
   String get feedbackHint => isArabic

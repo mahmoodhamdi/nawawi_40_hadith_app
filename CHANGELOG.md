@@ -45,8 +45,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Settings no longer carries the backup/restore card, the About card, or the
   notes summary row. The app is small enough that none of them earned their
-  space. Per-hadith notes are unchanged on the details screen; `BackupService`
-  is left in the tree but is no longer reachable from the UI.
+  space. Per-hadith notes are unchanged on the details screen.
+- `BackupService`, its tests, and the eight backup strings are deleted. With
+  the settings card gone, nothing reached the service; keeping an unreachable
+  JSON export/import path only meant a second place to remember whenever a
+  persisted key was added. Nothing user-facing changes — the card was already
+  gone in this release, and no data is touched.
 
 ## [1.5.0] - 2026-08-20 — "Android 16 Compliance"
 

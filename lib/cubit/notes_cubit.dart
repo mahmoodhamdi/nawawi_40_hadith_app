@@ -9,8 +9,7 @@ import 'notes_state.dart';
 
 /// Manages per-hadith private notes, stored as a JSON-encoded map under a
 /// single SharedPreferences key. All persistence is local — notes never
-/// leave the device unless the user explicitly exports them via the backup
-/// service.
+/// leave the device.
 ///
 /// The schema is `{"1": "...", "14": "..."}` — string keys because JSON
 /// doesn't allow integer object keys; we re-parse to int on load.

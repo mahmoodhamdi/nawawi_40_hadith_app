@@ -46,7 +46,7 @@ Cubits load their own persisted state in their constructor and write through to
 `SharedPreferences` on every mutation. States are `Equatable` with `copyWith`.
 
 **Services are stateless static-method classes** (`HadithLoader`, `PreferencesService`,
-`SearchService`, `QuizGenerator`, `BackupService`, `PdfExportService`, `ShareImageService`,
+`SearchService`, `QuizGenerator`, `PdfExportService`, `ShareImageService`,
 `NotificationService`, `FeedbackService`). `SearchService` and `QuizGenerator` are pure — no
 Flutter or I/O imports — which is why they are directly unit-testable; `QuizGenerator` takes
 an injectable `Random` so tests can pin a seed.
@@ -83,17 +83,17 @@ plus localized `topics` labels; two hadiths are "related" when their `topicIds` 
   (`AppTheme.themeTypes` controls display order independently).
 - `AppInfo.appVersion` in `constants.dart` duplicates `version:` in `pubspec.yaml` on purpose
   (avoids a `package_info_plus` dependency) — bump both together.
-- `BackupService.allowedKeys` is an allowlist for local JSON export/import; a new persisted
-  key is not backed up until it is added there, and `schemaVersion` gates restore.
 
 ## Project rules (from CONTRIBUTING.md / PRIVACY.md)
 
 These are product commitments, not preferences:
 
-- **No tracking, analytics, telemetry, ads, paywalls, or network calls.** Features are built
-  around this: feedback and backup go through the OS share sheet (`share_plus`), citation
-  URLs are copied to the clipboard rather than opened (no `url_launcher`), PDFs are generated
-  on-device from bundled assets.
+- **No tracking, analytics, telemetry, ads, or paywalls, and the app itself makes no network
+  requests.** Features are built around this: PDFs are generated on-device from bundled
+  assets and citation URLs are copied to the clipboard rather than opened. The one hand-off
+  outward is feedback, which `url_launcher` opens in WhatsApp (`ContactInfo.whatsappUri`)
+  and falls back to the OS share sheet (`share_plus`) — the app never talks to a server
+  itself, and the release APK still declares no `INTERNET` permission.
 - **No new dependencies without justification**; no new platform permissions without an
   explanation in the PR.
 - **Arabic hadith text in `assets/json/` is not edited** without a canonical printed source
