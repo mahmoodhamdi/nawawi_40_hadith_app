@@ -176,7 +176,7 @@ class AppInfo {
   AppInfo._();
 
   /// Keep in sync with `version:` line in `pubspec.yaml`.
-  static const String appVersion = '1.4.0+10';
+  static const String appVersion = '1.5.0+11';
 }
 
 /// Constants related to assets

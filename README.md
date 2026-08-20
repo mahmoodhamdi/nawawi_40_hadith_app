@@ -3,7 +3,7 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/الإصدار-1.4.0-brightgreen)
+![Version](https://img.shields.io/badge/الإصدار-1.5.0-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.8+-blue)
 ![Dart](https://img.shields.io/badge/Dart-3.8+-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)

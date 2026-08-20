@@ -111,3 +111,81 @@ These are product commitments, not preferences:
 - Tests use `SharedPreferences.setMockInitialValues({})` in `setUp`; `bloc_test` and
   `mocktail` are available dev dependencies.
 - User-visible strings must be added to `AppLocalizations` in both languages, never inlined.
+
+## Release / Android signing
+
+Release signing reads `android/key.properties` (gitignored, never committed):
+
+```properties
+storePassword=...
+keyPassword=...
+keyAlias=upload
+storeFile=../upload-keystore.jks
+```
+
+`rootProject.file("key.properties")` resolves to `android/key.properties`, and `storeFile` is
+resolved relative to `android/app/`, so `../upload-keystore.jks` means
+**`android/upload-keystore.jks`**. (`android/key.properties.example` documents a different
+layout — `../app/upload-keystore.jks` → `android/app/upload-keystore.jks`; either works as
+long as the two agree.) If `key.properties` is missing, the release build silently falls back
+to debug signing — Play will reject that artifact, so verify the file exists before building.
+
+Publishing checklist:
+
+1. Bump `version:` in `pubspec.yaml` **and** `AppInfo.appVersion` in `constants.dart`; the
+   Play versionCode is the `+N` suffix and must be strictly greater than any uploaded build.
+2. Also update `CITATION.cff` and the README version badge.
+3. `dart format --set-exit-if-changed` → `flutter analyze --fatal-warnings --fatal-infos` →
+   `flutter test`.
+4. `flutter build appbundle --release` (Play) and/or `flutter build apk --release --split-per-abi`.
+5. Verify the shipped target SDK: `aapt2 dump badging build/app/outputs/flutter-apk/app-release.apk | grep targetSdk`.
+
+Google Play requires `targetSdk = 36` (Android 16) for updates published after
+**31 August 2026**; `compileSdk`/`targetSdk` are pinned to 36 in
+[android/app/build.gradle.kts](android/app/build.gradle.kts) — pinned literally rather than
+via `flutter.targetSdkVersion` so a Flutter downgrade cannot silently drop below the Play
+floor. Toolchain: Flutter 3.47.1 / Dart 3.13.1, Gradle 9.3.1, AGP 9.1.0, Kotlin 2.4.0, JDK 17.
+
+**Branding is generated, not hand-exported.** `assets/images/logo.png` and
+`logo_foreground.png` come from a GDI+ script; `dart run flutter_launcher_icons`
+turns them into launcher icons (including the adaptive + monochrome layers), and
+the Android splash drawables (`drawable-*/splash.png`, `android12splash.png`) are
+emitted at every density from the same emblem. Regenerate rather than editing the
+PNGs by hand.
+
+**The launch screen has two separate paths.** Pre-Android-12 uses
+`drawable/launch_background.xml`; Android 12+ ignores that and uses
+`windowSplashScreenBackground` / `windowSplashScreenAnimatedIcon` on `LaunchTheme`
+in `values-v31`. `MainActivity` must keep `android:theme="@style/LaunchTheme"` —
+pointing it at `NormalTheme` leaves the app with no launch screen *and* lets the
+resource shrinker delete the splash drawables.
+
+**Release builds behave differently from debug — always smoke-test the release APK on a
+device before shipping.** `isMinifyEnabled` + `isShrinkResources` are on, and resource
+shrinking drops any drawable that is only referenced by a *string* in Dart code. That is how
+`@mipmap/ic_launcher` disappeared from release builds and made
+`NotificationService.initialize()` throw; because `main()` awaited it before `runApp()`, the
+app hung on the splash screen. Notification icons must use `@mipmap/launcher_icon` (the one
+the manifest references, so the shrinker keeps it), and platform init in `main()` stays
+wrapped in try/catch.
+
+Reminders schedule with `AndroidScheduleMode.inexactAllowWhileIdle` on purpose: the exact
+modes need `SCHEDULE_EXACT_ALARM`, which Android 13+ does not grant on install and Play
+restricts to alarm-clock/calendar apps.
+
+Build gotchas on Windows:
+
+- Enable Developer Mode, or `flutter pub get` fails with *"Building with plugins requires
+  symlink support"* (which then makes `flutter test` exit before running anything).
+- `org.gradle.daemon=false` means each build spawns a single-use daemon. If a previous build
+  is still running, the next one dies with *"Timeout waiting to lock build logic queue"* —
+  wait for the stale `java.exe` to exit rather than re-running immediately.
+- The Flutter migrator may append `android.builtInKotlin=false` / `android.newDsl=false` to
+  `android/gradle.properties` on first build with a newer Flutter; keep those.
+- `kotlin.jvm.target.validation.mode=warning` in `android/gradle.properties` is load-bearing:
+  Flutter pins some plugin modules to Java 11 while others build at 17 and a few still declare
+  Kotlin 1.8, and KGP 2.x makes that mismatch fatal. No single global JVM target satisfies
+  every plugin — do not "fix" this by forcing one.
+- The pinned NDK must actually be installed; AGP needs it to strip symbols even though the
+  project has no native code. `sdkmanager --install "ndk;28.2.13676358"`.
+- `flutter test`/`build` can quietly re-resolve `pubspec.lock` — check `git status` afterwards.
