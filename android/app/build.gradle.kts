@@ -19,18 +19,18 @@ android {
     ndkVersion = "28.2.13676358"
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = true
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
         applicationId = "com.ashwah.hadith_nawawi_audio"
         minSdk = flutter.minSdkVersion
+        // Google Play requires API 36 (Android 16) for updates published
+        // after 31 August 2026. Pinned explicitly rather than using
+        // `flutter.targetSdkVersion` so a Flutter downgrade can't silently
+        // lower it below the Play requirement.
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -61,12 +61,20 @@ android {
         }
     }
 
-    aaptOptions {
-        noCompress("mp3")
+    // Audio ships as pre-compressed MP3; re-compressing it in the APK/AAB
+    // wastes build time and gains nothing. (`aaptOptions` was removed in
+    // AGP 9 — this is the replacement DSL.)
+    androidResources {
+        noCompress += "mp3"
     }
 }
 
-
+// `kotlinOptions` was removed in AGP 9 / Kotlin Gradle Plugin 2.x.
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
+}
 
 flutter {
     source = "../.."

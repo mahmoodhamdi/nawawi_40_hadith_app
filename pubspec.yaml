@@ -3,7 +3,7 @@ description: "تطبيق الأربعين النووية بصوت الشيخ أ�
 
 publish_to: "none"
 
-version: 1.4.0+10
+version: 1.5.0+11
 
 environment:
   sdk: ^3.8.0
@@ -23,9 +23,9 @@ dependencies:
   just_audio:
   shared_preferences:
   flutter_markdown: ^0.7.4+3
-  flutter_local_notifications: ^18.0.1
-  timezone: ^0.10.0
-  flutter_timezone: ^3.0.1
+  flutter_local_notifications: ^22.3.0
+  timezone: ^0.11.1
+  flutter_timezone: ^5.1.0
   # PDF export — used by lib/services/pdf_export_service.dart for the
   # "print / save as PDF" feature. Both packages are pure-Dart with no
   # tracking and no network access; they only consume bundled assets.
@@ -37,6 +37,9 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+  # Build-time only: regenerates launcher icons from assets/images/logo.png
+  # per flutter_launcher_icons.yaml. Not shipped in the app.
+  flutter_launcher_icons: ^0.14.4
   flutter_lints:
   bloc_test: ^10.0.0
   mocktail: ^1.0.4
